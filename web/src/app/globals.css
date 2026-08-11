@@ -143,11 +143,20 @@ img, video { max-width: 100%; display: block; }
 .nav-links {
   display: flex;
   align-items: center;
-  gap: var(--sp-8);
-  font-size: 14px;
-  font-weight: 500;
+  gap: 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
 }
-.nav-links a { opacity: .85; transition: opacity var(--t-fast), color var(--t-fast); }
+.nav-links a {
+  opacity: .88;
+  transition: opacity var(--t-fast), color var(--t-fast);
+  white-space: nowrap;
+  word-break: keep-all;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
 .nav-links a:hover { opacity: 1; color: #e7b76b; }
 
 .nav-actions { display: flex; align-items: center; gap: var(--sp-3); }

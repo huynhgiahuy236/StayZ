@@ -1,7 +1,6 @@
 const authService = require("../services/auth.service");
 const { CLIENT_URL, WEB_CLIENT_URL } = require("../constants/app.constant");
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require("../config/prisma.config");
 
 const buildRefreshCookieOptions = () => ({
   httpOnly: true,

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { LogOut, User, Heart, Calendar, ChevronDown, ShieldCheck, ShieldAlert, Utensils, Compass } from "lucide-react";
+import { LogOut, User, Heart, Calendar, ChevronDown, ShieldCheck, ShieldAlert, Utensils, Compass, Check, Bus, Car, Ticket } from "lucide-react";
 import type { User as UserType } from "@/lib/types";
 import { Language, t } from "@/lib/i18n";
 
@@ -17,6 +17,11 @@ const LANGUAGES: { code: Language; flag: string; label: string }[] = [
   { code: "ko", flag: "🇰🇷", label: "한국어" },
   { code: "ja", flag: "🇯🇵", label: "日本語" },
   { code: "th", flag: "🇹🇭", label: "ไทย" },
+  { code: "zh", flag: "🇨🇳", label: "中文 (简体)" },
+  { code: "fr", flag: "🇫🇷", label: "Français" },
+  { code: "de", flag: "🇩🇪", label: "Deutsch" },
+  { code: "es", flag: "🇪🇸", label: "Español" },
+  { code: "ru", flag: "🇷🇺", label: "Русский" },
 ];
 
 function getUserFromCookie(): UserType | null {
@@ -90,6 +95,9 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
       if (langRef.current && !langRef.current.contains(e.target as Node)) {
         setLangOpen(false);
       }
+      if (countryRef.current && !countryRef.current.contains(e.target as Node)) {
+        setCountryOpen(false);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -120,33 +128,34 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
       <nav className="nav shell" aria-label="Điều hướng chính">
         {/* Brand */}
         <Link href="/" className="brand" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-          <span>Stay<span className="z">Z</span></span>
-          <span style={{ fontSize: 10, background: "rgba(251,191,36,0.2)", color: "var(--gold, #fbbf24)", padding: "2px 6px", borderRadius: 4, fontWeight: 700, letterSpacing: 0.5 }}>GLOBAL</span>
+          <span>HuKi<span className="z"> Travel</span></span>
+          <span style={{ fontSize: 10, background: "rgba(251,191,36,0.25)", color: "var(--gold, #fbbf24)", padding: "2px 8px", borderRadius: 4, fontWeight: 800, letterSpacing: 0.5 }}>10 LANGUAGES</span>
         </Link>
 
         {/* Nav links */}
         <div className="nav-links" role="menubar">
-          <Link href="/search" role="menuitem">Khám phá</Link>
+          <Link href="/search" role="menuitem">{t("nav_stays", currentLang)}</Link>
+          <Link href="#search-banner" role="menuitem" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+            <Bus size={14} /> {t("nav_bus", currentLang)}
+          </Link>
+          <Link href="#search-banner" role="menuitem" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+            <Car size={14} /> {t("nav_ride", currentLang)}
+          </Link>
           <Link href="#taste-section" role="menuitem" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-            <Utensils size={14} /> Ẩm thực
+            <Utensils size={14} /> {t("taste_title", currentLang).split("&")[0]}
           </Link>
           <Link href="#experiences-section" role="menuitem" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-            <Compass size={14} /> Trải nghiệm
-          </Link>
-          <Link href="/search?type=resort" role="menuitem">Resort</Link>
-          <Link href="/search?type=villa" role="menuitem">Villa</Link>
-          <Link href="/favorites" role="menuitem" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-            <Heart size={14} aria-hidden="true" /> Yêu thích
+            <Compass size={14} /> {t("experiences_title", currentLang).split("&")[0]}
           </Link>
           {isAdmin && (
             <Link href="/admin" role="menuitem" style={{ color: "var(--gold)", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4 }}>
-              <ShieldAlert size={14} aria-hidden="true" /> Quản trị
+              <ShieldAlert size={14} aria-hidden="true" /> Admin
             </Link>
           )}
         </div>
 
         {/* Actions */}
-        <div className="nav-actions" style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div className="nav-actions" style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {/* 🌍 12-Country Selector Dropdown */}
           <div className="nav-dropdown" ref={countryRef} style={{ position: "relative" }}>
             <button
@@ -169,7 +178,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
               aria-label="Chọn quốc gia"
             >
               <span>🌍</span>
-              <span>Quốc gia</span>
+              <span className="hide-mobile">12 Countries</span>
               <ChevronDown size={13} />
             </button>
 
@@ -187,7 +196,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                   background: "var(--color-bg, #fff)",
                   color: "var(--color-ink, #0f172a)",
                   borderRadius: 12,
-                  boxShadow: "0 10px 25px -5px rgba(0,0,0,0.2)",
+                  boxShadow: "0 10px 25px -5px rgba(0,0,0,0.25)",
                   padding: "6px",
                   zIndex: 100,
                 }}
@@ -218,7 +227,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
             )}
           </div>
 
-          {/* 🌐 5-Language Switcher */}
+          {/* 🌐 Re-Designed 10-Language Selector Dropdown */}
           <div className="nav-dropdown" ref={langRef} style={{ position: "relative" }}>
             <button
               type="button"
@@ -227,19 +236,20 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 6,
-                background: "rgba(255, 255, 255, 0.15)",
+                background: "rgba(255, 255, 255, 0.18)",
                 backdropFilter: "blur(8px)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                padding: "6px 12px",
+                border: "1px solid rgba(255, 255, 255, 0.25)",
+                padding: "6px 14px",
                 borderRadius: 100,
                 color: "inherit",
                 fontSize: 13,
-                fontWeight: 600,
+                fontWeight: 700,
                 cursor: "pointer",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               }}
               aria-label="Chọn ngôn ngữ"
             >
-              <span>{activeLangObj.flag}</span>
+              <span style={{ fontSize: 16 }}>{activeLangObj.flag}</span>
               <span>{activeLangObj.code.toUpperCase()}</span>
               <ChevronDown size={13} />
             </button>
@@ -252,39 +262,51 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                   right: 0,
                   top: "100%",
                   marginTop: 8,
-                  minWidth: 150,
-                  background: "var(--color-bg, #fff)",
-                  color: "var(--color-ink, #0f172a)",
-                  borderRadius: 12,
-                  boxShadow: "0 10px 25px -5px rgba(0,0,0,0.2)",
-                  padding: "6px",
-                  zIndex: 100,
+                  width: 210,
+                  maxHeight: 380,
+                  overflowY: "auto",
+                  background: "#ffffff",
+                  color: "#0f172a",
+                  borderRadius: 14,
+                  boxShadow: "0 15px 35px -5px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)",
+                  padding: "8px",
+                  zIndex: 200,
                 }}
               >
-                {LANGUAGES.map((langItem) => (
-                  <button
-                    key={langItem.code}
-                    onClick={() => changeLanguage(langItem.code)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      width: "100%",
-                      padding: "8px 12px",
-                      borderRadius: 8,
-                      border: 0,
-                      background: currentLang === langItem.code ? "rgba(15, 23, 42, 0.08)" : "transparent",
-                      fontWeight: currentLang === langItem.code ? 700 : 500,
-                      cursor: "pointer",
-                      textAlign: "left",
-                      color: "inherit",
-                      fontSize: 13,
-                    }}
-                  >
-                    <span>{langItem.flag}</span>
-                    <span>{langItem.label}</span>
-                  </button>
-                ))}
+                <div style={{ padding: "6px 10px 8px 10px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#64748b", borderBottom: "1px solid #f1f5f9", marginBottom: 4 }}>
+                  10 Languages / 10 Ngôn Ngữ
+                </div>
+                {LANGUAGES.map((langItem) => {
+                  const isSelected = currentLang === langItem.code;
+                  return (
+                    <button
+                      key={langItem.code}
+                      onClick={() => changeLanguage(langItem.code)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        padding: "8px 12px",
+                        borderRadius: 8,
+                        border: 0,
+                        background: isSelected ? "#f1f5f9" : "transparent",
+                        fontWeight: isSelected ? 700 : 500,
+                        cursor: "pointer",
+                        textAlign: "left",
+                        color: isSelected ? "#0f172a" : "#334155",
+                        fontSize: 13,
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 18 }}>{langItem.flag}</span>
+                        <span>{langItem.label}</span>
+                      </span>
+                      {isSelected && <Check size={15} style={{ color: "#2563eb" }} />}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -311,7 +333,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                   </span>
                 )}
                 <span style={{ maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {user.full_name?.split(" ").slice(-1)[0] ?? "Tài khoản"}
+                  {user.full_name?.split(" ").slice(-1)[0] ?? t("nav_account", currentLang)}
                 </span>
                 <ChevronDown size={14} aria-hidden="true" />
               </button>
@@ -337,15 +359,15 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                   )}
                   <div className="nav-dropdown-divider" role="separator" />
                   <button className="nav-dropdown-item danger" role="menuitem" onClick={handleLogout}>
-                    <LogOut size={16} aria-hidden="true" /> Đăng xuất
+                    <LogOut size={16} aria-hidden="true" /> {t("nav_logout", currentLang)}
                   </button>
                 </div>
               )}
             </div>
           ) : (
             <>
-              <Link href="/login" className="btn-ghost">Đăng nhập</Link>
-              <Link href="/auth/register" className="btn-primary">Đăng ký</Link>
+              <Link href="/login" className="btn-ghost">{t("nav_login", currentLang)}</Link>
+              <Link href="/auth/register" className="btn-primary">{t("nav_signup", currentLang)}</Link>
             </>
           )}
         </div>

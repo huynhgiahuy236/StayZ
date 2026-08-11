@@ -1,15 +1,17 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useRef, useState, Suspense } from "react";
+import { useRef, useState, useEffect, Suspense } from "react";
 import { Search } from "lucide-react";
+import { Language, t } from "@/lib/i18n";
 
 interface Props {
   initialCity?: string;
   initialKeyword?: string;
+  lang?: Language;
 }
 
 const CITIES = [
-  { value: "", label: "Tất cả thành phố" },
+  { value: "", labelKey: "filter_all" },
   { value: "da-nang", label: "Đà Nẵng" },
   { value: "da-lat", label: "Đà Lạt" },
   { value: "ha-noi", label: "Hà Nội" },
@@ -20,7 +22,7 @@ const CITIES = [
   { value: "phu-quoc", label: "Phú Quốc" },
 ];
 
-function SearchBarInner({ initialCity, initialKeyword }: Props) {
+function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
   const router = useRouter();
   const sp = useSearchParams();
   const keywordRef = useRef<HTMLInputElement>(null);
@@ -28,6 +30,12 @@ function SearchBarInner({ initialCity, initialKeyword }: Props) {
   const [keyword, setKeyword] = useState(initialKeyword ?? sp.get("keyword") ?? "");
   const [guests, setGuests] = useState(sp.get("guests") ?? "");
   const [type, setType] = useState(sp.get("type") ?? "");
+  const [currentLang, setCurrentLang] = useState<Language>(lang);
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || lang || "vi";
+    setCurrentLang(saved);
+  }, [lang]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -40,53 +48,54 @@ function SearchBarInner({ initialCity, initialKeyword }: Props) {
   }
 
   return (
-    <form className="search-bar" onSubmit={handleSubmit} role="search" aria-label="Tìm kiếm khách sạn">
+    <form className="search-bar" id="search-banner" onSubmit={handleSubmit} role="search" aria-label="Tìm kiếm">
       <div className="search-field">
-        <label htmlFor="sb-keyword">Tìm kiếm</label>
+        <label htmlFor="sb-keyword">{t("search_button", currentLang).split(" ")[0]}</label>
         <input
           id="sb-keyword"
           ref={keywordRef}
           type="text"
-          placeholder="Tên khách sạn, khu vực..."
+          placeholder={t("search_destination_placeholder", currentLang)}
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           autoComplete="off"
         />
       </div>
       <div className="search-field">
-        <label htmlFor="sb-city">Thành phố</label>
+        <label htmlFor="sb-city">{t("stat_destinations", currentLang).split(" ")[0]}</label>
         <select
           id="sb-city"
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          aria-label="Chọn thành phố"
+          aria-label="Chọn điểm đến"
         >
           {CITIES.map((c) => (
-            <option key={c.value} value={c.value}>{c.label}</option>
+            <option key={c.value} value={c.value}>
+              {c.labelKey ? t(c.labelKey, currentLang) : c.label}
+            </option>
           ))}
         </select>
       </div>
       <div className="search-field">
-        <label htmlFor="sb-type">Loại hình</label>
+        <label htmlFor="sb-type">{t("filter_all", currentLang)}</label>
         <select
           id="sb-type"
           value={type}
           onChange={(e) => setType(e.target.value)}
-          aria-label="Chọn loại hình lưu trú"
+          aria-label="Chọn loại hình"
         >
-          <option value="">Tất cả loại</option>
-          <option value="resort">Resort</option>
-          <option value="villa">Villa</option>
-          <option value="hotel">Khách sạn</option>
-          <option value="homestay">Homestay</option>
+          <option value="">{t("filter_all", currentLang)}</option>
+          <option value="resort">{t("filter_villa", currentLang)}</option>
+          <option value="hotel">{t("filter_hotel", currentLang)}</option>
+          <option value="apartment">{t("filter_apartment", currentLang)}</option>
         </select>
       </div>
       <div className="search-field" style={{ borderRight: 0 }}>
-        <label htmlFor="sb-guests">Số khách</label>
+        <label htmlFor="sb-guests">{t("search_guests", currentLang)}</label>
         <input
           id="sb-guests"
           type="number"
-          placeholder="Bao nhiêu khách?"
+          placeholder="1+"
           min={1}
           max={20}
           value={guests}
@@ -95,7 +104,7 @@ function SearchBarInner({ initialCity, initialKeyword }: Props) {
       </div>
       <button type="submit" className="search-btn" aria-label="Tìm kiếm">
         <Search size={16} aria-hidden="true" />
-        Tìm
+        {t("search_button", currentLang)}
       </button>
     </form>
   );

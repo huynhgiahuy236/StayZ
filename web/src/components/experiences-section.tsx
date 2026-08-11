@@ -19,11 +19,11 @@ function getI18nText(field: unknown, lang: Language, fallback: string): string {
   return fallback;
 }
 
-const CATEGORY_MAP: Record<string, { label: string; icon: any; color: string }> = {
-  nature: { label: "Thiên nhiên", icon: Trees, color: "#10b981" },
-  culture: { label: "Văn hóa", icon: Landmark, color: "#8b5cf6" },
-  entertainment: { label: "Giải trí", icon: Sparkles, color: "#f59e0b" },
-  checkin: { label: "Sống ảo", icon: Camera, color: "#ec4899" },
+const CATEGORY_MAP: Record<string, { labelKey: string; icon: any; color: string }> = {
+  nature: { labelKey: "category_nature", icon: Trees, color: "#10b981" },
+  culture: { labelKey: "category_culture", icon: Landmark, color: "#8b5cf6" },
+  entertainment: { labelKey: "category_entertainment", icon: Sparkles, color: "#f59e0b" },
+  checkin: { labelKey: "category_checkin", icon: Camera, color: "#ec4899" },
 };
 
 export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
@@ -45,7 +45,7 @@ export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
         <div className="section-heading">
           <div>
             <p className="eyebrow dark" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              <Compass size={14} className="text-gold" /> STAYZ EXPERIENCE
+              <Compass size={14} className="text-gold" /> HUKI EXPERIENCE
             </p>
             <h2 id="exp-heading">{t("experiences_title", lang)}</h2>
             <p className="section-sub">{t("experiences_subtitle", lang)}</p>
@@ -60,6 +60,7 @@ export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
             const img = act.image_url || "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85";
             const catInfo = CATEGORY_MAP[act.category || "checkin"] || CATEGORY_MAP.checkin;
             const CatIcon = catInfo.icon;
+            const categoryLabel = t(catInfo.labelKey, lang);
 
             return (
               <div
@@ -96,7 +97,7 @@ export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
                       gap: 4,
                     }}
                   >
-                    <CatIcon size={12} /> {catInfo.label}
+                    <CatIcon size={12} /> {categoryLabel}
                   </span>
                 </div>
 

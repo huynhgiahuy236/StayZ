@@ -41,3 +41,11 @@ graph TD
 
 8. **Phân hệ HuKi Guide (Cẩm nang du lịch & Điểm đến)**:
    - Gợi ý di sản, di tích, địa điểm ẩm thực check-in hot kèm bản đồ tương tác.
+
+---
+
+## 🌐 3. CHUẨN HÓA ĐA NGÔN NGỮ I18N & QUY TẮC BẢO TỒN TÊN ĐỊA DANH GỐC
+
+- **Hệ thống i18n 10 Ngôn Ngữ**: Hỗ trợ toàn diện 10 ngôn ngữ (`vi`, `en`, `ko`, `ja`, `th`, `zh`, `fr`, `de`, `es`, `ru`).
+- **Quy tắc Bảo tồn Tên riêng Địa danh (Proper Nouns)**: Tên các thành phố/địa danh (Sydney, Tokyo, Đà Nẵng, New York, Paris, Phú Quốc...) giữ nguyên tên gốc, KHÔNG dịch tên địa danh. Chỉ dịch phần mô tả/tiêu đề đi kèm.
+- **Thư mục Automation Test Script (`scripts/`)**: Duy trì `scripts/test-i18n-darkmode.js` để tự động hóa việc kiểm thử chất lượng đa ngôn ngữ và Dark Mode.

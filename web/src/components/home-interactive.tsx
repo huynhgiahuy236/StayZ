@@ -56,7 +56,7 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
   return (
     <main id="main-content">
       {/* ── 1. HERO BANNER & SEARCH BAR ────────────────────────── */}
-      <section className="hero" aria-label="Trang chủ StayZ">
+      <section className="hero" aria-label="HuKi Travel Homepage">
         <SiteHeader transparent lang={lang} onLangChange={handleLangChange} />
         <div className="hero-overlay" aria-hidden="true" />
         <div className="hero-content shell">
@@ -71,12 +71,12 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
             {t("hero_subtitle", lang)}
           </p>
 
-          <SearchBar />
+          <SearchBar lang={lang} />
 
           <div className="trust-row">
             <span><BadgeCheck size={14} aria-hidden="true" /> {t("deposit_badge", lang)}</span>
             <span><ShieldCheck size={14} aria-hidden="true" /> {t("deposit_desc", lang)}</span>
-            <span><Headphones size={14} aria-hidden="true" /> 24/7 Support</span>
+            <span><Headphones size={14} aria-hidden="true" /> {t("trust_support", lang)}</span>
           </div>
         </div>
       </section>
@@ -114,10 +114,10 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
         onSelectCountry={(code) => setSelectedCountryCode(code)}
       />
 
-      {/* ── 5. TASTE OF STAYZ (8 items + Nút Xem thêm) ───────────── */}
+      {/* ── 5. TASTE OF HUKI (8 items + Nút Xem thêm) ───────────── */}
       <TasteSection destinations={initialDestinations} lang={lang} />
 
-      {/* ── 6. STAYZ EXPERIENCES (8 items + Nút Xem thêm) ───────── */}
+      {/* ── 6. HUKI EXPERIENCES (8 items + Nút Xem thêm) ───────── */}
       <ExperiencesSection destinations={initialDestinations} lang={lang} />
 
       {/* ── 7. EXCLUSIVE 30% DEPOSIT OFFER BANNER ──────────────── */}
@@ -149,7 +149,7 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
                 letterSpacing: 1,
               }}
             >
-              🔥 StayZ Exclusive
+              🔥 HuKi Exclusive
             </span>
             <h2 style={{ fontSize: 28, fontWeight: 800, margin: "12px 0 8px 0", color: "#fff" }}>
               {t("deposit_badge", lang)}
@@ -185,7 +185,7 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
         <div className="shell">
           <div className="section-heading" style={{ marginBottom: 20 }}>
             <div>
-              <p className="eyebrow dark">StayZ Pick</p>
+              <p className="eyebrow dark">{t("stayz_pick", lang)}</p>
               <h2 id="featured-heading">{t("hotels_title", lang)}</h2>
               <p className="section-sub">{t("hotels_subtitle", lang)}</p>
             </div>
@@ -234,13 +234,13 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
           {displayHotels.length ? (
             <div className="hotel-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
               {displayHotels.map((hotel) => (
-                <HotelCard hotel={hotel} key={hotel._id} />
+                <HotelCard hotel={hotel} key={hotel._id} lang={lang} />
               ))}
             </div>
           ) : (
             <div className="empty-state">
-              <h3>Đang chuẩn bị những nơi lưu trú tuyệt nhất</h3>
-              <p>Hãy chọn tab danh mục khác hoặc tìm kiếm ngay</p>
+              <h3>{t("hotels_title", lang)}</h3>
+              <p>{t("hotels_subtitle", lang)}</p>
             </div>
           )}
 
@@ -270,34 +270,35 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
       <section className="promise shell" aria-labelledby="promise-heading">
         <div>
           <span className="promise-icon" aria-hidden="true"><Sparkles size={22} /></span>
-          <h3 id="promise-heading">Tuyển chọn có gu</h3>
-          <p>Mỗi nơi lưu trú đều được chọn để mang đến một trải nghiệm đáng nhớ nhất.</p>
+          <h3 id="promise-heading">{t("stayz_pick", lang)}</h3>
+          <p>{t("hotels_subtitle", lang)}</p>
         </div>
         <div>
           <span className="promise-icon" aria-hidden="true"><ShieldCheck size={22} /></span>
-          <h3>Đặt phòng an tâm</h3>
-          <p>Thông tin minh bạch, thanh toán bảo mật và xác nhận ngay lập tức.</p>
+          <h3>{t("deposit_badge", lang)}</h3>
+          <p>{t("deposit_desc", lang)}</p>
         </div>
         <div>
           <span className="promise-icon" aria-hidden="true"><Headphones size={22} /></span>
-          <h3>Đồng hành 24/7</h3>
-          <p>Đội ngũ StayZ luôn sẵn sàng hỗ trợ trước, trong và sau chuyến đi của bạn.</p>
+          <h3>{t("trust_support", lang)}</h3>
+          <p>{t("footer_desc", lang)}</p>
         </div>
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────── */}
       <footer className="footer">
         <div className="shell footer-inner">
-          <Link href="/" className="brand brand-light">Stay<span className="z">Z</span></Link>
+          <Link href="/" className="brand brand-light">HuKi<span className="z"> Travel</span></Link>
           <div className="footer-links">
-            <Link href="/search">Khám phá</Link>
-            <Link href="#taste-section">Ẩm thực</Link>
-            <Link href="#experiences-section">Trải nghiệm</Link>
-            <Link href="/login">Đăng nhập</Link>
-            <Link href="/auth/register">Đăng ký</Link>
-            <Link href="/policy">Chính sách & Điều khoản</Link>
+            <Link href="/search">{t("nav_stays", lang)}</Link>
+            <Link href="#search-banner">{t("nav_bus", lang)}</Link>
+            <Link href="#search-banner">{t("nav_ride", lang)}</Link>
+            <Link href="#taste-section">{t("taste_title", lang).split("&")[0]}</Link>
+            <Link href="#experiences-section">{t("experiences_title", lang).split("&")[0]}</Link>
+            <Link href="/login">{t("nav_login", lang)}</Link>
+            <Link href="/auth/register">{t("nav_signup", lang)}</Link>
           </div>
-          <p>© 2026 StayZ · Stay somewhere unforgettable.</p>
+          <p>{t("footer_rights", lang)} · {t("footer_address", lang)}</p>
         </div>
       </footer>
     </main>

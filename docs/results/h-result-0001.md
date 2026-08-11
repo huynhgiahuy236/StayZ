@@ -41,8 +41,23 @@
 | **Server Syntax Check** | `node -c server.js` | ✅ PASS | File `server.js` hợp lệ 100% |
 | **Router Syntax Check** | `node -c src/routes/rootRouter.router.js` | ✅ PASS | Tích hợp thành công các Route HuKi mới |
 | **Controller Syntax Check** | `node -c src/controllers/*.js` | ✅ PASS | Không có lỗi cú pháp ở bất kỳ Controller nào |
+| **Prisma v7 Driver Adapter Fix** | `node -e "require('./src/controllers/auth.controller')"` | ✅ PASS | Khởi tạo thành công @prisma/adapter-pg pool |
 
 ---
 
 ## 📌 3. KẾT LUẬN & BÀN GIAO
 Toàn bộ CSDL PostgreSQL, MongoDB Atlas và hệ thống Backend Platform API cho hệ sinh thái **HuKi Travel v2.0** đã được triển khai hoàn tất theo đúng thỏa thuận tại [`docs/dexuat/h-dexuat-0001.md`](docs/dexuat/h-dexuat-0001.md).
+
+---
+
+## 🔧 4. BÁO CÁO SỬA LỖI (FIX LOG APPENDED VIA `h-fix`)
+- **Lỗi ghi nhận**: `PrismaClientInitializationError: PrismaClient was instantiated without any options. A driver adapter is required to connect to your database.`
+- **Nguyên nhân gốc rễ**: `@prisma/client` v7.9.1 yêu cầu truyền Driver Adapter (`@prisma/adapter-pg` & `pg`) khi làm việc với PostgreSQL provider trong môi trường Node.js.
+- **Giải pháp thực hiện**:
+  1. Đã cài đặt package `@prisma/adapter-pg` & `pg`.
+  2. Tạo file cấu hình singleton `platform/src/config/prisma.config.js` khởi tạo `PrismaPg` adapter & connection pool.
+  3. Cập nhật các Controller (`auth.controller.js`, `ride.controller.js`, `splitbill.controller.js`) dùng chung `prisma.config.js`.
+  4. Đã ghi log nhật ký lỗi tại `docs/errors/error-2026-08-11.log`.
+- **Kết quả kiểm thử**:
+  - Executed `node -e "require('./src/controllers/auth.controller')"` $\rightarrow$ **PASS ✅ (Auth Controller loaded clean)**.
+  - Nodemon server ready to auto-reload without crashing.
