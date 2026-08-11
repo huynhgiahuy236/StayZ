@@ -1,6 +1,3 @@
-# Ignores agent test folder completely
-Test/
-
 # Build artifacts & dependencies at root level
 build/
 dist/
