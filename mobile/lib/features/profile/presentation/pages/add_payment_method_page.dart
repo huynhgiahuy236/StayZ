@@ -1,0 +1,175 @@
+import 'package:capstone_mobile/features/home/presentation/widgets/home_section_widgets.dart';
+import 'package:capstone_mobile/features/profile/presentation/widgets/profile_widgets.dart';
+import 'package:capstone_mobile/shared/i18n/app_locale.dart';
+import 'package:flutter/material.dart';
+
+class AddPaymentMethodPage extends StatelessWidget {
+  const AddPaymentMethodPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.fromLTRB(
+          responsive.horizontalPadding,
+          18 * responsive.scale,
+          responsive.horizontalPadding,
+          24 * responsive.scale,
+        ),
+        child: SafeArea(
+          top: false,
+          child: ProfilePrimaryButton(
+            label: tr('Quay lại', 'Go back'),
+            onTap: () => Navigator.of(context).maybePop(),
+          ),
+        ),
+      ),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                responsive.horizontalPadding,
+                0,
+                responsive.horizontalPadding,
+                10 * responsive.scale,
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.of(context).maybePop(),
+                    icon: const Icon(Icons.arrow_back),
+                  ),
+                  Expanded(
+                    child: Text(
+                      tr('Thêm phương thức mới', 'Add payment method'),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.headlineMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 25 * responsive.scale,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.all(responsive.horizontalPadding),
+                children: [
+                  ProfileSectionLabel(
+                    label: tr('Chọn loại thanh toán', 'Choose payment type'),
+                  ),
+                  SizedBox(height: 20 * responsive.scale),
+                  _PaymentTypeTile(
+                    icon: Icons.credit_card,
+                    title: tr('Thẻ tín dụng/Ghi nợ', 'Credit/Debit card'),
+                    subtitle: 'Visa, Mastercard, JCB',
+                  ),
+                  SizedBox(height: 52 * responsive.scale),
+                  _PaymentTypeTile(
+                    icon: Icons.account_balance_wallet_outlined,
+                    title: tr('Ví điện tử', 'E-wallet'),
+                    subtitle: 'MoMo, ZaloPay, ShopeePay',
+                  ),
+                  SizedBox(height: 20 * responsive.scale),
+                  _PaymentTypeTile(
+                    icon: Icons.account_balance,
+                    title: tr('Chuyển khoản ngân hàng', 'Bank transfer'),
+                    subtitle: 'Internet Banking / QR Code',
+                  ),
+                  SizedBox(height: 34 * responsive.scale),
+                  Container(
+                    height: 190 * responsive.scale,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                        colors: [Theme.of(context).colorScheme.onSurface, Theme.of(context).colorScheme.primary],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PaymentTypeTile extends StatelessWidget {
+  const _PaymentTypeTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Container(
+      padding: EdgeInsets.all(16 * responsive.scale),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 24 * responsive.scale,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            child: Icon(
+              icon,
+              color: Theme.of(context).colorScheme.primary,
+              size: 24 * responsive.scale,
+            ),
+          ),
+          SizedBox(width: 20 * responsive.widthScale),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 18 * responsive.scale,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                SizedBox(height: 6 * responsive.scale),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 13 * responsive.scale,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.info_outline_rounded,
+            color: Theme.of(context).colorScheme.secondary,
+            size: 22,
+          ),
+        ],
+      ),
+    );
+  }
+}

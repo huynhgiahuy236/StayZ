@@ -1,0 +1,17 @@
+# Ignores agent test folder completely
+Test/
+
+# Build artifacts & dependencies at root level
+build/
+dist/
+.next/
+node_modules/
+*.log
+
+# OS & IDE Files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.user

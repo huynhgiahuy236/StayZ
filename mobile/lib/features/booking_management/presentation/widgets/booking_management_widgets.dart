@@ -1,0 +1,968 @@
+import 'package:capstone_mobile/app/routes/app_routes.dart';
+import 'package:capstone_mobile/app/theme/app_theme.dart';
+import 'package:capstone_mobile/features/home/presentation/widgets/home_section_widgets.dart';
+import 'package:capstone_mobile/shared/widgets/stayz_network_image.dart';
+import 'package:capstone_mobile/shared/widgets/stayz_brand_logo.dart';
+import 'package:capstone_mobile/shared/i18n/app_locale.dart';
+import 'package:flutter/material.dart';
+
+enum BookingManageTab { upcoming, completed, cancelled }
+
+/// Anh dai dien khach san cho cac the booking. Hien anh that neu co,
+/// khong thi ve gradient + icon.
+class BookingThumb extends StatelessWidget {
+  const BookingThumb({
+    required this.imageUrl,
+    required this.colors,
+    required this.size,
+    this.radius = 16,
+    super.key,
+  });
+
+  final String? imageUrl;
+  final List<Color> colors;
+  final double size;
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius),
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: (imageUrl != null && imageUrl!.isNotEmpty)
+            ? StayZNetworkImage(imageUrl: imageUrl!, width: size, height: size)
+            : DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: colors),
+                ),
+                child: const Center(
+                  child: Icon(Icons.hotel_rounded, color: Colors.white),
+                ),
+              ),
+      ),
+    );
+  }
+}
+
+/// Header dung chung cho ca ba tab: Sap toi, Hoan tat, Da huy.
+///
+/// Truoc day moi man tu dat header rieng - "Chuyến đi của tôi", "Đặt phòng của
+/// tôi" va "StayZ" - nen chuyen tab la tieu de nhay lung tung.
+class BookingsScreenHeader extends StatelessWidget {
+  const BookingsScreenHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StayZScreenHeader(
+      title: tr('Chuyến đi của tôi', 'My trips'),
+      subtitle: tr('Lịch đặt', 'Bookings'),
+      trailing: IconButton.filledTonal(
+        onPressed: () => Navigator.of(context).pushNamed(AppRoutes.search),
+        icon: const Icon(Icons.add_rounded),
+        tooltip: tr('Tìm phòng mới', 'Find a stay'),
+        style: IconButton.styleFrom(
+          backgroundColor: AppTheme.primarySoft,
+          foregroundColor: AppTheme.primary,
+          minimumSize: const Size(48, 48),
+        ),
+      ),
+    );
+  }
+}
+
+class BookingManageHeader extends StatelessWidget {
+  const BookingManageHeader({
+    required this.title,
+    this.brand = false,
+    this.trailing,
+    super.key,
+  });
+
+  final String title;
+  final bool brand;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        responsive.horizontalPadding,
+        14 * responsive.scale,
+        responsive.horizontalPadding,
+        16 * responsive.scale,
+      ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(
+            color: AppTheme.neutral200.withValues(alpha: 0.65),
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).maybePop(),
+            icon: const Icon(Icons.arrow_back),
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+          SizedBox(width: 10 * responsive.widthScale),
+          Expanded(
+            child: brand
+                ? StayZBrandLogo(
+                    size: 48 * responsive.scale,
+                    borderRadius: 14,
+                    alignment: Alignment.centerLeft,
+                  )
+                : Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: textTheme.headlineMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 24 * responsive.scale,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+          ),
+          SizedBox(
+            width: 72 * responsive.widthScale,
+            child:
+                trailing ??
+                Icon(
+                  Icons.more_vert,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  size: 28 * responsive.scale,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BookingManageTabs extends StatelessWidget {
+  const BookingManageTabs({
+    required this.activeTab,
+    required this.upcomingRoute,
+    required this.completedRoute,
+    required this.cancelledRoute,
+    super.key,
+  });
+
+  final BookingManageTab activeTab;
+  final String upcomingRoute;
+  final String completedRoute;
+  final String cancelledRoute;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: responsive.horizontalPadding),
+      child: Container(
+        padding: EdgeInsets.all(4 * responsive.scale),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        ),
+        child: Row(
+          children: [
+            _BookingTab(
+              label: tr('Sắp tới', 'Upcoming'),
+              active: activeTab == BookingManageTab.upcoming,
+              routeName: upcomingRoute,
+            ),
+            _BookingTab(
+              label: tr('Hoàn tất', 'Completed'),
+              active: activeTab == BookingManageTab.completed,
+              routeName: completedRoute,
+            ),
+            _BookingTab(
+              label: tr('Đã hủy', 'Cancelled'),
+              active: activeTab == BookingManageTab.cancelled,
+              routeName: cancelledRoute,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BookingTab extends StatelessWidget {
+  const _BookingTab({
+    required this.label,
+    required this.routeName,
+    this.active = false,
+  });
+
+  final String label;
+  final String routeName;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Expanded(
+      child: InkWell(
+        onTap: active
+            ? null
+            : () => Navigator.of(context).pushReplacementNamed(routeName),
+        borderRadius: BorderRadius.circular(14),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          height: 44 * responsive.scale,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: active
+                ? (isDark
+                    ? Theme.of(context).colorScheme.primaryContainer
+                    : Theme.of(context).colorScheme.onSurface)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: active
+                  ? Colors.white
+                  : (isDark
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.secondary),
+              fontSize: 13 * responsive.scale,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BookingStatusPill extends StatelessWidget {
+  const BookingStatusPill({
+    required this.label,
+    required this.color,
+    this.textColor,
+    super.key,
+  });
+
+  final String label;
+  final Color color;
+  final Color? textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+    final foreground = textColor ?? AppTheme.accentDark;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 16 * responsive.widthScale,
+        vertical: 8 * responsive.scale,
+      ),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: foreground.withValues(alpha: 0.75),
+          width: 1.4,
+        ),
+        boxShadow: AppTheme.softShadow,
+      ),
+      child: Text(
+        label.toUpperCase(),
+        style: TextStyle(
+          color: foreground,
+          fontSize: 12 * responsive.scale,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
+}
+
+class UpcomingBookingCard extends StatelessWidget {
+  const UpcomingBookingCard({
+    required this.name,
+    required this.location,
+    required this.code,
+    required this.checkIn,
+    required this.checkOut,
+    required this.colors,
+    required this.onDetail,
+    required this.onCancel,
+    this.onPay,
+    this.pendingPayment = false,
+    this.paymentExpired = false,
+    this.paymentBusy = false,
+    this.imageUrl,
+    this.statusLabel,
+    this.statusColor,
+    this.statusTextColor,
+    this.statusDescription,
+    this.detailLabel,
+    this.secondaryLabel,
+    this.paymentAmount,
+    this.remainingAmount,
+    this.deposit30 = false,
+    this.canCancel = true,
+    super.key,
+  });
+
+  final String name;
+  final String location;
+  final String code;
+  final String checkIn;
+  final String checkOut;
+  final List<Color> colors;
+  final VoidCallback onDetail;
+  final VoidCallback onCancel;
+  final VoidCallback? onPay;
+  final bool pendingPayment;
+  final bool paymentExpired;
+  final bool paymentBusy;
+  final String? imageUrl;
+  final String? statusLabel;
+  final Color? statusColor;
+  final Color? statusTextColor;
+  final String? statusDescription;
+  final String? detailLabel;
+  final String? secondaryLabel;
+  final String? paymentAmount;
+  final String? remainingAmount;
+  final bool deposit30;
+  final bool canCancel;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        boxShadow: AppTheme.softShadow,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Anh full-width, ten khach san nam DUOI anh (giong the ngoai home),
+          // pill trang thai noi goc phai tren anh (giong the cancelled).
+          SizedBox(
+            height: 136 * responsive.scale,
+            width: double.infinity,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) =>
+                        (imageUrl == null || imageUrl!.isEmpty)
+                        ? CustomPaint(
+                            painter: LuxuryArchitecturalPainter(colors: colors),
+                          )
+                        : StayZNetworkImage(
+                            imageUrl: imageUrl!,
+                            width: constraints.maxWidth,
+                            height: 136 * responsive.scale,
+                          ),
+                  ),
+                ),
+                Positioned(
+                  top: 12 * responsive.scale,
+                  right: 12 * responsive.widthScale,
+                  child: BookingStatusPill(
+                    label:
+                        statusLabel ??
+                        (paymentExpired
+                            ? tr('Đã hết hạn', 'Payment expired')
+                            : pendingPayment
+                            ? tr('Chờ thanh toán', 'Pending payment')
+                            : tr('Sắp tới', 'Upcoming')),
+                    color:
+                        statusColor ??
+                        (paymentExpired
+                            ? AppTheme.danger.withValues(alpha: 0.14)
+                            : pendingPayment
+                            ? const Color(0xFFFFE8B0)
+                            : AppTheme.primarySoft),
+                    textColor:
+                        statusTextColor ??
+                        (paymentExpired ? AppTheme.danger : null),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(14 * responsive.scale),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 17 * responsive.scale,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                SizedBox(height: 6 * responsive.scale),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on_outlined,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 16 * responsive.scale,
+                    ),
+                    SizedBox(width: 5 * responsive.widthScale),
+                    Expanded(
+                      child: Text(
+                        location,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontSize: 13.5 * responsive.scale,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(height: 20 * responsive.scale, color: AppTheme.line),
+                if (statusDescription != null) ...[
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12 * responsive.widthScale,
+                      vertical: 9 * responsive.scale,
+                    ),
+                    decoration: BoxDecoration(
+                      color: statusColor ?? Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: (statusTextColor ?? AppTheme.line).withValues(
+                          alpha: 0.45,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      statusDescription!,
+                      style: TextStyle(
+                        color: statusTextColor ?? Theme.of(context).colorScheme.onSurface,
+                        fontSize: 12.5 * responsive.scale,
+                        height: 1.35,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10 * responsive.scale),
+                ],
+                if (paymentAmount != null) ...[
+                  Row(
+                    children: [
+                      Text(
+                        tr('Đã thanh toán', 'Amount paid'),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                          fontSize: 13 * responsive.scale,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        // l10n-ignore: Currency value plus invariant percentage.
+                        '$paymentAmount${deposit30 ? ' (30%)' : ''}',
+                        style: TextStyle(
+                          color: deposit30
+                              ? AppTheme.depositText
+                              : AppTheme.success,
+                          fontSize: 17 * responsive.scale,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(height: 20 * responsive.scale, color: AppTheme.line),
+                ],
+                if (remainingAmount != null) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          tr(
+                            'Còn lại tại khách sạn (70%)',
+                            'Remaining at hotel (70%)',
+                          ),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontSize: 13 * responsive.scale,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        remainingAmount!,
+                        style: TextStyle(
+                          color: AppTheme.notificationConfirmedText,
+                          fontSize: 17 * responsive.scale,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(height: 20 * responsive.scale, color: AppTheme.line),
+                ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: _MetaBlock(
+                        label: tr('Nhận phòng', 'Check-in'),
+                        value: checkIn,
+                      ),
+                    ),
+                    Expanded(
+                      child: _MetaBlock(
+                        label: tr('Trả phòng', 'Check-out'),
+                        value: checkOut,
+                      ),
+                    ),
+                    Expanded(
+                      child: _MetaBlock(
+                        label: tr('Mã đặt phòng', 'Code'),
+                        value: code,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 12 * responsive.scale),
+                Row(
+                  children: [
+                    Expanded(
+                      child: BookingSoftButton(
+                        label: detailLabel ?? tr('Chi tiết', 'Details'),
+                        onTap: onDetail,
+                      ),
+                    ),
+                    if (pendingPayment && onPay != null) ...[
+                      SizedBox(width: 10 * responsive.widthScale),
+                      Expanded(
+                        child: BookingSoftButton(
+                          label: paymentBusy
+                              ? tr('Đang tạo mã...', 'Creating...')
+                              : paymentExpired
+                              ? tr('Tạo mã mới', 'New payment code')
+                              : tr('Thanh toán', 'Pay now'),
+                          onTap: paymentBusy ? null : onPay!,
+                        ),
+                      ),
+                    ] else if (canCancel) ...[
+                      SizedBox(width: 10 * responsive.widthScale),
+                      Expanded(
+                        child: BookingOutlineButton(
+                          label: secondaryLabel ?? tr('Hủy lịch', 'Cancel'),
+                          onTap: onCancel,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetaBlock extends StatelessWidget {
+  const _MetaBlock({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label.toUpperCase(),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontSize: 10.5 * responsive.scale,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1,
+          ),
+        ),
+        SizedBox(height: 6 * responsive.scale),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 14 * responsive.scale,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class BookingSoftButton extends StatelessWidget {
+  const BookingSoftButton({required this.label, this.onTap, super.key});
+
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return SizedBox(
+      height: 54 * responsive.scale,
+      child: FilledButton(
+        // Khong co handler thi disable han, thay vi bam roi khong co gi xay ra.
+        onPressed: onTap,
+        style: FilledButton.styleFrom(
+          backgroundColor: isDark
+              ? const Color(0xFF3F5E96).withValues(alpha: 0.45)
+              : AppTheme.primarySoft,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: isDark ? const Color(0xFF3F5E96) : Colors.transparent,
+            ),
+          ),
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: isDark ? Colors.white : AppTheme.accentDark,
+            fontSize: 16 * responsive.scale,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BookingOutlineButton extends StatelessWidget {
+  const BookingOutlineButton({required this.label, this.onTap, super.key});
+
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return SizedBox(
+      height: 54 * responsive.scale,
+      child: OutlinedButton(
+        // Khong co handler thi disable han, thay vi bam roi khong co gi xay ra.
+        onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: AppTheme.danger),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: isDark ? const Color(0xFFFF6B6B) : AppTheme.accentDark,
+            fontSize: 16 * responsive.scale,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HistoryBookingCard extends StatelessWidget {
+  const HistoryBookingCard({
+    required this.name,
+    required this.date,
+    required this.price,
+    required this.colors,
+    required this.onPrimary,
+    this.onSecondary,
+    this.imageUrl,
+    this.primaryLabel,
+    this.secondaryLabel,
+    super.key,
+  });
+
+  final String name;
+  final String date;
+  final String price;
+  final List<Color> colors;
+  final String? imageUrl;
+  final VoidCallback onPrimary;
+
+  /// Thieu callback thi nut phu se bi vo hieu hoa.
+  final VoidCallback? onSecondary;
+  final String? primaryLabel;
+  final String? secondaryLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.all(18 * responsive.scale),
+            child: Row(
+              children: [
+                BookingThumb(
+                  imageUrl: imageUrl,
+                  colors: colors,
+                  size: 112 * responsive.scale,
+                  radius: 12,
+                ),
+                SizedBox(width: 18 * responsive.widthScale),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BookingStatusPill(
+                        label: tr('Đã hoàn thành', 'Completed'),
+                        color: const Color(0xFFBDF4D4),
+                        textColor: const Color(0xFF096A43),
+                      ),
+                      SizedBox(height: 12 * responsive.scale),
+                      Text(
+                        name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 18 * responsive.scale,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 10 * responsive.scale),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_today_outlined,
+                            color: Theme.of(context).colorScheme.onSurface,
+                            size: 17 * responsive.scale,
+                          ),
+                          SizedBox(width: 10 * responsive.widthScale),
+                          Expanded(
+                            child: Text(
+                              date,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontSize: 18 * responsive.scale,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12 * responsive.scale),
+                      Text(
+                        price,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 19 * responsive.scale,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: Theme.of(context).colorScheme.outlineVariant),
+          Padding(
+            padding: EdgeInsets.all(16 * responsive.scale),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _FilledAction(
+                    label: primaryLabel ?? tr('Đánh giá ngay', 'Review now'),
+                    onTap: onPrimary,
+                  ),
+                ),
+                SizedBox(width: 14 * responsive.widthScale),
+                Expanded(
+                  child: BookingOutlineButton(
+                    label: secondaryLabel ?? tr('Đặt lại', 'Rebook'),
+                    onTap: onSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FilledAction extends StatelessWidget {
+  const _FilledAction({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return SizedBox(
+      height: 54 * responsive.scale,
+      child: FilledButton(
+        onPressed: onTap,
+        style: FilledButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16 * responsive.scale,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BookingDetailPanel extends StatelessWidget {
+  const BookingDetailPanel({
+    required this.title,
+    required this.children,
+    super.key,
+  });
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Container(
+      padding: EdgeInsets.all(18 * responsive.scale),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: TextStyle(
+              color: AppTheme.neutral500,
+              fontSize: 12 * responsive.scale,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.6,
+            ),
+          ),
+          SizedBox(height: 18 * responsive.scale),
+          ...children,
+        ],
+      ),
+    );
+  }
+}
+
+class DetailLine extends StatelessWidget {
+  const DetailLine({
+    required this.label,
+    required this.value,
+    this.total = false,
+    this.valueColor,
+    super.key,
+  });
+
+  final String label;
+  final String value;
+  final bool total;
+  final Color? valueColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 9 * responsive.scale),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: total ? AppTheme.accentDark : Theme.of(context).colorScheme.onSurface,
+                fontSize: (total ? 18 : 16) * responsive.scale,
+                fontWeight: total ? FontWeight.w900 : FontWeight.w500,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: valueColor ?? (total ? AppTheme.accentDark : Theme.of(context).colorScheme.onSurface),
+              fontSize: (total ? 20 : 16) * responsive.scale,
+              fontWeight: FontWeight.w900,
+              letterSpacing: total ? 1 : 0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

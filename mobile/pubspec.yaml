@@ -1,0 +1,74 @@
+name: capstone_mobile
+description: "StayZ hotel booking mobile app."
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  http: ^1.2.2
+  http_parser: ^4.1.2
+  shared_preferences: ^2.5.3
+  flutter_secure_storage: ^9.2.4
+  url_launcher: ^6.3.0
+  app_links: ^6.4.0
+  cross_file: ^0.3.4+2
+  file_picker: ^10.3.3
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^7.2.0
+  share_plus: ^10.1.4
+  image: ^4.8.0
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  icons_launcher: ^3.1.0
+  flutter_native_splash: ^2.4.8
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/images/hotels/
+    - assets/images/hotel_preview/
+    - assets/icons/
+    - assets/fonts/
+    - assets/design-reference/screens/
+    - assets/design-reference/layout-samples/
+    - assets/design-reference/style-guide/
+
+icons_launcher:
+  image_path: "assets/images/StayZ new.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+    web:
+      enable: true
+      favicon_path: "assets/images/StayZ new.png"
+    macos:
+      enable: true
+    windows:
+      enable: true
+
+flutter_native_splash:
+  color: "#046CB8"
+  image: "assets/images/StayZ splash.png"
+  android: true
+  ios: true
+  web: true
+  android_12:
+    color: "#046CB8"
+    image: "assets/images/StayZ splash.png"

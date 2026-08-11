@@ -1,0 +1,1478 @@
+import 'package:capstone_mobile/app/routes/app_routes.dart';
+import 'package:capstone_mobile/app/theme/app_theme.dart';
+import 'package:capstone_mobile/shared/i18n/app_locale.dart';
+import 'package:capstone_mobile/shared/notifications/notifications_controller.dart';
+import 'package:capstone_mobile/shared/widgets/stayz_network_image.dart';
+import 'package:capstone_mobile/shared/widgets/stayz_brand_logo.dart';
+import 'package:flutter/material.dart';
+
+class HomeResponsive {
+  const HomeResponsive._({
+    required this.widthScale,
+    required this.heightScale,
+    required this.scale,
+    required this.horizontalPadding,
+  });
+
+  factory HomeResponsive.of(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final width = size.width.clamp(360.0, 560.0).toDouble();
+    final widthScale = (width / 390).clamp(0.92, 1.16).toDouble();
+    final heightScale = (size.height / 844).clamp(0.78, 1.05).toDouble();
+    final maxContentPadding = size.width >= 720 ? (size.width - 640) / 2 : 0.0;
+
+    return HomeResponsive._(
+      widthScale: widthScale,
+      heightScale: heightScale,
+      scale: widthScale < heightScale ? widthScale : heightScale,
+      horizontalPadding: maxContentPadding > 0
+          ? maxContentPadding
+          : 20 * widthScale,
+    );
+  }
+
+  final double widthScale;
+  final double heightScale;
+  final double scale;
+  final double horizontalPadding;
+}
+
+enum HomeTab { home, search, saved, bookings, profile }
+
+class StayZBottomNav extends StatefulWidget {
+  const StayZBottomNav({required this.activeTab, super.key});
+
+  final HomeTab activeTab;
+
+  static int _lastIndex = 0;
+
+  static const _navItemsData = [
+    (
+      icon: Icons.home_rounded,
+      labelVi: 'Trang chủ',
+      labelEn: 'Home',
+      labelKo: '홈',
+      labelJa: 'ホーム',
+      labelTh: 'หน้าแรก',
+      route: AppRoutes.home,
+      tab: HomeTab.home
+    ),
+    (
+      icon: Icons.travel_explore_rounded,
+      labelVi: 'Tìm kiếm',
+      labelEn: 'Search',
+      labelKo: '검색',
+      labelJa: '検索',
+      labelTh: 'ค้นหา',
+      route: AppRoutes.search,
+      tab: HomeTab.search
+    ),
+    (
+      icon: Icons.favorite_rounded,
+      labelVi: 'Đã lưu',
+      labelEn: 'Saved',
+      labelKo: '위시리스트',
+      labelJa: 'お気に入り',
+      labelTh: 'รายการโปรด',
+      route: AppRoutes.favorites,
+      tab: HomeTab.saved
+    ),
+    (
+      icon: Icons.calendar_month_rounded,
+      labelVi: 'Lịch đặt',
+      labelEn: 'Trips',
+      labelKo: '내 예약',
+      labelJa: '予約履歴',
+      labelTh: 'การจอง',
+      route: AppRoutes.myBookings,
+      tab: HomeTab.bookings
+    ),
+    (
+      icon: Icons.person_rounded,
+      labelVi: 'Tôi',
+      labelEn: 'Me',
+      labelKo: '마이페이지',
+      labelJa: 'マイページ',
+      labelTh: 'โปรไฟล์',
+      route: AppRoutes.settings,
+      tab: HomeTab.profile
+    ),
+  ];
+
+  @override
+  State<StayZBottomNav> createState() => _StayZBottomNavState();
+}
+
+class _StayZBottomNavState extends State<StayZBottomNav> {
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    final targetIndex = HomeTab.values.indexOf(widget.activeTab).clamp(0, 4);
+    _currentIndex = StayZBottomNav._lastIndex;
+    StayZBottomNav._lastIndex = targetIndex;
+
+    if (_currentIndex != targetIndex) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _currentIndex = targetIndex;
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(StayZBottomNav oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final targetIndex = HomeTab.values.indexOf(widget.activeTab).clamp(0, 4);
+    if (_currentIndex != targetIndex) {
+      setState(() {
+        _currentIndex = targetIndex;
+      });
+      StayZBottomNav._lastIndex = targetIndex;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+    final alignmentX = -1.0 + (_currentIndex / 4.0) * 2.0;
+
+    return SafeArea(
+      top: false,
+      minimum: EdgeInsets.only(bottom: 8 * responsive.scale),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          10 * responsive.widthScale,
+          6 * responsive.scale,
+          10 * responsive.widthScale,
+          0,
+        ),
+        child: SizedBox(
+          height: 66 * responsive.scale,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                  blurRadius: 18,
+                  offset: const Offset(0, -6),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 4 * responsive.widthScale,
+                vertical: 4 * responsive.scale,
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final totalWidth = constraints.maxWidth;
+                  final itemWidth = totalWidth / 5;
+
+                  return Stack(
+                    children: [
+                      // Smooth sliding active pill indicator
+                      AnimatedAlign(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.fastOutSlowIn,
+                        alignment: Alignment(alignmentX, 0),
+                        child: Container(
+                          width: itemWidth,
+                          height: 56 * responsive.scale,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(18),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.35),
+                                blurRadius: 12,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Navigation item labels and icons overlay
+                      Row(
+                        children: [
+                          for (final item in StayZBottomNav._navItemsData)
+                            _NavItem(
+                              icon: item.icon,
+                              label: tr(
+                                item.labelVi,
+                                item.labelEn,
+                                ko: item.labelKo,
+                                ja: item.labelJa,
+                                th: item.labelTh,
+                              ),
+                              active: widget.activeTab == item.tab,
+                              routeName: item.route,
+                              onTap: () {
+                                final clickedIndex = HomeTab.values.indexOf(item.tab).clamp(0, 4);
+                                if (_currentIndex != clickedIndex) {
+                                  setState(() {
+                                    _currentIndex = clickedIndex;
+                                  });
+                                  StayZBottomNav._lastIndex = clickedIndex;
+                                }
+                                Navigator.of(context).pushReplacementNamed(item.route);
+                              },
+                            ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.active,
+    required this.routeName,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool active;
+  final String routeName;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+    final targetColor = active ? Colors.white : Theme.of(context).colorScheme.secondary;
+
+    return Expanded(
+      child: Semantics(
+        selected: active,
+        button: true,
+        label: label,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          child: Container(
+            height: 56 * responsive.scale,
+            padding: EdgeInsets.symmetric(
+              horizontal: 2 * responsive.widthScale,
+              vertical: 5 * responsive.scale,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: targetColor,
+                  size: 22 * responsive.scale,
+                ),
+                SizedBox(height: 3 * responsive.scale),
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: targetColor,
+                        fontSize: 10.5 * responsive.scale,
+                        fontWeight: active ? FontWeight.w900 : FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class StayZLogoRow extends StatelessWidget {
+  const StayZLogoRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Row(
+      children: [
+        StayZBrandLogo(size: 52 * responsive.scale, borderRadius: 16),
+        SizedBox(width: 10 * responsive.widthScale),
+        Text(
+          'StayZ',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 25 * responsive.scale,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const Spacer(),
+        const _NotificationBell(),
+        SizedBox(width: 10 * responsive.widthScale),
+        _RoundIconButton(
+          icon: Icons.person_outline_rounded,
+          onTap: () => Navigator.of(context).pushNamed(AppRoutes.settings),
+        ),
+      ],
+    );
+  }
+}
+
+class StayZScreenHeader extends StatelessWidget {
+  const StayZScreenHeader({
+    required this.title,
+    this.subtitle,
+    this.leading,
+    this.trailing,
+    super.key,
+  });
+
+  final String title;
+  final String? subtitle;
+  final Widget? leading;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        responsive.horizontalPadding,
+        16 * responsive.scale,
+        responsive.horizontalPadding,
+        18 * responsive.scale,
+      ),
+      child: Row(
+        children: [
+          leading ?? const SizedBox.shrink(),
+          if (leading != null) SizedBox(width: 12 * responsive.widthScale),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (subtitle != null) ...[
+                  Text(
+                    subtitle!.toUpperCase(),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 11 * responsive.scale,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.6,
+                    ),
+                  ),
+                  SizedBox(height: 4 * responsive.scale),
+                ],
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 28 * responsive.scale,
+                    fontWeight: FontWeight.w900,
+                    height: 1.05,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ?trailing,
+        ],
+      ),
+    );
+  }
+}
+
+class SectionLabel extends StatelessWidget {
+  const SectionLabel({
+    required this.title,
+    this.action,
+    this.onAction,
+    super.key,
+  });
+
+  final String title;
+  final String? action;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Row(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 19 * responsive.scale,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const Spacer(),
+        if (action != null)
+          TextButton(
+            onPressed:
+                onAction ??
+                () => Navigator.of(context).pushNamed(AppRoutes.search),
+            child: Text(
+              action!,
+              style: TextStyle(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF818CF8)
+                    : Theme.of(context).colorScheme.primary,
+                fontSize: 14 * responsive.scale,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class SearchBox extends StatelessWidget {
+  const SearchBox({this.onTap, this.onFilterTap, super.key});
+
+  final VoidCallback? onTap;
+  final VoidCallback? onFilterTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Material(
+      color: Theme.of(context).cardColor,
+      borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+      child: InkWell(
+        onTap: onTap ?? () => Navigator.of(context).pushNamed(AppRoutes.search),
+        borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+        child: Container(
+          constraints: BoxConstraints(minHeight: 60 * responsive.scale),
+          padding: EdgeInsets.symmetric(
+            horizontal: 16 * responsive.widthScale,
+            vertical: 12 * responsive.scale,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+            boxShadow: AppTheme.softShadow,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.search_rounded,
+                size: 24 * responsive.scale,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              SizedBox(width: 12 * responsive.widthScale),
+              Expanded(
+                child: Text(
+                  tr('Bạn muốn đi đâu?', 'Where to?'),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 15 * responsive.scale,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: onFilterTap,
+                child: Container(
+                  width: 40 * responsive.scale,
+                  height: 40 * responsive.scale,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(
+                    Icons.tune_rounded,
+                    color: Theme.of(context).cardColor,
+                    size: 19 * responsive.scale,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FilterPill extends StatelessWidget {
+  const FilterPill({
+    required this.label,
+    this.active = false,
+    this.icon,
+    this.onTap,
+    super.key,
+  });
+
+  final String label;
+  final bool active;
+  final IconData? icon;
+
+  /// Thieu callback nay thi chip chi la trang tri: truoc day bam khong co gi xay ra.
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Semantics(
+      button: onTap != null,
+      selected: active,
+      label: label,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(999),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            constraints: BoxConstraints(minHeight: 42 * responsive.scale),
+            padding: EdgeInsets.symmetric(
+              horizontal: 16 * responsive.widthScale,
+            ),
+            decoration: BoxDecoration(
+              color: active
+                  ? Theme.of(context).colorScheme.primary
+                  : (Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF1E2D47)
+                      : Colors.white),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
+                color: active
+                    ? Theme.of(context).colorScheme.primary
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF2B3D5C)
+                        : Theme.of(context).colorScheme.outlineVariant),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[
+                  Icon(
+                    icon,
+                    size: 17 * responsive.scale,
+                    color: active
+                        ? Colors.white
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white70
+                            : Theme.of(context).colorScheme.primary),
+                  ),
+                  SizedBox(width: 7 * responsive.widthScale),
+                ],
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: active
+                        ? Colors.white
+                        : (Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Theme.of(context).colorScheme.onSurface),
+                    fontSize: 13 * responsive.scale,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HotelCard extends StatelessWidget {
+  const HotelCard({
+    required this.name,
+    required this.location,
+    required this.price,
+    required this.colors,
+    required this.onTap,
+    this.compact = false,
+    this.fullWidth = false,
+    this.imageUrl,
+    this.onFavoriteTap,
+    this.isFavorite = false,
+    this.rating,
+    this.reviewCount = 0,
+    super.key,
+  });
+
+  final String name;
+  final String location;
+  final String price;
+  final List<Color> colors;
+  final bool compact;
+  final bool fullWidth;
+  final String? imageUrl;
+
+  /// Bat buoc: truoc day mac dinh `onTap` mo `/room-detail` KHONG kem tham so,
+  /// khien man chi tiet hien du lieu rong.
+  final VoidCallback onTap;
+  final VoidCallback? onFavoriteTap;
+  final bool isFavorite;
+
+  /// Diem danh gia that. `null` = chua co danh gia nao, khong hien huy hieu.
+  final double? rating;
+  final int reviewCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+    final width = fullWidth
+        ? null
+        : (compact ? 174 * responsive.widthScale : 254 * responsive.widthScale);
+
+    return SizedBox(
+      width: width,
+      child: Material(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+              border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+              boxShadow: AppTheme.softShadow,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AspectRatio(
+                  // Chieu cao suy tu chieu rong the theo ti le chung, nen anh
+                  // luon can doi du the ngang hay rong het man hinh.
+                  aspectRatio: AppTheme.cardImageAspectRatio,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(AppTheme.cardRadius),
+                    ),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        CustomPaint(
+                          painter: LuxuryArchitecturalPainter(colors: colors),
+                        ),
+                        if (imageUrl != null)
+                          StayZNetworkImage(
+                            imageUrl: imageUrl!,
+                            width: width ?? MediaQuery.sizeOf(context).width,
+                            height:
+                                (width ?? MediaQuery.sizeOf(context).width) /
+                                AppTheme.cardImageAspectRatio,
+                          ),
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withValues(alpha: 0.38),
+                              ],
+                            ),
+                          ),
+                        ),
+                        if (rating != null && reviewCount > 0)
+                          Positioned(
+                            top: 12 * responsive.scale,
+                            left: 12 * responsive.scale,
+                            child: _RatingBadge(
+                              value: rating!.toStringAsFixed(1),
+                              reviewCount: reviewCount,
+                            ),
+                          ),
+                        Positioned(
+                          top: 4 * responsive.scale,
+                          right: 4 * responsive.scale,
+                          child: Semantics(
+                            button: true,
+                            label: isFavorite
+                                ? tr(
+                                    'Bỏ khỏi yêu thích',
+                                    'Remove from favorites',
+                                  )
+                                : tr('Thêm vào yêu thích', 'Add to favorites'),
+                            child: InkResponse(
+                              onTap: onFavoriteTap,
+                              radius: 24,
+                              // Vung cham 48dp theo chuan Android, trong khi
+                              // huy hieu ben trong van giu 36dp cho gon mat.
+                              child: SizedBox(
+                                width: 48,
+                                height: 48,
+                                child: Center(
+                                  child: _GlassIcon(
+                                    icon: isFavorite
+                                        ? Icons.favorite_rounded
+                                        : Icons.favorite_border_rounded,
+                                    active: isFavorite,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(14 * responsive.scale),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 14 * responsive.scale,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          SizedBox(width: 5 * responsive.widthScale),
+                          Expanded(
+                            child: Text(
+                              location,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontSize: 11 * responsive.scale,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8 * responsive.scale),
+                      Text(
+                        name,
+                        maxLines: fullWidth ? 2 : 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 16 * responsive.scale,
+                          height: 1.2,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      SizedBox(height: 12 * responsive.scale),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              price,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 14 * responsive.scale,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            color: Theme.of(context).colorScheme.onSurface,
+                            size: 20 * responsive.scale,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BookingPreviewCard extends StatelessWidget {
+  const BookingPreviewCard({
+    required this.name,
+    required this.location,
+    required this.date,
+    required this.total,
+    required this.status,
+    required this.colors,
+    this.deposit30 = false,
+    this.paymentRecorded = false,
+    this.statusColor,
+    this.statusTextColor,
+    this.statusDescription,
+    this.imageUrl,
+    this.onTap,
+    super.key,
+  });
+
+  final String name;
+  final String location;
+  final String date;
+  final String total;
+  final String status;
+  final List<Color> colors;
+  final bool deposit30;
+  final bool paymentRecorded;
+  final Color? statusColor;
+  final Color? statusTextColor;
+  final String? statusDescription;
+  final String? imageUrl;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+    final thumbSize = 84 * responsive.scale;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Material(
+      color: Theme.of(context).cardColor,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap:
+            onTap ??
+            () => Navigator.of(context).pushNamed(AppRoutes.myBookings),
+        borderRadius: BorderRadius.circular(18),
+        child: Ink(
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+            boxShadow: AppTheme.softShadow,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(16 * responsive.scale),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: SizedBox(
+                        width: thumbSize,
+                        height: thumbSize,
+                        child: (imageUrl != null && imageUrl!.isNotEmpty)
+                            ? StayZNetworkImage(
+                                imageUrl: imageUrl!,
+                                width: thumbSize,
+                                height: thumbSize,
+                              )
+                            : DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(colors: colors),
+                                ),
+                                child: Icon(
+                                  Icons.confirmation_number_rounded,
+                                  color: Colors.white,
+                                ),
+                              ),
+                      ),
+                    ),
+                    SizedBox(width: 14 * responsive.widthScale),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontSize: 17 * responsive.scale,
+                              fontWeight: FontWeight.w900,
+                              height: 1.2,
+                            ),
+                          ),
+                          SizedBox(height: 6 * responsive.scale),
+                          Text(
+                            location,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontSize: 12.5 * responsive.scale,
+                            ),
+                          ),
+                          SizedBox(height: 10 * responsive.scale),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? const Color(0xFF141E30)
+                                  : AppTheme.primarySoft,
+                              borderRadius: BorderRadius.circular(99),
+                              border: Border.all(
+                                color: (statusTextColor ?? Theme.of(context).colorScheme.primary)
+                                    .withValues(alpha: 0.75),
+                              ),
+                            ),
+                            child: Text(
+                              status,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: statusTextColor ?? Theme.of(context).colorScheme.primary,
+                                fontSize: 10.5 * responsive.scale,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                if (statusDescription != null) ...[
+                  SizedBox(height: 14 * responsive.scale),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(12 * responsive.scale),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : const Color(0xFFF4F4F8),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.14)
+                            : AppTheme.line,
+                      ),
+                    ),
+                    child: Text(
+                      statusDescription!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 12 * responsive.scale,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
+                Divider(
+                  height: 28 * responsive.scale,
+                  color: Theme.of(context).dividerColor,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: _DarkMeta(label: tr('Ngày', 'Dates'), value: date),
+                    ),
+                    SizedBox(width: 12 * responsive.widthScale),
+                    Expanded(
+                      flex: 2,
+                      child: _DarkMeta(
+                        label: paymentRecorded
+                            ? tr('Đã trả', 'Paid')
+                            : tr('Tổng', 'Total'),
+                        value: total,
+                        alignEnd: true,
+                        valueColor: !paymentRecorded
+                            ? null
+                            : deposit30
+                            ? AppTheme.depositBorder
+                            : (isDark ? const Color(0xFF69E6A6) : AppTheme.success),
+                        badge: paymentRecorded && deposit30 ? '30%' : null,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class NotificationCard extends StatelessWidget {
+  const NotificationCard({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.body,
+    required this.time,
+    required this.borderColor,
+    required this.statusLabel,
+    this.unread = false,
+    super.key,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String body;
+  final String time;
+  final Color borderColor;
+  final String statusLabel;
+  final bool unread;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Container(
+      padding: EdgeInsets.all(16 * responsive.scale),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: borderColor, width: unread ? 1.8 : 1.2),
+        boxShadow: unread ? AppTheme.softShadow : null,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 46 * responsive.scale,
+            height: 46 * responsive.scale,
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: iconColor, size: 22 * responsive.scale),
+          ),
+          SizedBox(width: 14 * responsive.widthScale),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 15 * responsive.scale,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    if (unread)
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                  ],
+                ),
+                SizedBox(height: 6 * responsive.scale),
+                Text(
+                  body,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontSize: 13 * responsive.scale,
+                    height: 1.35,
+                  ),
+                ),
+                SizedBox(height: 8 * responsive.scale),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(99),
+                        border: Border.all(
+                          color: borderColor.withValues(alpha: 0.7),
+                        ),
+                      ),
+                      child: Text(
+                        statusLabel,
+                        style: TextStyle(
+                          color: iconColor,
+                          fontSize: 10.5 * responsive.scale,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      time,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: 12 * responsive.scale,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LuxuryArchitecturalPainter extends CustomPainter {
+  const LuxuryArchitecturalPainter({required this.colors});
+  final List<Color> colors;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final bgPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: colors.length >= 2 ? colors : const [Color(0xFF4C4DDC), Color(0xFF6B6EF6)],
+      ).createShader(rect);
+    canvas.drawRect(rect, bgPaint);
+
+    final glowPaint = Paint()..color = Colors.white.withValues(alpha: 0.16);
+    canvas.drawCircle(
+      Offset(size.width * 0.78, size.height * 0.28),
+      size.shortestSide * 0.24,
+      glowPaint,
+    );
+
+    final wave = Path()
+      ..moveTo(0, size.height * 0.78)
+      ..quadraticBezierTo(
+        size.width * 0.34,
+        size.height * 0.58,
+        size.width * 0.68,
+        size.height * 0.80,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.86,
+        size.height * 0.92,
+        size.width,
+        size.height * 0.70,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      wave,
+      Paint()..color = Colors.white.withValues(alpha: 0.12),
+    );
+
+    final arch = Path()
+      ..moveTo(size.width * 0.14, size.height)
+      ..lineTo(size.width * 0.14, size.height * 0.52)
+      ..quadraticBezierTo(
+        size.width * 0.28,
+        size.height * 0.22,
+        size.width * 0.42,
+        size.height * 0.52,
+      )
+      ..lineTo(size.width * 0.42, size.height)
+      ..close();
+    canvas.drawPath(
+      arch,
+      Paint()..color = Colors.white.withValues(alpha: 0.13),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant LuxuryArchitecturalPainter oldDelegate) =>
+      oldDelegate.colors != colors;
+}
+
+class TicketDashedDivider extends StatelessWidget {
+  const TicketDashedDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: List.generate(
+        18,
+        (_) => Expanded(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 3),
+            height: 1,
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Chuong thong bao co badge dem so chua doc. Lang nghe NotificationsController
+/// nen badge tu cap nhat khi co booking moi hoac khi danh dau da doc.
+class _NotificationBell extends StatefulWidget {
+  const _NotificationBell();
+
+  @override
+  State<_NotificationBell> createState() => _NotificationBellState();
+}
+
+class _NotificationBellState extends State<_NotificationBell> {
+  @override
+  void initState() {
+    super.initState();
+    // Cap nhat so chua doc moi lan header xuat hien.
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => NotificationsController.instance.refresh(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: NotificationsController.instance,
+      builder: (context, _) {
+        final unread = NotificationsController.instance.unread;
+        return Badge(
+          isLabelVisible: unread > 0,
+          label: Text(unread > 9 ? '9+' : '$unread'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          child: _RoundIconButton(
+            icon: unread > 0
+                ? Icons.notifications_rounded
+                : Icons.notifications_none_rounded,
+            onTap: () async {
+              await Navigator.of(context).pushNamed(AppRoutes.notifications);
+              await NotificationsController.instance.refresh();
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _RoundIconButton extends StatelessWidget {
+  const _RoundIconButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Material(
+      color: Theme.of(context).cardColor,
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: Container(
+          width: 44 * responsive.scale,
+          height: 44 * responsive.scale,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+          ),
+          child: Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: 22 * responsive.scale),
+        ),
+      ),
+    );
+  }
+}
+
+class _RatingBadge extends StatelessWidget {
+  const _RatingBadge({required this.value, required this.reviewCount});
+
+  final String value;
+  final int reviewCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Semantics(
+      label: tr(
+        'Đánh giá $value trên 5, $reviewCount lượt',
+        '$value out of 5, $reviewCount reviews',
+      ),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 8 * responsive.widthScale,
+          vertical: 5 * responsive.scale,
+        ),
+        decoration: BoxDecoration(
+          color: isDark
+              ? const Color(0xFF141E30).withValues(alpha: 0.90)
+              : Colors.white.withValues(alpha: 0.94),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: isDark
+                ? const Color(0xFF2B3D5C)
+                : Colors.white.withValues(alpha: 0.6),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.star_rounded,
+              color: AppTheme.gold,
+              size: 14 * responsive.scale,
+            ),
+            SizedBox(width: 3 * responsive.widthScale),
+            Text(
+              value,
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF101010),
+                fontSize: 11 * responsive.scale,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            SizedBox(width: 3 * responsive.widthScale),
+            Text(
+              '($reviewCount)',
+              style: TextStyle(
+                color: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF666666),
+                fontSize: 10 * responsive.scale,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GlassIcon extends StatelessWidget {
+  const _GlassIcon({required this.icon, this.active = false});
+
+  final IconData icon;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Container(
+      width: 36 * responsive.scale,
+      height: 36 * responsive.scale,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.25),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.38)),
+      ),
+      child: Icon(
+        icon,
+        color: active ? Theme.of(context).colorScheme.primary : Colors.white,
+        size: 19 * responsive.scale,
+      ),
+    );
+  }
+}
+
+class _DarkMeta extends StatelessWidget {
+  const _DarkMeta({
+    required this.label,
+    required this.value,
+    this.alignEnd = false,
+    this.valueColor,
+    this.badge,
+  });
+
+  final String label;
+  final String value;
+  final bool alignEnd;
+  final Color? valueColor;
+  final String? badge;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = HomeResponsive.of(context);
+
+    return Column(
+      crossAxisAlignment: alignEnd
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+      children: [
+        Text(
+          label.toUpperCase(),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+            fontSize: 10 * responsive.scale,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.2,
+          ),
+        ),
+        SizedBox(height: 4 * responsive.scale),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: alignEnd
+              ? MainAxisAlignment.end
+              : MainAxisAlignment.start,
+          children: [
+            Flexible(
+              child: Text(
+                value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: alignEnd ? TextAlign.right : TextAlign.left,
+                style: TextStyle(
+                  color: valueColor ?? Theme.of(context).colorScheme.onSurface,
+                  fontSize: 13 * responsive.scale,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            if (badge != null) ...[
+              const SizedBox(width: 5),
+              Text(
+                '($badge)',
+                style: TextStyle(
+                  color: valueColor,
+                  fontSize: 11 * responsive.scale,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+}

@@ -1,0 +1,5 @@
+node_modules/
+.env
+stayz.sql
+dist/
+build/
