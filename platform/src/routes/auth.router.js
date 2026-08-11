@@ -18,4 +18,7 @@ authRouter.get(
   authController.googleCallback,
 );
 
+authRouter.post("/kyc", authController.updateKYC);
+authRouter.get("/kyc/:userId", authController.getKYCStatus);
+
 module.exports = authRouter;

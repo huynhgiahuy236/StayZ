@@ -15,3 +15,6 @@ Thumbs.db
 .vscode/
 *.suo
 *.user
+
+# HuKi Travel PDF Specification Folder
+HuKi Travel/

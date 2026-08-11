@@ -3,80 +3,168 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
 }
 
 model User {
-  id         String    @id @default(uuid()) @db.VarChar(64)
-  full_name  String    @db.VarChar(100)
-  email      String    @unique(map: "email") @db.VarChar(150)
-  password   String?   @db.VarChar(255)
-  phone      String?   @db.VarChar(20)
-  role       String?   @default("customer") @db.VarChar(20)
-  avatar_url String?   @db.Text
-  google_id  String?   @db.VarChar(100)
-  created_at DateTime? @default(now()) @db.DateTime(0)
-  updated_at DateTime? @default(now()) @updatedAt @db.DateTime(0)
-  bookings   Booking[]
-  reviews    Review[]
+  id                       String             @id @default(uuid()) @db.VarChar(64)
+  full_name                String             @db.VarChar(100)
+  email                    String             @unique @db.VarChar(150)
+  password                 String?            @db.VarChar(255)
+  phone                    String?            @db.VarChar(20)
+  role                     String?            @default("customer") @db.VarChar(20)
+  avatar_url               String?            @db.Text
+  google_id                String?            @db.VarChar(100)
+  identity_card_number     String?            @unique @db.VarChar(20)
+  passport_number          String?            @unique @db.VarChar(20)
+  driver_license_number    String?            @db.VarChar(20)
+  driver_license_image_url String?            @db.Text
+  kyc_status               String?            @default("UNVERIFIED") @db.VarChar(20)
+  is_deleted               Boolean            @default(false)
+  deleted_at               DateTime?
+  deleted_by               String?            @db.VarChar(64)
+  created_at               DateTime?          @default(now())
+  updated_at               DateTime?          @default(now()) @updatedAt
+  bookings                 Booking[]
+  reviews                  Review[]
+  split_bill_expenses      SplitBillExpense[]
+  split_bill_shares        SplitBillShare[]
 
   @@map("users")
 }
 
 model Booking {
-  id           String    @id @default(uuid()) @db.VarChar(64)
-  booking_code String    @unique(map: "booking_code") @db.VarChar(30)
-  user_id      String    @db.VarChar(64)
-  property_id  String    @db.VarChar(64)
-  room_id      String    @db.VarChar(64)
-  check_in     DateTime  @db.Date
-  check_out    DateTime  @db.Date
-  guest_count  Int?      @default(1)
-  total_price  Decimal   @db.Decimal(15, 2)
-  status       String?   @default("pending") @db.VarChar(20)
-  created_at   DateTime? @default(now()) @db.DateTime(0)
-  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "bookings_ibfk_1")
-  payments     Payment[]
+  id              String        @id @default(uuid()) @db.VarChar(64)
+  booking_code    String        @unique @db.VarChar(30)
+  user_id         String        @db.VarChar(64)
+  booking_type    String        @default("STAY") @db.VarChar(20)
+  total_amount    Decimal       @db.Decimal(15, 2)
+  discount_amount Decimal       @default(0.00) @db.Decimal(15, 2)
+  final_amount    Decimal       @db.Decimal(15, 2)
+  status          String?       @default("PENDING") @db.VarChar(20)
+  hold_expires_at DateTime?
+  note            String?       @db.Text
+  is_deleted      Boolean       @default(false)
+  deleted_at      DateTime?
+  deleted_by      String?       @db.VarChar(64)
+  created_at      DateTime?     @default(now())
+  updated_at      DateTime?     @default(now()) @updatedAt
+  user            User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  booking_items   BookingItem[]
+  payments        Payment[]
 
-  @@index([user_id], map: "user_id")
+  @@index([user_id])
   @@map("bookings")
 }
 
-model Payment {
-  id               String    @id @default(uuid()) @db.VarChar(64)
-  booking_id       String    @db.VarChar(64)
-  amount           Decimal   @db.Decimal(15, 2)
-  payment_method   String?   @default("payos") @db.VarChar(30)
-  payos_order_code BigInt?   @unique(map: "payos_order_code")
-  status           String?   @default("PENDING") @db.VarChar(20)
-  paid_at          DateTime? @db.DateTime(0)
-  created_at       DateTime? @default(now()) @db.DateTime(0)
-  booking          Booking   @relation(fields: [booking_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "payments_ibfk_1")
+model BookingItem {
+  id          String    @id @default(uuid()) @db.VarChar(64)
+  booking_id  String    @db.VarChar(64)
+  item_type   String    @db.VarChar(20)
+  ref_id      String    @db.VarChar(64)
+  sub_ref_id  String?   @db.VarChar(64)
+  start_date  DateTime  @db.Date
+  end_date    DateTime? @db.Date
+  quantity    Int       @default(1)
+  unit_price  Decimal   @db.Decimal(15, 2)
+  total_price Decimal   @db.Decimal(15, 2)
+  is_deleted  Boolean   @default(false)
+  deleted_at  DateTime?
+  deleted_by  String?   @db.VarChar(64)
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @default(now()) @updatedAt
+  booking     Booking   @relation(fields: [booking_id], references: [id], onDelete: Cascade)
 
-  @@index([booking_id], map: "booking_id")
+  @@index([booking_id])
+  @@map("booking_items")
+}
+
+model Payment {
+  id                     String    @id @default(uuid()) @db.VarChar(64)
+  booking_id             String    @db.VarChar(64)
+  amount                 Decimal   @db.Decimal(15, 2)
+  payment_method         String?   @default("payos") @db.VarChar(30)
+  payos_order_code       BigInt?   @unique
+  gateway_transaction_id String?   @db.VarChar(100)
+  status                 String?   @default("PENDING") @db.VarChar(20)
+  paid_at                DateTime?
+  is_deleted             Boolean   @default(false)
+  deleted_at             DateTime?
+  deleted_by             String?   @db.VarChar(64)
+  created_at             DateTime? @default(now())
+  updated_at             DateTime? @default(now()) @updatedAt
+  booking                Booking   @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+
+  @@index([booking_id])
   @@map("payments")
 }
 
-model Review {
-  id          String    @id @default(uuid()) @db.VarChar(64)
-  user_id     String    @db.VarChar(64)
-  property_id String    @db.VarChar(64)
-  rating      Int
-  comment     String?   @db.Text
-  created_at  DateTime? @default(now()) @db.DateTime(0)
-  user        User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "reviews_ibfk_1")
+model SplitBillExpense {
+  id           String           @id @default(uuid()) @db.VarChar(64)
+  trip_id      String           @db.VarChar(64)
+  payer_id     String           @db.VarChar(64)
+  amount       Decimal          @db.Decimal(15, 2)
+  description  String           @db.VarChar(255)
+  split_method String           @default("EQUAL") @db.VarChar(20)
+  is_deleted   Boolean          @default(false)
+  deleted_at   DateTime?
+  deleted_by   String?          @db.VarChar(64)
+  created_at   DateTime?        @default(now())
+  updated_at   DateTime?        @default(now()) @updatedAt
+  payer        User             @relation(fields: [payer_id], references: [id], onDelete: Cascade)
+  shares       SplitBillShare[]
 
-  @@index([user_id], map: "user_id")
+  @@map("split_bill_expenses")
+}
+
+model SplitBillShare {
+  id          String           @id @default(uuid()) @db.VarChar(64)
+  expense_id  String           @db.VarChar(64)
+  user_id     String           @db.VarChar(64)
+  owed_amount Decimal          @db.Decimal(15, 2)
+  is_settled  Boolean          @default(false)
+  settled_at  DateTime?
+  is_deleted  Boolean          @default(false)
+  deleted_at  DateTime?
+  deleted_by  String?          @db.VarChar(64)
+  created_at  DateTime?        @default(now())
+  updated_at  DateTime?        @default(now()) @updatedAt
+  expense     SplitBillExpense @relation(fields: [expense_id], references: [id], onDelete: Cascade)
+  user        User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("split_bill_shares")
+}
+
+model Review {
+  id           String    @id @default(uuid()) @db.VarChar(64)
+  user_id      String    @db.VarChar(64)
+  service_type String    @db.VarChar(20)
+  ref_id       String    @db.VarChar(64)
+  rating       Int
+  comment      String?   @db.Text
+  is_deleted   Boolean   @default(false)
+  deleted_at   DateTime?
+  deleted_by   String?   @db.VarChar(64)
+  created_at   DateTime? @default(now())
+  updated_at   DateTime? @default(now()) @updatedAt
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
   @@map("reviews")
 }
 
 model Coupon {
   id               String    @id @default(uuid()) @db.VarChar(64)
-  code             String    @unique(map: "code") @db.VarChar(30)
+  code             String    @unique @db.VarChar(30)
   discount_percent Int
   max_discount     Decimal?  @default(0.00) @db.Decimal(15, 2)
-  valid_until      DateTime? @db.DateTime(0)
-  created_at       DateTime? @default(now()) @db.DateTime(0)
+  min_order_value  Decimal?  @default(0.00) @db.Decimal(15, 2)
+  valid_until      DateTime?
+  is_deleted       Boolean   @default(false)
+  deleted_at       DateTime?
+  deleted_by       String?   @db.VarChar(64)
+  created_at       DateTime? @default(now())
+  updated_at       DateTime? @default(now()) @updatedAt
 
   @@map("coupons")
 }
