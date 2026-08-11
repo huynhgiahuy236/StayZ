@@ -34,6 +34,23 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "Linh hoạt giữ chỗ - Hoàn tiền 100% khi hủy trước 48h",
     trust_support: "Hỗ Trợ 24/7 Toàn Cầu",
 
+    // Combo Widget
+    combo_widget_title: "Gom Chuyến Đi Đa Dịch Vụ · Tiết Kiệm Ngay 10%",
+    combo_widget_desc: "Kết hợp Vé máy bay/Xe khách + Khách sạn + Thuê xe tự lái vào 1 chuyến đi duy nhất. Khóa giữ chỗ 10 phút.",
+    combo_feature_lock: "Tự động khóa chỗ 10 phút",
+    combo_feature_refund: "Hoàn 100% cọc hủy trước 48h",
+    combo_feature_pass: "Ví vé QR Code Động 30s",
+    combo_button: "Tạo Chuyến Đi Combo",
+
+    // Bus Widget
+    bus_widget_title: "Sơ Đồ Ghế Giường Nằm 2 Tầng Tự Động Khóa Chỗ",
+    bus_deck_lower: "Tầng Dưới (Deck 1)",
+    bus_deck_upper: "Tầng Trên (Deck 2)",
+
+    // Splitbill Widget
+    splitbill_widget_title: "Quản Lý Chi Tiêu Nhóm & Hạch Toán Nợ Chéo Tự Động",
+    splitbill_per_person: "MỖI THÀNH VIÊN CẦN THANH TOÁN",
+
     // Stats
     stat_destinations: "Điểm đến Toàn cầu",
     stat_properties: "Khách sạn & Villa",
@@ -74,6 +91,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "Địa chỉ gợi ý",
     card_book_now: "Đặt Ngay",
     card_reviews: "đánh giá",
+    favorites_title: "Nơi lưu trú yêu thích",
+    favorites_empty: "Chưa có nơi lưu trú yêu thích",
 
     // Footer
     footer_desc: "Nền tảng tích hợp du lịch toàn diện: Đặt phòng + Vé xe + Thuê xe + Ẩm thực + Trải nghiệm.",
@@ -114,6 +133,20 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "Flexible hold - 100% refund up to 48h prior",
     trust_support: "24/7 Global Support",
 
+    combo_widget_title: "Multi-Service Trip Bundle · Save 10% Now",
+    combo_widget_desc: "Bundle Flight/Bus + Hotel + Car Rental into a single trip with 10-minute hold lock.",
+    combo_feature_lock: "Auto 10-min hold lock",
+    combo_feature_refund: "100% refund up to 48h prior",
+    combo_feature_pass: "Dynamic 30s QR Ticket Pass",
+    combo_button: "Create Combo Trip",
+
+    bus_widget_title: "2-Deck Sleeper SeatMap with Auto Hold Lock",
+    bus_deck_lower: "Lower Deck (1)",
+    bus_deck_upper: "Upper Deck (2)",
+
+    splitbill_widget_title: "Group Expense Ledger & Auto Reconciliation",
+    splitbill_per_person: "PAYMENT PER MEMBER",
+
     stat_destinations: "Global Destinations",
     stat_properties: "Hotels & Villas",
     stat_foods: "Specialty Dishes",
@@ -149,6 +182,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "Recommended spots",
     card_book_now: "Book Now",
     card_reviews: "reviews",
+    favorites_title: "Favorite Stays",
+    favorites_empty: "No favorite stays saved yet",
 
     footer_desc: "All-in-One Travel Platform: Stays + Bus + Rental + Taste + Experiences.",
     footer_company: "About HuKi Travel",
@@ -188,6 +223,20 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "유연한 예약 - 48시간 전 취소 시 100% 환불",
     trust_support: "24/7 글로벌 지원",
 
+    combo_widget_title: "다중 서비스 여행 콤보 · 지금 10% 할인",
+    combo_widget_desc: "항공/버스 + 호텔 + 렌터카를 하나의 여행으로 번들하고 10분 잠금을 이용하세요.",
+    combo_feature_lock: "10분 자동 좌석 잠금",
+    combo_feature_refund: "48시간 전 100% 환불",
+    combo_feature_pass: "30초 동적 QR 티켓 패스",
+    combo_button: "콤보 여행 만들기",
+
+    bus_widget_title: "2층 침대 버스 좌석표 및 자동 잠금",
+    bus_deck_lower: "하층 (Deck 1)",
+    bus_deck_upper: "상층 (Deck 2)",
+
+    splitbill_widget_title: "그룹 지출 관리 및 자동 정산",
+    splitbill_per_person: "1인당 결제 금액",
+
     stat_destinations: "글로벌 여행지",
     stat_properties: "호텔 & 빌라",
     stat_foods: "현지 특색 음식",
@@ -223,6 +272,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "추천 장소",
     card_book_now: "지금 예약",
     card_reviews: "리뷰",
+    favorites_title: "즐겨찾는 숙소",
+    favorites_empty: "저장된 즐겨찾기 숙소가 없습니다",
 
     footer_desc: "올인원 여행 플랫폼: 숙박 + 버스 + 렌트 + 맛집 + 액티비티.",
     footer_company: "HuKi Travel 소개",
@@ -262,6 +313,20 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "柔軟な予約 - 48時間前までのキャンセルで全額返金",
     trust_support: "24/7 グローバルサポート",
 
+    combo_widget_title: "マルチサービス旅行コンボ · 今すぐ10%割引",
+    combo_widget_desc: "航空/バス＋ホテル＋レンタカーを1つの旅行にまとめ、10分間キープ。",
+    combo_feature_lock: "10分間自動座席キープ",
+    combo_feature_refund: "48時間前まで100%返金",
+    combo_feature_pass: "30秒動的QRチケットパス",
+    combo_button: "コンボ旅行を作成",
+
+    bus_widget_title: "2階建て寝台バス座席図＆自動キープ",
+    bus_deck_lower: "1階（Deck 1）",
+    bus_deck_upper: "2階（Deck 2）",
+
+    splitbill_widget_title: "グループ支出管理＆自動割り勘計算",
+    splitbill_per_person: "1人あたりの支払額",
+
     stat_destinations: "世界の目的地",
     stat_properties: "ホテル＆ヴィラ",
     stat_foods: "名物料理",
@@ -297,6 +362,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "おすすめスポット",
     card_book_now: "今すぐ予約",
     card_reviews: "件のレビュー",
+    favorites_title: "お気に入りの宿泊施設",
+    favorites_empty: "保存されたお気に入りはありません",
 
     footer_desc: "オールインワン旅行プラットフォーム：宿泊＋バス＋レンタカー＋グルメ＋体験。",
     footer_company: "HuKi Travelについて",
@@ -336,6 +403,20 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "จองยืดหยุ่น - คืนเงิน 100% เมื่อยกเลิกก่อน 48 ชม.",
     trust_support: "ดูแล 24 ชม. ทั่วโลก",
 
+    combo_widget_title: "รวมทริปหลายบริการ · ประหยัดทันที 10%",
+    combo_widget_desc: "รวม ตั๋วเครื่องบิน/รถบัส + โรงแรม + เช่ารถ ในทริปเดียว ล็อคที่นั่ง 10 นาที",
+    combo_feature_lock: "ล็อคที่นั่งอัตโนมัติ 10 นาที",
+    combo_feature_refund: "คืนเงิน 100% ยกเลิกก่อน 48 ชม.",
+    combo_feature_pass: "บัตรตั๋ว QR Code 30 วินาที",
+    combo_button: "สร้างทริปคอมโบ",
+
+    bus_widget_title: "ผังที่นั่งรถบัส 2 ชั้น ล็อคอัตโนมัติ",
+    bus_deck_lower: "ชั้นล่าง (Deck 1)",
+    bus_deck_upper: "ชั้นบน (Deck 2)",
+
+    splitbill_widget_title: "จัดการค่าใช้จ่ายกลุ่ม & คำนวณอัตโนมัติ",
+    splitbill_per_person: "ยอดชำระต่อคน",
+
     stat_destinations: "จุดหมายปลายทางทั่วโลก",
     stat_properties: "โรงแรมและวิลล่า",
     stat_foods: "อาหารจานเด็ด",
@@ -371,6 +452,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "ร้านแนะนำ",
     card_book_now: "จองเลย",
     card_reviews: "รีวิว",
+    favorites_title: "ที่พักโปรด",
+    favorites_empty: "ยังไม่มีที่พักถูกใจที่บันทึกไว้",
 
     footer_desc: "แพลตฟอร์มท่องเที่ยวครบวงจร: ที่พัก + รถบัส + เช่ารถ + อาหาร + กิจกรรม",
     footer_company: "เกี่ยวกับ HuKi Travel",
@@ -410,6 +493,20 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "灵活预订 - 提前48小时取消可退全款",
     trust_support: "24/7 全球客服",
 
+    combo_widget_title: "多服务行程套餐 · 立省 10%",
+    combo_widget_desc: "组合 机票/客车 + 酒店 + 租车 为单一行程，享有 10 分钟锁位。",
+    combo_feature_lock: "自动 10 分钟锁位",
+    combo_feature_refund: "提前 48 小时 100% 退款",
+    combo_feature_pass: "30 秒动态 QR 码电子票",
+    combo_button: "创建套餐行程",
+
+    bus_widget_title: "双层卧铺客车座位图与自动锁位",
+    bus_deck_lower: "下层 (Deck 1)",
+    bus_deck_upper: "上层 (Deck 2)",
+
+    splitbill_widget_title: "团队账单管理与自动对账",
+    splitbill_per_person: "每人应付金额",
+
     stat_destinations: "全球热门目的地",
     stat_properties: "酒店与豪华别墅",
     stat_foods: "地道特色美食",
@@ -445,6 +542,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "推荐地点",
     card_book_now: "立即预订",
     card_reviews: "条评价",
+    favorites_title: "收藏的住宿",
+    favorites_empty: "暂无收藏的住宿",
 
     footer_desc: "全方位一站式旅游平台：住宿 + 客车 + 租车 + 美食 + 体验。",
     footer_company: "关于 HuKi Travel",
@@ -484,6 +583,20 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "Réservation flexible - 100% remboursé jusqu'à 48h",
     trust_support: "Support 24/7 Mondial",
 
+    combo_widget_title: "Combo Voyage Multi-Services · Économisez 10%",
+    combo_widget_desc: "Combinez Vol/Bus + Hôtel + Location de voiture avec blocage de 10 min.",
+    combo_feature_lock: "Blocage auto 10 min",
+    combo_feature_refund: "Remboursement 100% jusqu'à 48h",
+    combo_feature_pass: "Pass billet QR dynamique 30s",
+    combo_button: "Créer un combo",
+
+    bus_widget_title: "Plan de sièges bus couchette 2 étages avec blocage auto",
+    bus_deck_lower: "Étage inférieur (1)",
+    bus_deck_upper: "Étage supérieur (2)",
+
+    splitbill_widget_title: "Gestion des dépenses de groupe & Calcul auto",
+    splitbill_per_person: "MONTANT PAR MEMBRE",
+
     stat_destinations: "Destinations Mondiales",
     stat_properties: "Hôtels & Villas",
     stat_foods: "Spécialités Locales",
@@ -519,6 +632,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "Adresses recommandées",
     card_book_now: "Réserver",
     card_reviews: "avis",
+    favorites_title: "Hébergements favoris",
+    favorites_empty: "Aucun hébergement favori enregistré",
 
     footer_desc: "Plateforme Touristique Tout-en-Un : Séjours + Bus + Location + Gastronomie + Expériences.",
     footer_company: "À Propos de HuKi Travel",
@@ -558,6 +673,20 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "Flexible Buchung - 100% Erstattung bis 48h vorher",
     trust_support: "24/7 Weltweiter Support",
 
+    combo_widget_title: "Multi-Service Reise-Kombi · Jetzt 10% Sparen",
+    combo_widget_desc: "Kombiniere Flug/Bus + Hotel + Mietwagen mit 10-Minuten-Reservierung.",
+    combo_feature_lock: "Automatischer 10-Min-Hold",
+    combo_feature_refund: "100% Erstattung bis 48h vorher",
+    combo_feature_pass: "Dynamischer 30s QR-Ticket-Pass",
+    combo_button: "Kombi-Reise Erstellen",
+
+    bus_widget_title: "Doppeldecker-Sitzplan mit automatischer Reservierung",
+    bus_deck_lower: "Unterdeck (1)",
+    bus_deck_upper: "Oberdeck (2)",
+
+    splitbill_widget_title: "Gruppenausgaben & Automatische Abrechnung",
+    splitbill_per_person: "BETRAG PRO MITGLIED",
+
     stat_destinations: "Globale Reiseziele",
     stat_properties: "Hotels & Villas",
     stat_foods: "Lokale Spezialitäten",
@@ -593,6 +722,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "Empfohlene Orte",
     card_book_now: "Buchen",
     card_reviews: "Bewertungen",
+    favorites_title: "Favoriten",
+    favorites_empty: "Keine Favoriten gespeichert",
 
     footer_desc: "All-in-One Reiseplattform: Unterkünfte + Bus + Mietwagen + Kulinarik + Erlebnisse.",
     footer_company: "Über HuKi Travel",
@@ -632,6 +763,20 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "Reserva flexible - 100% reembolso hasta 48h antes",
     trust_support: "Soporte 24/7 Global",
 
+    combo_widget_title: "Combo de Viaje Multi-Servicio · Ahorra 10%",
+    combo_widget_desc: "Agrupa Vuelo/Autobús + Hotel + Alquiler en un solo viaje con reserva de 10 min.",
+    combo_feature_lock: "Bloqueo automático de 10 min",
+    combo_feature_refund: "100% reembolso hasta 48h antes",
+    combo_feature_pass: "Pase de billete QR dinámico de 30s",
+    combo_button: "Crear viaje combo",
+
+    bus_widget_title: "Mapa de asientos de autobús de 2 pisos con reserva auto",
+    bus_deck_lower: "Piso Inferior (1)",
+    bus_deck_upper: "Piso Superior (2)",
+
+    splitbill_widget_title: "Gestión de gastos de grupo y cálculo automático",
+    splitbill_per_person: "PAGO POR MIEMBRO",
+
     stat_destinations: "Destinos Globales",
     stat_properties: "Hoteles y Villas",
     stat_foods: "Platos Típicos",
@@ -667,6 +812,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "Sitios recomendados",
     card_book_now: "Reservar Ya",
     card_reviews: "opiniones",
+    favorites_title: "Alojamientos favoritos",
+    favorites_empty: "No hay alojamientos favoritos guardados",
 
     footer_desc: "Plataforma de Viajes Todo en Uno: Alojamientos + Autobús + Alquiler + Gastronomía + Experiencias.",
     footer_company: "Sobre HuKi Travel",
@@ -706,6 +853,20 @@ export const translations: Record<Language, Record<string, string>> = {
     deposit_desc: "Гибкое бронирование - 100% возврат при отмене за 48 ч.",
     trust_support: "Круглосуточная Поддержка 24/7",
 
+    combo_widget_title: "Мультисервисный Тур-Комбо · Скидка 10%",
+    combo_widget_desc: "Объединяйте Перелет/Автобус + Отель + Аренду авто в одну поездку с удержанием 10 мин.",
+    combo_feature_lock: "Автоблокировка мест 10 мин",
+    combo_feature_refund: "100% возврат за 48 ч.",
+    combo_feature_pass: "Динамический 30с QR-билет",
+    combo_button: "Создать тур-комбо",
+
+    bus_widget_title: "Схема мест 2-этажного спального автобуса с удержанием",
+    bus_deck_lower: "Нижний ярус (1)",
+    bus_deck_upper: "Верхний ярус (2)",
+
+    splitbill_widget_title: "Учет групповых расходов и автоматический расчет",
+    splitbill_per_person: "СУММА НА ОДНОГО УЧАСТНИКА",
+
     stat_destinations: "Мировые Направления",
     stat_properties: "Отели и Виллы",
     stat_foods: "Местные Блюда",
@@ -741,6 +902,8 @@ export const translations: Record<Language, Record<string, string>> = {
     recommended_spot: "Рекомендуемые места",
     card_book_now: "Забронировать",
     card_reviews: "отзывов",
+    favorites_title: "Избранные отели",
+    favorites_empty: "Нет сохраненных отелей в избранном",
 
     footer_desc: "Универсальная платформа путешествий: Отели + Автобусы + Аренда авто + Кухня + Впечатления.",
     footer_company: "О компании HuKi Travel",

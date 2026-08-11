@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/site-header";
 import { HotelCard } from "@/components/hotel-card";
 import { getMyFavorites, removeFavorite } from "@/lib/api";
 import type { Favorite, Hotel } from "@/lib/types";
+import { Language, t } from "@/lib/i18n";
 
 function getToken(): string | null {
   if (typeof document === "undefined") return null;
@@ -19,8 +20,11 @@ export default function FavoritesPage() {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState<string | null>(null);
+  const [lang, setLang] = useState<Language>("vi");
 
   useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || "vi";
+    setLang(saved);
     const token = getToken();
     if (!token) { router.replace("/login?redirect=/favorites"); return; }
     getMyFavorites(token).then((data) => {
@@ -47,7 +51,7 @@ export default function FavoritesPage() {
 
   if (loading) return (
     <main id="main-content" className="favorites-page">
-      <SiteHeader />
+      <SiteHeader lang={lang} onLangChange={setLang} />
       <div style={{ display: "flex", justifyContent: "center", padding: "var(--sp-24)" }}>
         <Loader2 size={32} style={{ animation: "spin .7s linear infinite", color: "var(--navy)" }} />
       </div>
@@ -56,11 +60,11 @@ export default function FavoritesPage() {
 
   return (
     <main id="main-content" className="favorites-page">
-      <SiteHeader />
+      <SiteHeader lang={lang} onLangChange={setLang} />
       <div className="favorites-hero">
         <div className="shell">
-          <h1>Nơi lưu trú yêu thích</h1>
-          <p style={{ opacity: .8, fontSize: 14 }}>{hotels.length} nơi lưu trú đã lưu</p>
+          <h1>{t("favorites_title", lang)}</h1>
+          <p style={{ opacity: .8, fontSize: 14 }}>{hotels.length} {t("stat_properties", lang)}</p>
         </div>
       </div>
 
@@ -68,22 +72,18 @@ export default function FavoritesPage() {
         {hotels.length === 0 ? (
           <div className="empty-state" style={{ marginTop: "var(--sp-10)" }}>
             <Heart size={40} style={{ color: "var(--color-ink-3)", margin: "0 auto var(--sp-4)" }} aria-hidden="true" />
-            <h3>Chưa có nơi lưu trú yêu thích</h3>
-            <p>Nhấn vào biểu tượng trái tim khi xem khách sạn để lưu lại.</p>
+            <h3>{t("favorites_empty", lang)}</h3>
+            <p>{t("hotels_subtitle", lang)}</p>
             <Link href="/search" className="btn-primary" style={{ display: "inline-flex", marginTop: "var(--sp-6)", textDecoration: "none" }}>
-              Khám phá khách sạn
+              {t("view_all", lang)}
             </Link>
           </div>
         ) : (
           <div className="hotel-grid">
             {hotels.map((hotel) => {
-              const fav = favorites.find((f) => {
-                const pid = typeof f.property_id === "object" ? (f.property_id as Hotel)._id : f.property_id;
-                return pid === hotel._id;
-              });
               return (
                 <div key={hotel._id} style={{ position: "relative" }}>
-                  <HotelCard hotel={hotel} />
+                  <HotelCard hotel={hotel} lang={lang} />
                   <button
                     onClick={() => handleRemove(hotel._id)}
                     disabled={removing === hotel._id}
@@ -118,9 +118,9 @@ export default function FavoritesPage() {
 
       <footer className="footer">
         <div className="shell footer-inner">
-          <Link href="/" className="brand brand-light">Stay<span className="z">Z</span></Link>
-          <p>Stay somewhere unforgettable.</p>
-          <p>© 2026 StayZ</p>
+          <Link href="/" className="brand brand-light">HuKi<span className="z"> Travel</span></Link>
+          <p>{t("footer_desc", lang)}</p>
+          <p>{t("footer_rights", lang)}</p>
         </div>
       </footer>
     </main>

@@ -1,16 +1,14 @@
 # Mã Đề Xuất: h-dexuat-0003
 **Dự án**: StayZ / HuKi Travel Web Frontend (`web/`)
-**Tiêu đề**: Kế Hoạch Đồng Nhất Ngôn Ngữ Toàn Bộ Trang Chủ (Standardization & i18n Localization Engine for Homepage: Header, Banner, Search, Sections, Items & Footer)
+**Tiêu đề**: Kế Hoạch Đồng Nhất Ngôn Ngữ Toàn Bộ Phiên Bản Web Application (Standardization & i18n Localization Engine Across All Web Pages: Header, Search, Hotels, Booking, Profile, Admin & Footer)
 **Tác giả**: Huỳnh Gia Huy (`Huy`)
-**Trạng thái**: ĐANG CHỜ THỐNG NHẤT (PROPOSAL PENDING APPROVAL ⏳)
+**Trạng thái**: ĐANG CHỜ THỐNG NHẤT BỔ SUNG (PROPOSAL PENDING APPROVAL ⏳)
 
 ---
 
 ## 📋 1. TỔNG QUAN YÊU CẦU (OVERVIEW)
 
-Hiện tại, trang chủ Web Application (`web/src/components`) còn tồn tại tình trạng **trộn lẫn ngôn ngữ** (tiếng Anh hardcode xen kẽ tiếng Việt trong các thẻ Card, Search Bar, Header, Section Title và Footer). 
-
-Đề xuất này lập bản kế hoạch chuẩn hóa **Hệ thống Đa ngôn ngữ Tập trung (i18n Localization Engine)** cho 10 ngôn ngữ chính toàn cầu (`vi`, `en`, `ko`, `ja`, `th`, `zh`, `fr`, `de`, `es`, `ru`), đảm bảo **100% văn bản hiển thị trên Trang chủ** chuyển đổi mượt mà khi người dùng thay đổi Ngôn ngữ từ Header.
+Chuẩn hóa **Hệ thống Đa ngôn ngữ Tập trung (i18n Localization Engine)** cho 10 ngôn ngữ chính toàn cầu (`vi`, `en`, `ko`, `ja`, `th`, `zh`, `fr`, `de`, `es`, `ru`), đảm bảo **100% văn bản hiển thị trên Toàn bộ phiên bản Web App** chuyển đổi mượt mà khi người dùng thay đổi Ngôn ngữ từ Header.
 
 ---
 
@@ -77,6 +75,25 @@ export type Language = "vi" | "en" | "ko" | "ja" | "th" | "zh" | "fr" | "de" | "
 
 ---
 
+## ➕ 6. CẬP NHẬT ĐỀ XUẤT THÊM (MỞ RỘNG i18N 10 NGÔN NGỮ CHO TOÀN BỘ PHIÊN BẢN WEB APP)
+
+### 🎯 Mục tiêu:
+Mở rộng việc hỗ trợ 10 ngôn ngữ toàn cầu cho **TẤT CẢ CÁC TRANG CON / LUỒNG PHỤ** của Web Application (`web/src/app/`):
+1. **Trang Tìm Kiếm & Lọc (`web/src/app/search/`)**:
+   - Nhãn bộ lọc mức giá, xếp hạng sao, danh mục tiện ích (Bể bơi, Wifi, Sân bay, Spa...), sắp xếp giá tăng/giảm.
+2. **Trang Chi Tiết Khách Sạn (`web/src/app/hotels/[city]/[slug]/`)**:
+   - Nhãn nút "Đặt phòng ngay", mô tả chính sách cọc 30%, danh sách tiện nghi, đánh giá du khách, sơ đồ phòng trống.
+3. **Trang Quy Trình Đặt Phòng & Thanh Toán (`web/src/app/booking/`)**:
+   - Nhãn điền thông tin khách hàng, chọn phương thức VietQR/PayOS, nút "Xác nhận cọc 30%".
+4. **Trang Hồ Sơ & Quản Lý Đặt Chỗ (`web/src/app/profile/`)**:
+   - Nhãn danh sách đơn đặt phòng, trạng thái vé điện tử QR code, thông tin cá nhân.
+5. **Trang Yêu Thích & So Sánh (`web/src/app/favorites/`)**:
+   - Nhãn bộ sưu tập yêu thích, danh sách lưu tạm.
+6. **Trang Quản Trị Hệ Thống (`web/src/app/admin/`)**:
+   - Nhãn menu quản trị, thống kê tổng quan doanh thu, quản lý khách sạn.
+
+---
+
 > [!NOTE]
-> **Tình trạng Proposal**: Đã bổ sung chi tiết ô chọn Header vào `h-dexuat-0003.md`. Vẫn ở chế độ **`đề xuất`**, **CHƯA SỬA CODE NGUỒN**.
-> Bạn vui lòng xem qua, nếu đã thấy đồng ý hãy phát lệnh **`h-thống nhất - @docs/dexuat/h-dexuat-0003.md`** để mình tiến hành viết code triển khai mượt mà nhé!
+> **Tình trạng Proposal**: Đã bổ sung đề xuất mở rộng i18n cho toàn bộ các trang Web App vào `h-dexuat-0003.md`. Vẫn ở chế độ **`đề xuất thêm`**, **CHƯA SỬA CODE NGUỒN**.
+> Bạn xem qua, nếu đồng ý triển khai mở rộng cho các trang con thì gõ **`h-thống nhất - @docs/dexuat/h-dexuat-0003.md`** nhé!

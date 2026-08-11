@@ -1,4 +1,6 @@
 const express = require("express");
+const { gatewayRouter } = require("../gateway/gateway.router");
+
 const userRouter = require("./users.router");
 const authRouter = require("./auth.router");
 
@@ -21,6 +23,10 @@ const splitBillRouter = require("./splitbill.router");
 
 const rootRouter = express.Router();
 
+// Mount API Gateway Service Discovery & Gateway Endpoints
+rootRouter.use("/", gatewayRouter);
+
+// Mount Core Microservice Modules
 rootRouter.use("/users", userRouter);
 rootRouter.use("/auth", authRouter);
 

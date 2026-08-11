@@ -12,6 +12,9 @@ import { CountrySliders } from "@/components/country-sliders";
 import { TasteSection } from "@/components/taste-section";
 import { ExperiencesSection } from "@/components/experiences-section";
 import { HotelCard } from "@/components/hotel-card";
+import { TripComboWidget } from "@/components/trip-combo-widget";
+import { BusSeatmapWidget } from "@/components/bus-seatmap-widget";
+import { SplitbillCalculatorWidget } from "@/components/splitbill-calculator-widget";
 
 interface Props {
   initialHotels: Hotel[];
@@ -55,25 +58,25 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
 
   return (
     <main id="main-content">
-      {/* ── 1. HERO BANNER & SEARCH BAR ────────────────────────── */}
-      <section className="hero" aria-label="HuKi Travel Homepage">
+      {/* ── 1. HERO BANNER & 5 SUPER-APP SEARCH TABS ─────────────── */}
+      <section className="hero" aria-label="HuKi Travel Super-App Portal">
         <SiteHeader transparent lang={lang} onLangChange={handleLangChange} />
         <div className="hero-overlay" aria-hidden="true" />
-        <div className="hero-content shell">
+        <div className="hero-content shell" style={{ paddingTop: 30, paddingBottom: 40 }}>
           <p className="eyebrow" style={{ letterSpacing: "1.5px", textTransform: "uppercase" }}>
             {t("hero_slogan", lang)}
           </p>
-          <h1>
+          <h1 style={{ fontSize: "clamp(32px, 5vw, 54px)", fontWeight: 900, marginBottom: 12 }}>
             {t("hero_title_1", lang)}<br />
-            <em>{t("hero_title_2", lang)}</em>
+            <em style={{ color: "var(--gold, #fbbf24)", fontStyle: "normal" }}>{t("hero_title_2", lang)}</em>
           </h1>
-          <p className="hero-copy">
+          <p className="hero-copy" style={{ maxWidth: 700, margin: "0 auto 28px auto" }}>
             {t("hero_subtitle", lang)}
           </p>
 
           <SearchBar lang={lang} />
 
-          <div className="trust-row">
+          <div className="trust-row" style={{ marginTop: 24 }}>
             <span><BadgeCheck size={14} aria-hidden="true" /> {t("deposit_badge", lang)}</span>
             <span><ShieldCheck size={14} aria-hidden="true" /> {t("deposit_desc", lang)}</span>
             <span><Headphones size={14} aria-hidden="true" /> {t("trust_support", lang)}</span>
@@ -81,7 +84,7 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
         </div>
       </section>
 
-      {/* ── 2. QUICK STATS BAR ────────────────────────────────── */}
+      {/* ── 2. REAL-TIME ECOSYSTEM QUICK STATS BAR ──────────────── */}
       <section style={{ background: "var(--color-ink, #0f172a)", color: "#fff", padding: "28px 0" }}>
         <div className="shell" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 24, textAlign: "center" }}>
           <div>
@@ -103,10 +106,13 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
         </div>
       </section>
 
-      {/* ── 3. WORLD COUNTRIES OVERVIEW (Render 12 Quốc gia) ────── */}
+      {/* ── 3. HUKI TRIP COMBO BUNDLE WIDGET (Save 10% + 10m Timer) ── */}
+      <TripComboWidget lang={lang} />
+
+      {/* ── 4. WORLD COUNTRIES OVERVIEW (Render 12 Quốc gia) ────── */}
       <CountriesSection lang={lang} onSelectCountry={(code) => setSelectedCountryCode(code)} />
 
-      {/* ── 4. COUNTRY DETAIL SLIDERS (8 items + Button Filter Quốc gia) ── */}
+      {/* ── 5. COUNTRY DETAIL SLIDERS (8 items + Button Filter Quốc gia) ── */}
       <CountrySliders
         destinations={initialDestinations}
         lang={lang}
@@ -114,73 +120,19 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
         onSelectCountry={(code) => setSelectedCountryCode(code)}
       />
 
-      {/* ── 5. TASTE OF HUKI (8 items + Nút Xem thêm) ───────────── */}
+      {/* ── 6. HUKI BUS - 2-DECK SLEEPER SEATMAP REAL-TIME DEMO ───── */}
+      <BusSeatmapWidget lang={lang} />
+
+      {/* ── 7. TASTE OF HUKI (8 items + Nút Xem thêm) ───────────── */}
       <TasteSection destinations={initialDestinations} lang={lang} />
 
-      {/* ── 6. HUKI EXPERIENCES (8 items + Nút Xem thêm) ───────── */}
+      {/* ── 8. HUKI EXPERIENCES (8 items + Nút Xem thêm) ───────── */}
       <ExperiencesSection destinations={initialDestinations} lang={lang} />
 
-      {/* ── 7. EXCLUSIVE 30% DEPOSIT OFFER BANNER ──────────────── */}
-      <section className="shell" style={{ margin: "40px auto" }}>
-        <div
-          style={{
-            background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
-            borderRadius: 24,
-            padding: "36px 40px",
-            color: "#fff",
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 24,
-            boxShadow: "0 10px 30px -5px rgba(15,23,42,0.3)",
-          }}
-        >
-          <div style={{ maxWidth: 600 }}>
-            <span
-              style={{
-                background: "rgba(251, 191, 36, 0.2)",
-                color: "var(--gold, #fbbf24)",
-                fontSize: 12,
-                fontWeight: 700,
-                padding: "6px 14px",
-                borderRadius: 100,
-                textTransform: "uppercase",
-                letterSpacing: 1,
-              }}
-            >
-              🔥 HuKi Exclusive
-            </span>
-            <h2 style={{ fontSize: 28, fontWeight: 800, margin: "12px 0 8px 0", color: "#fff" }}>
-              {t("deposit_badge", lang)}
-            </h2>
-            <p style={{ fontSize: 14, opacity: 0.85, margin: 0, lineHeight: 1.6 }}>
-              {t("deposit_desc", lang)}
-            </p>
-          </div>
+      {/* ── 9. HUKI WALLET & SPLIT BILL CALCULATOR WIDGET ───────── */}
+      <SplitbillCalculatorWidget lang={lang} />
 
-          <Link
-            href="/search"
-            style={{
-              background: "var(--gold, #fbbf24)",
-              color: "#000",
-              fontWeight: 800,
-              fontSize: 15,
-              padding: "14px 28px",
-              borderRadius: 100,
-              textDecoration: "none",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              boxShadow: "0 4px 15px rgba(251, 191, 36, 0.4)",
-            }}
-          >
-            {t("search_button", lang)} <ArrowRight size={16} />
-          </Link>
-        </div>
-      </section>
-
-      {/* ── 8. FEATURED HOTELS GRID (8 Items + 4 Filter Tabs + Nút Xem thêm) ── */}
+      {/* ── 10. FEATURED HOTELS GRID (8 Items + 4 Filter Tabs) ──── */}
       <section className="section warm" aria-labelledby="featured-heading">
         <div className="shell">
           <div className="section-heading" style={{ marginBottom: 20 }}>
@@ -266,7 +218,7 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
         </div>
       </section>
 
-      {/* ── 9. TESTIMONIALS & PROMISE FOOTER ──────────────────── */}
+      {/* ── 11. PROMISE FOOTER ───────────────────────────────── */}
       <section className="promise shell" aria-labelledby="promise-heading">
         <div>
           <span className="promise-icon" aria-hidden="true"><Sparkles size={22} /></span>

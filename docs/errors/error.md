@@ -29,3 +29,15 @@
   2. Thiết lập Quy tắc Bảo tồn Tên riêng Địa danh (không dịch tên riêng địa danh, chỉ dịch phần tiêu đề/mô tả đi kèm).
   3. Xây dựng script kiểm thử tự động `scripts/test-i18n-darkmode.js`.
 * **Trạng thái**: ✅ **ĐÃ FIX & CHẠY SCRIPT TEST THÀNH CÔNG** (`node scripts/test-i18n-darkmode.js` PASSED 29/29).
+
+---
+
+### 📌 Log #003 - [2026-08-11 22:40:00] Missing i18n Dictionary Translations for 5 New Global Languages (zh, fr, de, es, ru)
+* **Lỗi ghi nhận**: Các thành phần UI mới (Trip Combo Widget, Bus Seatmap Widget, Splitbill Calculator Widget) chứa văn bản hardcode chưa được biên dịch hoàn chỉnh khi người dùng chọn 5 ngôn ngữ mới (`zh`, `fr`, `de`, `es`, `ru`).
+* **Thành phần bị lỗi**: `web/src/lib/i18n.ts`, `web/src/components/trip-combo-widget.tsx`, `bus-seatmap-widget.tsx`, `splitbill-calculator-widget.tsx`.
+* **Nguyên nhân gốc rễ**: Từ điển dịch thuật thiếu các key dịch cho các thành phần widget mới tạo.
+* **Phương án xử lý**:
+  1. Mở rộng từ điển `web/src/lib/i18n.ts` bổ sung trọn bộ dịch thuật cho `combo_widget_title`, `bus_widget_title`, `splitbill_widget_title`... across 10 global languages.
+  2. Cập nhật các Component Widgets bọc văn bản trong thẻ `t(key, lang)`.
+  3. Chạy lại script test tự động tái sử dụng `node docs/scripts/test-i18n-darkmode.js`.
+* **Trạng thái**: ✅ **ĐÃ FIX & CHẠY SCRIPT TEST THÀNH CÔNG** (`node docs/scripts/test-i18n-darkmode.js` PASSED 29/29).

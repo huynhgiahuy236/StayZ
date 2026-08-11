@@ -1,38 +1,60 @@
-# 🚀 HuKi Travel - Master Feature Standard & Integration Rules
+# 🚀 HuKi Travel - Master Feature Architecture & Service Rule Registry
 
-[Tác giả: Huy] Tài liệu này quy định các chuẩn mực kỹ thuật và quy trình phát triển cho tất cả các Phân Hệ Tính Năng (Feature Modules) thuộc Hệ sinh thái Super-App HuKi Travel.
+> **Tài liệu tổng hợp danh mục quy tắc thiết kế và chuẩn mực kỹ thuật cho tất cả các Phân Hệ Dịch Vụ Microservices (Feature Modules) thuộc Hệ sinh thái Super-App HuKi Travel.**
+> **Tác giả**: Huỳnh Gia Huy (`Huy` - Prefix `h-`) | **HK Team**
+> **Phiên bản Master**: v2.0.0 | **Ngày cập nhật**: 11/08/2026
 
 ---
 
-## 🏛️ 1. DANH SÁCH 7 PHÂN HỆ TÍNH NĂNG HẠT NHÂN (CORE FEATURE MODULES)
+## 🏛️ 1. MA TRẬN PHÂN RÃ CHUYÊN SÂU 8 MICROSERVICES FEATURE MODULES
 
-| STT | Tên Phân Hệ | Mô Tả Chức Năng | Platform Route | Database Model |
+| STT | Phân Hệ Dịch Vụ | Tên Service & Route Path | Database Type | File Quy Tắc Chi Tiết (Rule Specification) |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | **HuKi ID** | Đăng nhập tập trung (SSO) & Xác thực KYC (CCCD, Passport, GPLX) | `/api/v1/auth/kyc` | PostgreSQL `users` |
-| 2 | **HuKi Stay** | Đặt phòng Khách sạn/Villa, tìm kiếm GPS bán kính & bộ lọc tiện ích | `/api/v1/properties` | MongoDB `properties`, `rooms` |
-| 3 | **HuKi Bus** | Sơ đồ ghế xe khách 2 tầng real-time, khóa ghế tạm thời 10 phút | `/api/v1/huki/bus` | MongoDB `bus_trips` |
-| 4 | **HuKi Ride** | Thuê xe máy & ô tô tự lái, kiểm tra tự động GPLX KYC | `/api/v1/huki/rides` | MongoDB `rides` |
-| 5 | **HuKi Trip** | Giỏ hàng chuyến đi Combo (Flight + Stay + Bus + Ride), đếm ngược giữ chỗ | `/api/v1/huki/trips` | MongoDB `trips` |
-| 6 | **HuKi Pass** | Ví vé điện tử & Mã QR Code động tự làm mới mỗi 30 giây | `/api/v1/huki/pass` | MongoDB `huki_passes` |
-| 7 | **HuKi Wallet & Split Bill** | Ví nhóm chuyến đi, nhập chi tiêu & tự động hạch toán chia nợ chéo | `/api/v1/huki/split-bill` | PostgreSQL `split_bill_*` |
+| **1** | **HuKi ID (SSO & KYC)** | `huki-auth-service` (`/api/v1/auth`) | PostgreSQL | [`01-huki-id-auth.md`](01-huki-id-auth.md) |
+| **2** | **HuKi Stay** | `huki-stay-service` (`/api/v1/properties`) | PostgreSQL | [`02-huki-stay.md`](02-huki-stay.md) |
+| **3** | **HuKi Bus** | `huki-bus-service` (`/api/v1/huki/bus`) | MongoDB + Redis | [`03-huki-bus.md`](03-huki-bus.md) |
+| **4** | **HuKi Ride** | `huki-ride-service` (`/api/v1/huki/rides`) | MongoDB + PostgreSQL | [`04-huki-ride.md`](04-huki-ride.md) |
+| **5** | **HuKi Trip** | `huki-trip-service` (`/api/v1/huki/trips`) | MongoDB + Redis | [`05-huki-trip.md`](05-huki-trip.md) |
+| **6** | **HuKi Pass** | `huki-pass-service` (`/api/v1/huki/pass`) | MongoDB | [`06-huki-pass.md`](06-huki-pass.md) |
+| **7** | **HuKi Wallet & Split Bill**| `huki-wallet-service` (`/api/v1/huki/split-bill`) | PostgreSQL | [`07-huki-wallet-splitbill.md`](07-huki-wallet-splitbill.md) |
+| **8** | **HuKi Guide & Taste** | `huki-guide-service` (`/api/v1/huki/guide`) | MongoDB | [`08-huki-guide-taste.md`](08-huki-guide-taste.md) |
 
 ---
 
-## 📐 2. QUY TRÌNH PHÁT TRIỂN & CẬP NHẬT FEATURE MỚI
+## 📐 2. NGUYÊN TẮC THIẾT KẾ SENIOR ARCHITECT NĂNG CAO (ARCHITECTURAL STANDARDS)
 
-1. **Phân Rã Controller & Router**: Mỗi feature mới phải có file Controller (`feature.controller.js`) và Router (`feature.router.js`) độc lập tại `platform/src/`.
-2. **Khai Báo Data Schema Dual-DB**:
-   - Nếu là giao dịch/tài chính/KYC: Khai báo Table trong `platform/prisma/schema.prisma` (PostgreSQL).
-   - Nếu là danh mục/JSON lồng nhau/real-time: Khai báo Schema trong `platform/src/models/` (MongoDB Mongoose).
-3. **Chuẩn Hóa API Response Contract**:
-   - Thành công: `{ success: true, message: "...", data: { ... } }`
-   - Thất bại: `{ success: false, code: "ERROR_CODE", message: "Chi tiết lỗi" }`
-4. **Cặp Đôi Đồng Bộ với Nhật Ký Lỗi (`docs/errors/`)**:
-   - Mỗi khi phát sinh lỗi trong quá trình phát triển/chạy feature, log lỗi chi tiết phải được tự động ghi lại tại `docs/errors/error-YYYY-MM-DD.log`.
+### 🔹 1. Chuẩn Hóa Kiến Trúc Dual-Database (Polyglot Persistence):
+- **PostgreSQL**: Dùng cho giao dịch tài chính, số dư tiền, quản lý tồn kho phòng `room_inventory`, tài khoản User & KYC (đảm bảo tính toàn vẹn **ACID strict**).
+- **MongoDB Atlas**: Dùng cho giỏ hàng đa dịch vụ `trips`, sơ đồ xe `bus_trips`, cẩm nang `guide` (phù hợp dữ liệu JSON lồng nhau linh hoạt).
+- **Redis Cluster**: Caching API master catalog, đếm ngược giữ chỗ tập trung `Hold Timer` (10 phút) và phân tán khóa `Redlock` chống Overbooking.
+
+### 🔹 2. Chuẩn Hóa RESTful API Contract & Response Format:
+Tất cả các Service bắt buộc trả về định dạng JSON thống nhất:
+- **Thành công (200/201 OK)**:
+  ```json
+  {
+    "success": true,
+    "code": "SUCCESS",
+    "message": "Thông báo ngắn gọn",
+    "data": { ... },
+    "meta": { "page": 1, "limit": 20, "total": 100 }
+  }
+  ```
+- **Thất bại (4xx/5xx Error)**:
+  ```json
+  {
+    "success": false,
+    "code": "INVALID_INPUT_DATA",
+    "message": "Mô tả chi tiết nguyên nhân lỗi",
+    "error": { ... }
+  }
+  ```
+
+### 🔹 3. Quy Tắc Bảo Toàn Dữ Liệu & Soft Delete (Audit Rules):
+Mọi bảng/collection CSDL bắt buộc duy trì 5 trường audit soft delete:
+- **PostgreSQL Prisma**: `is_deleted` (Boolean), `deleted_at` (DateTime?), `deleted_by` (UUID?), `created_at` (DateTime), `updated_at` (DateTime).
+- **MongoDB Mongoose**: `isDeleted` (Boolean), `deletedAt` (Date), `deletedBy` (String), `timestamps: true`.
 
 ---
 
-## 🛡️ 3. QUY TẮC BẢO TOÀN DỮ LIỆU FEATURE (AUDIT & SOFT DELETE)
-Mọi feature mới khi làm việc với CSDL phải tuân thủ 5 trường Audit Soft Delete:
-- PostgreSQL Prisma: `is_deleted`, `deleted_at`, `deleted_by`, `created_at`, `updated_at`.
-- MongoDB Mongoose: `isDeleted`, `deletedAt`, `deletedBy`, `timestamps: true`.
+> Vui lòng truy cập từng file tài liệu quy tắc chi tiết theo danh mục bảng trên để xem đặc tả kỹ thuật chi tiết của từng Service.
