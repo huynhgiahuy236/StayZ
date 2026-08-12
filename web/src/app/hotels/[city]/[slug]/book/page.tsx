@@ -7,6 +7,8 @@ import { SiteHeader } from "@/components/site-header";
 import { getHotel, getRoomsByProperty, createBooking, createPayment } from "@/lib/api";
 import type { Hotel, Room } from "@/lib/types";
 
+import { t, Language } from "@/lib/i18n";
+
 function getToken(): string | null {
   if (typeof document === "undefined") return null;
   const m = document.cookie.split("; ").find((c) => c.startsWith("stayz_access_token="));
@@ -20,6 +22,7 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
   const sp = useSearchParams();
   const preselectedRoomId = sp.get("roomId") ?? "";
 
+  const [lang, setLang] = useState<Language>("vi");
   const [hotel, setHotel] = useState<Hotel | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +36,18 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
   const [guests, setGuests] = useState(1);
   const [roomsCount, setRoomsCount] = useState(1);
   const [paymentPlan, setPaymentPlan] = useState<"deposit_30" | "full_100">("full_100");
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || "vi";
+    setLang(saved);
+
+    const handleLangChange = (e: CustomEvent<{ lang: Language }>) => {
+      if (e.detail?.lang) setLang(e.detail.lang);
+    };
+
+    window.addEventListener("stayz_lang_changed" as any, handleLangChange as any);
+    return () => window.removeEventListener("stayz_lang_changed" as any, handleLangChange as any);
+  }, []);
 
   useEffect(() => {
     const token = getToken();
@@ -111,9 +126,9 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
       {/* Left: Form */}
       <div>
         <Link href={`/hotels/${city}/${slug}`} className="back-link">
-          <ArrowLeft size={14} aria-hidden="true" /> Quay lại {hotel.title}
+          <ArrowLeft size={14} aria-hidden="true" /> {t("Quay lại", lang)} {hotel.title}
         </Link>
-        <h1>Đặt phòng</h1>
+        <h1>{t("Đặt phòng", lang)}</h1>
 
         {/* Real-time 15-Minute Hold Countdown Banner */}
         <div style={{
@@ -131,10 +146,10 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
           <span style={{ fontSize: "20px" }}>⏳</span>
           <div>
             <strong style={{ color: "#fbbf24", fontSize: "14px", display: "block" }}>
-              Giữ chỗ tạm thời (15 Phút)
+              {t("Giữ chỗ tạm thời (15 Phút)", lang)}
             </strong>
             <span style={{ fontSize: "12px", opacity: 0.9 }}>
-              Phòng của bạn đang được tạm giữ trong 15:00 phút. Hoàn tất thanh toán PayOS để đảm bảo giữ chỗ.
+              {t("Phòng của bạn đang được tạm giữ trong 15:00 phút. Hoàn tất thanh toán PayOS để đảm bảo giữ chỗ.", lang)}
             </span>
           </div>
         </div>
@@ -142,7 +157,7 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
         <form onSubmit={handleSubmit} noValidate>
           {/* Room selection */}
           <div className="book-section">
-            <h2>Chọn loại phòng</h2>
+            <h2>{t("Chọn loại phòng", lang)}</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-3)" }}>
               {rooms.map((r) => (
                 <label

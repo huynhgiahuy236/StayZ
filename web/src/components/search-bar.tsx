@@ -19,15 +19,51 @@ const SERVICE_TABS = [
 ];
 
 const CITIES = [
-  { value: "", labelKey: "Tất cả" },
-  { value: "da-nang", label: "Đà Nẵng" },
-  { value: "da-lat", label: "Đà Lạt" },
-  { value: "ha-noi", label: "Hà Nội" },
-  { value: "vung-tau", label: "Vũng Tàu" },
-  { value: "hoi-an", label: "Hội An" },
-  { value: "nha-trang", label: "Nha Trang" },
-  { value: "ho-chi-minh", label: "TP. Hồ Chí Minh" },
-  { value: "phu-quoc", label: "Phú Quốc" },
+  { value: "", labelKey: "Tất cả điểm đến (12 Quốc gia)" },
+  // 🇻🇳 Việt Nam
+  { value: "da-nang", label: "🇻🇳 Đà Nẵng, Việt Nam" },
+  { value: "da-lat", label: "🇻🇳 Đà Lạt, Việt Nam" },
+  { value: "ha-noi", label: "🇻🇳 Hà Nội, Việt Nam" },
+  { value: "ho-chi-minh", label: "🇻🇳 TP. Hồ Chí Minh, Việt Nam" },
+  { value: "phu-quoc", label: "🇻🇳 Phú Quốc, Việt Nam" },
+  { value: "nha-trang", label: "🇻🇳 Nha Trang, Việt Nam" },
+  { value: "hoi-an", label: "🇻🇳 Hội An, Việt Nam" },
+  // 🇯🇵 Nhật Bản
+  { value: "tokyo", label: "🇯🇵 Tokyo, Nhật Bản" },
+  { value: "kyoto", label: "🇯🇵 Kyoto, Nhật Bản" },
+  { value: "osaka", label: "🇯🇵 Osaka, Nhật Bản" },
+  // 🇰🇷 Hàn Quốc
+  { value: "seoul", label: "🇰🇷 Seoul, Hàn Quốc" },
+  { value: "busan", label: "🇰🇷 Busan, Hàn Quốc" },
+  { value: "jeju", label: "🇰🇷 Đảo Jeju, Hàn Quốc" },
+  // 🇺🇸 Mỹ
+  { value: "new-york", label: "🇺🇸 New York, Mỹ" },
+  { value: "los-angeles", label: "🇺🇸 Los Angeles, Mỹ" },
+  { value: "san-francisco", label: "🇺🇸 San Francisco, Mỹ" },
+  { value: "las-vegas", label: "🇺🇸 Las Vegas, Mỹ" },
+  { value: "hawaii", label: "🇺🇸 Hawaii, Mỹ" },
+  // 🇹🇭 Thái Lan
+  { value: "bangkok", label: "🇹🇭 Bangkok, Thái Lan" },
+  { value: "phuket", label: "🇹🇭 Phuket, Thái Lan" },
+  { value: "chiang-mai", label: "🇹🇭 Chiang Mai, Thái Lan" },
+  // 🇨🇳 Trung Quốc
+  { value: "shanghai", label: "🇨🇳 Thượng Hải, Trung Quốc" },
+  { value: "beijing", label: "🇨🇳 Bắc Kinh, Trung Quốc" },
+  // 🇮🇩 Indonesia
+  { value: "bali", label: "🇮🇩 Bali, Indonesia" },
+  { value: "jakarta", label: "🇮🇩 Jakarta, Indonesia" },
+  // 🇨🇭 Thụy Sĩ
+  { value: "zurich", label: "🇨🇭 Zurich, Thụy Sĩ" },
+  { value: "geneva", label: "🇨🇭 Geneva, Thụy Sĩ" },
+  // 🇦🇺 Úc
+  { value: "sydney", label: "🇦🇺 Sydney, Úc" },
+  { value: "melbourne", label: "🇦🇺 Melbourne, Úc" },
+  // 🇧🇷 Brazil
+  { value: "rio-de-janeiro", label: "🇧🇷 Rio de Janeiro, Brazil" },
+  // 🇦🇷 Argentina
+  { value: "buenos-aires", label: "🇦🇷 Buenos Aires, Argentina" },
+  // 🇸🇬 Singapore
+  { value: "singapore", label: "🇸🇬 Singapore" },
 ];
 
 function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {

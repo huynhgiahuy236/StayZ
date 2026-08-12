@@ -463,8 +463,16 @@ const reviewComments = [
 ];
 
 async function main() {
-  const mongoUrl = process.env.DATABASE_URL || process.env.MONGODB_URI || DATABASE_URL || "mongodb://127.0.0.1:27017/stayz";
-  await mongoose.connect(mongoUrl, { serverSelectionTimeoutMS: 30000 });
+  const primaryUrl = process.env.DATABASE_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/stayz";
+  const localUrl = process.env.LOCAL_DATABASE_URL || "mongodb://127.0.0.1:27017/stayz";
+
+  try {
+    console.log(`Connecting to MongoDB at ${primaryUrl}...`);
+    await mongoose.connect(primaryUrl, { serverSelectionTimeoutMS: 5000 });
+  } catch (err) {
+    console.warn(`Primary MongoDB Atlas connection failed (${err.message}). Falling back to Local MongoDB at ${localUrl}...`);
+    await mongoose.connect(localUrl, { serverSelectionTimeoutMS: 5000 });
+  }
 
   const password = await bcrypt.hash("Stayz@123", 10);
   const users = [];

@@ -5,7 +5,8 @@ const Destination = require("./models/destinations.model");
 const Property = require("./models/properties.model");
 const { DATABASE_URL } = require("./constants/app.constant");
 
-const mongoUrl = process.env.DATABASE_URL || process.env.MONGODB_URI || DATABASE_URL || "mongodb://127.0.0.1:27017/stayz";
+const primaryUrl = process.env.DATABASE_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/stayz";
+const localUrl = process.env.LOCAL_DATABASE_URL || "mongodb://127.0.0.1:27017/stayz";
 
 const seedDestinations = [
   // --- QUỐC TẾ (INTERNATIONAL) ---
@@ -612,20 +613,14 @@ const seedDestinations = [
 ];
 
 async function runSeed() {
-  for (let attempt = 1; attempt <= 5; attempt++) {
-    try {
-      console.log(`Connecting to MongoDB Atlas (Attempt ${attempt}/5)...`);
-      await mongoose.connect(mongoUrl, {
-        serverSelectionTimeoutMS: 30000,
-        connectTimeoutMS: 30000,
-      });
-      console.log("Connected to MongoDB for Seeding High-Res 5-Language Destinations!");
-      break;
-    } catch (err) {
-      console.error(`Attempt ${attempt} failed: ${err.message}`);
-      if (attempt === 5) process.exit(1);
-      await new Promise((res) => setTimeout(res, 2000));
-    }
+  try {
+    console.log(`Connecting to Primary MongoDB (${primaryUrl})...`);
+    await mongoose.connect(primaryUrl, { serverSelectionTimeoutMS: 5000 });
+    console.log("Connected to Primary MongoDB for Seeding!");
+  } catch (err) {
+    console.warn(`Primary MongoDB Atlas connection failed (${err.message}). Falling back to Local MongoDB at ${localUrl}...`);
+    await mongoose.connect(localUrl, { serverSelectionTimeoutMS: 5000 });
+    console.log("Connected to Local MongoDB for Seeding!");
   }
 
   for (const data of seedDestinations) {
