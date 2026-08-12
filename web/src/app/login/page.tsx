@@ -1,10 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { login } from "@/lib/api";
 import { API_URL } from "@/lib/api";
+import { t, Language } from "@/lib/i18n";
 
 function LoginForm() {
   const router = useRouter();
