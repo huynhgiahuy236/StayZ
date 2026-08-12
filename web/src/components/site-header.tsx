@@ -133,18 +133,18 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
 
         {/* Nav links */}
         <div className="nav-links" role="menubar">
-          <Link href="/search" role="menuitem">{t("nav_stays", currentLang)}</Link>
+          <Link href="/search" role="menuitem">{t("Khách Sạn & Villa", currentLang)}</Link>
           <Link href="#search-banner" role="menuitem" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-            <Bus size={14} /> {t("nav_bus", currentLang)}
+            <Bus size={14} /> {t("Vé Xe Khách", currentLang)}
           </Link>
           <Link href="#search-banner" role="menuitem" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-            <Car size={14} /> {t("nav_ride", currentLang)}
+            <Car size={14} /> {t("Thuê Xe Tự Lái", currentLang)}
           </Link>
           <Link href="#taste-section" role="menuitem" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-            <Utensils size={14} /> {t("taste_title", currentLang).split("&")[0]}
+            <Utensils size={14} /> {t("Ẩm Thực Đặc Sản & Quán Ngon", currentLang).split("&")[0]}
           </Link>
           <Link href="#experiences-section" role="menuitem" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-            <Compass size={14} /> {t("experiences_title", currentLang).split("&")[0]}
+            <Compass size={14} /> {t("Trải Nghiệm & Điểm Sống Ảo", currentLang).split("&")[0]}
           </Link>
           {isAdmin && (
             <Link href="/admin" role="menuitem" style={{ color: "var(--gold)", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 4 }}>
@@ -178,7 +178,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
               aria-label="Chọn quốc gia"
             >
               <span>🌍</span>
-              <span className="hide-mobile" style={{ whiteSpace: "nowrap" }}>{t("nav_countries", currentLang)}</span>
+              <span className="hide-mobile" style={{ whiteSpace: "nowrap" }}>{t("Quốc Gia", currentLang)}</span>
               <ChevronDown size={13} />
             </button>
 
@@ -279,7 +279,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                 }}
               >
                 <div style={{ padding: "6px 10px 8px 10px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#64748b", borderBottom: "1px solid #f1f5f9", marginBottom: 4 }}>
-                  {t("lang_dropdown_title", currentLang)}
+                  {t("10 Ngôn Ngữ Toàn Cầu", currentLang)}
                 </div>
                 {LANGUAGES.map((langItem) => {
                   const isSelected = currentLang === langItem.code;
@@ -342,7 +342,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                   </span>
                 )}
                 <span style={{ maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {user.full_name?.split(" ").slice(-1)[0] ?? t("nav_account", currentLang)}
+                  {user.full_name?.split(" ").slice(-1)[0] ?? t("Tài Khoản HuKi", currentLang)}
                 </span>
                 <ChevronDown size={14} aria-hidden="true" />
               </button>
@@ -368,15 +368,15 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                   )}
                   <div className="nav-dropdown-divider" role="separator" />
                   <button className="nav-dropdown-item danger" role="menuitem" onClick={handleLogout}>
-                    <LogOut size={16} aria-hidden="true" /> {t("nav_logout", currentLang)}
+                    <LogOut size={16} aria-hidden="true" /> {t("Đăng Xuất", currentLang)}
                   </button>
                 </div>
               )}
             </div>
           ) : (
             <>
-              <Link href="/login" className="btn-ghost">{t("nav_login", currentLang)}</Link>
-              <Link href="/auth/register" className="btn-primary">{t("nav_signup", currentLang)}</Link>
+              <Link href="/login" className="btn-ghost">{t("Đăng Nhập", currentLang)}</Link>
+              <Link href="/auth/register" className="btn-primary">{t("Đăng Ký", currentLang)}</Link>
             </>
           )}
         </div>

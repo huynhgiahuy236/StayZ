@@ -92,14 +92,14 @@ export function RoomCard({ room, propertyCity, propertySlug }: Props) {
               )}
             </div>
             <strong>{new Intl.NumberFormat("vi-VN").format(room.price)} ₫</strong>
-            <span style={{ marginLeft: 4 }}>{t("per_night", lang)}</span>
+            <span style={{ marginLeft: 4 }}>{t("/ đêm", lang)}</span>
           </div>
           <a
             href={`/hotels/${encodeURIComponent(propertyCity)}/${propertySlug}/book?roomId=${room._id}`}
             className="btn-book"
-            aria-label={`${t("card_book_now", lang)} ${room.name}`}
+            aria-label={`${t("Đặt Ngay", lang)} ${room.name}`}
           >
-            {t("card_book_now", lang)}
+            {t("Đặt Ngay", lang)}
           </a>
         </div>
       </div>

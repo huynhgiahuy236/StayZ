@@ -48,10 +48,10 @@ export function SplitbillCalculatorWidget({ lang = "vi" }: Props) {
             <Wallet size={14} /> HUKI WALLET & SPLIT BILL
           </span>
           <h2 style={{ fontSize: 26, fontWeight: 800, margin: "12px 0 8px 0", color: "#ffffff" }}>
-            {t("splitbill_widget_title", lang)}
+            {t("Quản Lý Chi Tiêu Nhóm & Hạch Toán Nợ Chéo Tự Động", lang)}
           </h2>
           <p style={{ fontSize: 14, color: "#94a3b8", lineHeight: 1.6, margin: 0 }}>
-            {t("footer_desc", lang)}
+            {t("Nền tảng tích hợp du lịch toàn diện: Đặt phòng + Vé xe + Thuê xe + Ẩm thực + Trải nghiệm.", lang)}
           </p>
 
           <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -136,7 +136,7 @@ export function SplitbillCalculatorWidget({ lang = "vi" }: Props) {
           </div>
 
           <div style={{ background: "rgba(251, 191, 36, 0.15)", border: "1px solid rgba(251, 191, 36, 0.3)", borderRadius: 14, padding: 16, textAlign: "center" }}>
-            <span style={{ fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>{t("splitbill_per_person", lang)}:</span>
+            <span style={{ fontSize: 12, color: "#fbbf24", fontWeight: 600 }}>{t("MỖI THÀNH VIÊN CẦN THANH TOÁN", lang)}:</span>
             <div style={{ fontSize: 24, fontWeight: 900, color: "#ffffff", marginTop: 4 }}>
               {new Intl.NumberFormat("vi-VN").format(perPerson)} ₫
             </div>

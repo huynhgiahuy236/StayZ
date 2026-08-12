@@ -20,10 +20,10 @@ function getI18nText(field: unknown, lang: Language, fallback: string): string {
 }
 
 const CATEGORY_MAP: Record<string, { labelKey: string; icon: any; color: string }> = {
-  nature: { labelKey: "category_nature", icon: Trees, color: "#10b981" },
-  culture: { labelKey: "category_culture", icon: Landmark, color: "#8b5cf6" },
-  entertainment: { labelKey: "category_entertainment", icon: Sparkles, color: "#f59e0b" },
-  checkin: { labelKey: "category_checkin", icon: Camera, color: "#ec4899" },
+  nature: { labelKey: "Thiên nhiên", icon: Trees, color: "#10b981" },
+  culture: { labelKey: "Văn hóa", icon: Landmark, color: "#8b5cf6" },
+  entertainment: { labelKey: "Giải trí", icon: Sparkles, color: "#f59e0b" },
+  checkin: { labelKey: "Sống ảo", icon: Camera, color: "#ec4899" },
 };
 
 export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
@@ -47,8 +47,8 @@ export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
             <p className="eyebrow dark" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
               <Compass size={14} className="text-gold" /> HUKI EXPERIENCE
             </p>
-            <h2 id="exp-heading">{t("experiences_title", lang)}</h2>
-            <p className="section-sub">{t("experiences_subtitle", lang)}</p>
+            <h2 id="exp-heading">{t("Trải Nghiệm & Điểm Sống Ảo", lang)}</h2>
+            <p className="section-sub">{t("Những hoạt động & góc chụp hình triệu view không thể bỏ qua", lang)}</p>
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
               textDecoration: "none",
             }}
           >
-            {t("view_more", lang)} ({allActivities.length})
+            {t("Xem thêm", lang)} ({allActivities.length})
           </Link>
         </div>
       </div>

@@ -78,22 +78,22 @@ export function TripComboWidget({ lang = "vi" }: Props) {
             </div>
 
             <h2 style={{ fontSize: 32, fontWeight: 900, margin: "8px 0 12px 0", color: "#ffffff", lineHeight: 1.2 }}>
-              {t("combo_widget_title", lang)}
+              {t("Gom Chuyến Đi Đa Dịch Vụ · Tiết Kiệm Ngay 10%", lang)}
             </h2>
 
             <p style={{ fontSize: 14, color: "#cbd5e1", margin: 0, lineHeight: 1.6 }}>
-              {t("combo_widget_desc", lang)}
+              {t("Kết hợp Vé máy bay/Xe khách + Khách sạn + Thuê xe tự lái vào 1 chuyến đi duy nhất. Khóa giữ chỗ 10 phút.", lang)}
             </p>
 
             <div style={{ display: "flex", gap: 16, marginTop: 24, flexWrap: "wrap" }}>
               <span style={{ fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6, color: "#f8fafc" }}>
-                <CheckCircle2 size={16} style={{ color: "#34d399" }} /> {t("combo_feature_lock", lang)}
+                <CheckCircle2 size={16} style={{ color: "#34d399" }} /> {t("Tự động khóa chỗ 10 phút", lang)}
               </span>
               <span style={{ fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6, color: "#f8fafc" }}>
-                <CheckCircle2 size={16} style={{ color: "#34d399" }} /> {t("combo_feature_refund", lang)}
+                <CheckCircle2 size={16} style={{ color: "#34d399" }} /> {t("Hoàn 100% cọc hủy trước 48h", lang)}
               </span>
               <span style={{ fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6, color: "#f8fafc" }}>
-                <CheckCircle2 size={16} style={{ color: "#34d399" }} /> {t("combo_feature_pass", lang)}
+                <CheckCircle2 size={16} style={{ color: "#34d399" }} /> {t("Ví vé QR Code Động 30s", lang)}
               </span>
             </div>
 
@@ -115,7 +115,7 @@ export function TripComboWidget({ lang = "vi" }: Props) {
                   transition: "all 0.2s ease",
                 }}
               >
-                {t("combo_button", lang)} <ArrowRight size={18} />
+                {t("Tạo Chuyến Đi Combo", lang)} <ArrowRight size={18} />
               </Link>
             </div>
           </div>

@@ -49,9 +49,9 @@ export function DestinationsInteractive({
           <p style={{ color: "#fbbf24", fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>
             <Compass size={14} style={{ display: "inline-block", verticalAlign: "middle" }} /> StayZ Destinations Portal
           </p>
-          <h1 style={{ fontSize: "2.5rem", fontWeight: 800, marginBottom: 12 }}>{t("destinations_title", lang)}</h1>
+          <h1 style={{ fontSize: "2.5rem", fontWeight: 800, marginBottom: 12 }}>{t("Vẻ Đẹp Thiên Nhiên & Điểm Đến Hot", lang)}</h1>
           <p style={{ opacity: 0.85, fontSize: "1.05rem" }}>
-            {t("destinations_subtitle", lang)}
+            {t("Chọn quốc gia để khám phá 8 điểm đến tuyệt vời nhất", lang)}
           </p>
         </div>
       </section>

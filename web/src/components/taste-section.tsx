@@ -39,8 +39,8 @@ export function TasteSection({ destinations, lang = "vi" }: Props) {
           <p className="eyebrow dark" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
             <Utensils size={14} className="text-gold" /> TASTE OF STAYZ
           </p>
-          <h2 id="taste-heading">{t("taste_title", lang)}</h2>
-          <p className="section-sub">{t("taste_subtitle", lang)}</p>
+          <h2 id="taste-heading">{t("Ẩm Thực Đặc Sản & Quán Ngon", lang)}</h2>
+          <p className="section-sub">{t("Hương vị truyền thống địa phương chuẩn vị khó cưỡng", lang)}</p>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ export function TasteSection({ destinations, lang = "vi" }: Props) {
                 {spots.length > 0 && spots[0] !== "" && (
                   <div style={{ borderTop: "1px solid var(--color-border, #f1f5f9)", paddingTop: 10, marginTop: 6 }}>
                     <span style={{ fontSize: 10, fontWeight: 700, color: "var(--gold, #d97706)", textTransform: "uppercase" }}>
-                      {t("recommended_spot", lang)}:
+                      {t("Địa chỉ gợi ý", lang)}:
                     </span>
                     <div style={{ fontSize: 11, fontWeight: 600, color: "var(--color-ink, #1e293b)", marginTop: 2 }}>
                       🏠 {spots.slice(0, 2).join(" • ")}
@@ -141,7 +141,7 @@ export function TasteSection({ destinations, lang = "vi" }: Props) {
             textDecoration: "none",
           }}
         >
-          {t("view_more", lang)} ({allFoods.length})
+          {t("Xem thêm", lang)} ({allFoods.length})
         </Link>
       </div>
     </section>

@@ -13,7 +13,7 @@ interface Props {
 export function HotelCard({ hotel, lang = "vi" }: Props) {
   const price = hotel.min_price ?? hotel.base_price;
   const imageSrc = resolveImage(hotel.main_image_url);
-  const typeLabel = hotel.type ? t(`filter_${hotel.type.toLowerCase()}`, lang) : t("filter_hotel", lang);
+  const typeLabel = hotel.type ? t(`filter_${hotel.type.toLowerCase()}`, lang) : t("Khách sạn", lang);
 
   return (
     <Link href={`/hotels/${encodeURIComponent(hotel.city.toLowerCase().replace(/\s+/g, "-"))}/${hotel.slug}`} className="hotel-card" aria-label={`Xem ${hotel.title}`}>
@@ -28,7 +28,7 @@ export function HotelCard({ hotel, lang = "vi" }: Props) {
           loading="lazy"
         />
         {hotel.is_preferred && (
-          <div className="hotel-badge" aria-label="HuKi Pick">{t("stayz_pick", lang)}</div>
+          <div className="hotel-badge" aria-label="HuKi Pick">{t("HuKi Pick", lang)}</div>
         )}
       </div>
       <div className="hotel-meta">
@@ -39,7 +39,7 @@ export function HotelCard({ hotel, lang = "vi" }: Props) {
             {hotel.rating.toFixed(1)}
             {hotel.review_count != null && (
               <span style={{ color: "var(--color-ink-3)", fontWeight: 400 }}>
-                ({hotel.review_count} {t("card_reviews", lang)})
+                ({hotel.review_count} {t("đánh giá", lang)})
               </span>
             )}
           </span>
@@ -56,7 +56,7 @@ export function HotelCard({ hotel, lang = "vi" }: Props) {
             ? new Intl.NumberFormat("vi-VN").format(price) + " ₫"
             : "Liên hệ"}
         </strong>
-        {price && <span>{t("per_night", lang)}</span>}
+        {price && <span>{t("/ đêm", lang)}</span>}
       </div>
     </Link>
   );

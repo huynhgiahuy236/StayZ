@@ -143,26 +143,39 @@ initSocket(server);
 // Disable Mongoose command buffering so queries fail fast or handle gracefully instead of buffering for 10s
 mongoose.set("bufferCommands", false);
 
+let mongoConnectAttempts = 0;
+const LOCAL_MONGO_URL = process.env.LOCAL_DATABASE_URL || "mongodb://127.0.0.1:27017/stayz";
+
 async function connectMongoWithRetry() {
   if (isMongoConnecting || mongoose.connection.readyState === 1) return;
 
   isMongoConnecting = true;
   lastMongoAttemptAt = new Date().toISOString();
+  mongoConnectAttempts++;
+
+  // If Atlas fails after 2 attempts, try local MongoDB fallback
+  const targetUrl = (mongoConnectAttempts > 2 && DATABASE_URL.startsWith("mongodb+srv://"))
+    ? LOCAL_MONGO_URL
+    : DATABASE_URL;
+
   try {
-    await mongoose.connect(DATABASE_URL, {
+    await mongoose.connect(targetUrl, {
       serverSelectionTimeoutMS: 5000,
       connectTimeoutMS: 10000,
       socketTimeoutMS: 45000,
       family: 4, // IPv4 first to prevent Windows dual-stack IPv6 DNS ECONNRESET timeouts
     });
     lastMongoError = null;
-    console.log("MongoDB connected");
+    console.log(`MongoDB connected successfully via ${targetUrl.startsWith("mongodb+srv://") ? "MongoDB Atlas" : "Local MongoDB"}`);
     await bookingService.settleExpiredBookings().catch((error) => {
       console.error("Booking settlement failed:", error.message);
     });
   } catch (error) {
     lastMongoError = error.message;
-    console.error("MongoDB connection failed:", error.message);
+    console.error(`MongoDB connection failed (${targetUrl.startsWith("mongodb+srv://") ? "Atlas Cluster" : "Local Database"}):`, error.message);
+    if (DATABASE_URL.startsWith("mongodb+srv://")) {
+      console.warn("📌 Gợi ý khắc phục: Kiểm tra Whitelist IP địa chỉ IP hiện tại trên MongoDB Atlas Security (https://www.mongodb.com/docs/atlas/security-whitelist/) hoặc kích hoạt MongoDB Local tại mongodb://127.0.0.1:27017/stayz");
+    }
     setTimeout(connectMongoWithRetry, 3000);
   } finally {
     isMongoConnecting = false;

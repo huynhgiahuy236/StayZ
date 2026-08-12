@@ -115,8 +115,8 @@ export function CountriesSection({ lang = "vi", onSelectCountry }: Props) {
           <p className="eyebrow dark" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
             <Globe size={14} className="text-gold" /> StayZ Global
           </p>
-          <h2 id="countries-heading">{t("countries_title", lang)}</h2>
-          <p className="section-sub">{t("countries_subtitle", lang)}</p>
+          <h2 id="countries-heading">{t("Khám Phá 12 Quốc Gia Du Lịch", lang)}</h2>
+          <p className="section-sub">{t("Hành trình xuyên lục địa từ Đông Nam Á đến Châu Mỹ & Châu Âu", lang)}</p>
         </div>
       </div>
 

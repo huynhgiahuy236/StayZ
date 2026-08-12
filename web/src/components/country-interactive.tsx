@@ -117,7 +117,7 @@ export function CountryDetailInteractive({
             }}
           >
             <span>
-              📍 <strong>{destinations.length}</strong> {t("stat_destinations", lang)}
+              📍 <strong>{destinations.length}</strong> {t("Điểm đến Toàn cầu", lang)}
             </span>
             <span>
               🏨 <strong>{hotels.length || 8}</strong> {t("hotels_5star", lang)}
@@ -230,10 +230,10 @@ export function CountryDetailInteractive({
                   fontWeight: 700,
                 }}
               >
-                <Utensils size={14} /> {t("taste_title", lang)}
+                <Utensils size={14} /> {t("Ẩm Thực Đặc Sản & Quán Ngon", lang)}
               </p>
               <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#0f172a" }}>
-                {t("taste_subtitle", lang)}
+                {t("Hương vị truyền thống địa phương chuẩn vị khó cưỡng", lang)}
               </h2>
             </div>
             <div
@@ -282,10 +282,10 @@ export function CountryDetailInteractive({
                   fontWeight: 700,
                 }}
               >
-                <Camera size={14} /> {t("experiences_title", lang)}
+                <Camera size={14} /> {t("Trải Nghiệm & Điểm Sống Ảo", lang)}
               </p>
               <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#0f172a" }}>
-                {t("experiences_subtitle", lang)}
+                {t("Những hoạt động & góc chụp hình triệu view không thể bỏ qua", lang)}
               </h2>
             </div>
             <div

@@ -22,10 +22,10 @@ interface Props {
 }
 
 const HOTEL_TABS = [
-  { id: "all", labelKey: "filter_all", icon: Building },
-  { id: "hotel", labelKey: "filter_hotel", icon: HotelIcon },
-  { id: "villa", labelKey: "filter_villa", icon: Palmtree },
-  { id: "apartment", labelKey: "filter_apartment", icon: HomeIcon },
+  { id: "all", labelKey: "Tất cả", icon: Building },
+  { id: "hotel", labelKey: "Khách sạn", icon: HotelIcon },
+  { id: "villa", labelKey: "Villa & Resort", icon: Palmtree },
+  { id: "apartment", labelKey: "Căn hộ & Business", icon: HomeIcon },
 ];
 
 const HERO_COUNTRY_BACKGROUNDS: Record<Language, string> = {
@@ -89,26 +89,26 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
           <div style={{ maxWidth: 1400, margin: "0 auto", width: "100%" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
               <span style={{ background: "rgba(251, 191, 36, 0.2)", color: "#fbbf24", border: "1px solid rgba(251, 191, 36, 0.4)", padding: "3px 10px", borderRadius: 100, fontSize: 10, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase" }}>
-                🌐 {t("lang_dropdown_title", lang)}
+                🌐 {t("10 Ngôn Ngữ Toàn Cầu", lang)}
               </span>
             </div>
             <p className="eyebrow" style={{ letterSpacing: "1.5px", textTransform: "uppercase", textAlign: "left", marginBottom: 8 }}>
-              {t("hero_slogan", lang)}
+              {t("Nền tảng Tích hợp Du lịch · HuKi Travel Ecosystem", lang)}
             </p>
             <h1 style={{ fontSize: "clamp(32px, 5vw, 54px)", fontWeight: 900, marginBottom: 12, textAlign: "left", lineHeight: 1.15 }}>
-              {t("hero_title_1", lang)}<br />
-              <em style={{ color: "var(--gold, #fbbf24)", fontStyle: "normal" }}>{t("hero_title_2", lang)}</em>
+              {t("Khám Phá Thế Giới", lang)}<br />
+              <em style={{ color: "var(--gold, #fbbf24)", fontStyle: "normal" }}>{t("Trải Nghiệm Trọn Vẹn", lang)}</em>
             </h1>
             <p className="hero-copy" style={{ maxWidth: 720, margin: "0 0 28px 0", textAlign: "left", fontSize: 15, color: "#cbd5e1" }}>
-              {t("hero_subtitle", lang)}
+              {t("Đặt phòng khách sạn, vé xe khách 2 tầng, thuê xe tự lái và gom chuyến đi tiết kiệm 10% tại 12 quốc gia.", lang)}
             </p>
 
             <SearchBar lang={lang} />
 
             <div className="trust-row" style={{ marginTop: 24, justifyContent: "flex-start", gap: 24 }}>
-              <span><BadgeCheck size={15} style={{ color: "#fbbf24" }} aria-hidden="true" /> {t("deposit_badge", lang)}</span>
-              <span><ShieldCheck size={15} style={{ color: "#34d399" }} aria-hidden="true" /> {t("deposit_desc", lang)}</span>
-              <span><Headphones size={15} style={{ color: "#60a5fa" }} aria-hidden="true" /> {t("trust_support", lang)}</span>
+              <span><BadgeCheck size={15} style={{ color: "#fbbf24" }} aria-hidden="true" /> {t("Chính sách Cọc 30%", lang)}</span>
+              <span><ShieldCheck size={15} style={{ color: "#34d399" }} aria-hidden="true" /> {t("Linh hoạt giữ chỗ - Hoàn tiền 100% khi hủy trước 48h", lang)}</span>
+              <span><Headphones size={15} style={{ color: "#60a5fa" }} aria-hidden="true" /> {t("Hỗ Trợ 24/7 Toàn Cầu", lang)}</span>
             </div>
           </div>
         </div>
@@ -119,19 +119,19 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
         <div className="shell" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 24, textAlign: "center" }}>
           <div>
             <div style={{ fontSize: 28, fontWeight: 800, color: "var(--gold, #fbbf24)" }}>12</div>
-            <div style={{ fontSize: 13, opacity: 0.85 }}>{t("stat_destinations", lang)}</div>
+            <div style={{ fontSize: 13, opacity: 0.85 }}>{t("Điểm đến Toàn cầu", lang)}</div>
           </div>
           <div>
             <div style={{ fontSize: 28, fontWeight: 800, color: "var(--gold, #fbbf24)" }}>1.100+</div>
-            <div style={{ fontSize: 13, opacity: 0.85 }}>{t("stat_properties", lang)}</div>
+            <div style={{ fontSize: 13, opacity: 0.85 }}>{t("Khách sạn & Villa", lang)}</div>
           </div>
           <div>
             <div style={{ fontSize: 28, fontWeight: 800, color: "var(--gold, #fbbf24)" }}>700+</div>
-            <div style={{ fontSize: 13, opacity: 0.85 }}>{t("stat_foods", lang)}</div>
+            <div style={{ fontSize: 13, opacity: 0.85 }}>{t("Món ăn Đặc sản", lang)}</div>
           </div>
           <div>
             <div style={{ fontSize: 28, fontWeight: 800, color: "var(--gold, #fbbf24)" }}>1.100+</div>
-            <div style={{ fontSize: 13, opacity: 0.85 }}>{t("stat_activities", lang)}</div>
+            <div style={{ fontSize: 13, opacity: 0.85 }}>{t("Điểm Check-in Hot", lang)}</div>
           </div>
         </div>
       </section>
@@ -167,9 +167,9 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
         <div className="shell">
           <div className="section-heading" style={{ marginBottom: 20 }}>
             <div>
-              <p className="eyebrow dark">{t("stayz_pick", lang)}</p>
-              <h2 id="featured-heading">{t("hotels_title", lang)}</h2>
-              <p className="section-sub">{t("hotels_subtitle", lang)}</p>
+              <p className="eyebrow dark">{t("HuKi Pick", lang)}</p>
+              <h2 id="featured-heading">{t("Khách Sạn & Villa Nổi Bật", lang)}</h2>
+              <p className="section-sub">{t("Nơi lưu trú hạng sang được đánh giá cao bởi cộng đồng du khách", lang)}</p>
             </div>
           </div>
 
@@ -221,8 +221,8 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
             </div>
           ) : (
             <div className="empty-state">
-              <h3>{t("hotels_title", lang)}</h3>
-              <p>{t("hotels_subtitle", lang)}</p>
+              <h3>{t("Khách Sạn & Villa Nổi Bật", lang)}</h3>
+              <p>{t("Nơi lưu trú hạng sang được đánh giá cao bởi cộng đồng du khách", lang)}</p>
             </div>
           )}
 
@@ -242,7 +242,7 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
                 gap: 8,
               }}
             >
-              {t("view_all", lang)} ({filteredHotels.length}) <ArrowRight size={16} />
+              {t("Khám phá tất cả", lang)} ({filteredHotels.length}) <ArrowRight size={16} />
             </Link>
           </div>
         </div>
@@ -252,18 +252,18 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
       <section className="promise shell" aria-labelledby="promise-heading">
         <div>
           <span className="promise-icon" aria-hidden="true"><Sparkles size={22} /></span>
-          <h3 id="promise-heading">{t("stayz_pick", lang)}</h3>
-          <p>{t("hotels_subtitle", lang)}</p>
+          <h3 id="promise-heading">{t("HuKi Pick", lang)}</h3>
+          <p>{t("Nơi lưu trú hạng sang được đánh giá cao bởi cộng đồng du khách", lang)}</p>
         </div>
         <div>
           <span className="promise-icon" aria-hidden="true"><ShieldCheck size={22} /></span>
-          <h3>{t("deposit_badge", lang)}</h3>
-          <p>{t("deposit_desc", lang)}</p>
+          <h3>{t("Chính sách Cọc 30%", lang)}</h3>
+          <p>{t("Linh hoạt giữ chỗ - Hoàn tiền 100% khi hủy trước 48h", lang)}</p>
         </div>
         <div>
           <span className="promise-icon" aria-hidden="true"><Headphones size={22} /></span>
-          <h3>{t("trust_support", lang)}</h3>
-          <p>{t("footer_desc", lang)}</p>
+          <h3>{t("Hỗ Trợ 24/7 Toàn Cầu", lang)}</h3>
+          <p>{t("Nền tảng tích hợp du lịch toàn diện: Đặt phòng + Vé xe + Thuê xe + Ẩm thực + Trải nghiệm.", lang)}</p>
         </div>
       </section>
 
@@ -272,15 +272,15 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
         <div className="shell footer-inner">
           <Link href="/" className="brand brand-light">HuKi<span className="z"> Travel</span></Link>
           <div className="footer-links">
-            <Link href="/search">{t("nav_stays", lang)}</Link>
-            <Link href="#search-banner">{t("nav_bus", lang)}</Link>
-            <Link href="#search-banner">{t("nav_ride", lang)}</Link>
-            <Link href="#taste-section">{t("taste_title", lang).split("&")[0]}</Link>
-            <Link href="#experiences-section">{t("experiences_title", lang).split("&")[0]}</Link>
-            <Link href="/login">{t("nav_login", lang)}</Link>
-            <Link href="/auth/register">{t("nav_signup", lang)}</Link>
+            <Link href="/search">{t("Khách Sạn & Villa", lang)}</Link>
+            <Link href="#search-banner">{t("Vé Xe Khách", lang)}</Link>
+            <Link href="#search-banner">{t("Thuê Xe Tự Lái", lang)}</Link>
+            <Link href="#taste-section">{t("Ẩm Thực Đặc Sản & Quán Ngon", lang).split("&")[0]}</Link>
+            <Link href="#experiences-section">{t("Trải Nghiệm & Điểm Sống Ảo", lang).split("&")[0]}</Link>
+            <Link href="/login">{t("Đăng Nhập", lang)}</Link>
+            <Link href="/auth/register">{t("Đăng Ký", lang)}</Link>
           </div>
-          <p>{t("footer_rights", lang)} · {t("footer_address", lang)}</p>
+          <p>{t("Bản quyền thuộc về HuKi Travel Ecosystem.", lang)} · {t("Trụ sở: Tòa nhà HuKi Center, TP. Hồ Chí Minh, Việt Nam", lang)}</p>
         </div>
       </footer>
     </main>

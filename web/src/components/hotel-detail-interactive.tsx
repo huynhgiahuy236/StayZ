@@ -92,7 +92,7 @@ export function HotelDetailInteractive({
       {/* Title row */}
       <div className="detail-title">
         <div>
-          <p className="eyebrow dark">{hotel.type ?? t("filter_hotel", lang)} · {hotel.city}</p>
+          <p className="eyebrow dark">{hotel.type ?? t("Khách sạn", lang)} · {hotel.city}</p>
           <h1>{hotelTitle}</h1>
           <p style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <MapPin size={14} aria-hidden="true" /> {hotel.address}
@@ -104,7 +104,7 @@ export function HotelDetailInteractive({
               <Star size={16} fill="currentColor" aria-hidden="true" />
               <span>{hotel.rating?.toFixed(1) ?? avgRating}</span>
               <span style={{ color: "var(--color-ink-3)", fontWeight: 400 }}>
-                · {hotel.review_count ?? reviews.length} {t("card_reviews", lang)}
+                · {hotel.review_count ?? reviews.length} {t("đánh giá", lang)}
               </span>
             </div>
           ) : (
@@ -162,7 +162,7 @@ export function HotelDetailInteractive({
 
         {/* Booking card */}
         <aside className="booking-card" aria-label="Booking info">
-          <p>{t("from_price", lang)}</p>
+          <p>{t("Giá từ", lang)}</p>
           <strong>
             {price ? new Intl.NumberFormat("vi-VN").format(price) + " ₫" : "Contact"}
           </strong>
@@ -181,7 +181,7 @@ export function HotelDetailInteractive({
             </a>
           ) : (
             <Link href="/login" className="booking-button" style={{ textAlign: "center", display: "block" }}>
-              {t("nav_login", lang)}
+              {t("Đăng Nhập", lang)}
             </Link>
           )}
         </aside>
@@ -206,7 +206,7 @@ export function HotelDetailInteractive({
 
       {/* Reviews section */}
       <section className="reviews-section" id="reviews">
-        <h2>{t("card_reviews", lang)} ({reviews.length})</h2>
+        <h2>{t("đánh giá", lang)} ({reviews.length})</h2>
         {reviews.length > 0 ? (
           <div className="review-list">
             {reviews.map((r) => (

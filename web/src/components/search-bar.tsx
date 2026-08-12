@@ -11,15 +11,15 @@ interface Props {
 }
 
 const SERVICE_TABS = [
-  { id: "stay", labelKey: "search_tab_stay", icon: Hotel },
-  { id: "bus", labelKey: "search_tab_bus", icon: Bus },
-  { id: "ride", labelKey: "search_tab_ride", icon: Car },
-  { id: "flight", labelKey: "search_tab_flight", icon: Plane },
-  { id: "combo", labelKey: "search_tab_combo", icon: Package, badge: "-10%" },
+  { id: "stay", labelKey: "Khách Sạn", icon: Hotel },
+  { id: "bus", labelKey: "Xe Khách 2 Tầng", icon: Bus },
+  { id: "ride", labelKey: "Thuê Xe Tự Lái", icon: Car },
+  { id: "flight", labelKey: "Vé Máy Bay", icon: Plane },
+  { id: "combo", labelKey: "Combo Chuyến Đi", icon: Package, badge: "-10%" },
 ];
 
 const CITIES = [
-  { value: "", labelKey: "filter_all" },
+  { value: "", labelKey: "Tất cả" },
   { value: "da-nang", label: "Đà Nẵng" },
   { value: "da-lat", label: "Đà Lạt" },
   { value: "ha-noi", label: "Hà Nội" },
@@ -44,6 +44,15 @@ function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
   useEffect(() => {
     const saved = (localStorage.getItem("stayz_lang") as Language) || lang || "vi";
     setCurrentLang(saved);
+
+    const handleLangChange = (e: CustomEvent<{ lang: Language }>) => {
+      if (e.detail?.lang) {
+        setCurrentLang(e.detail.lang);
+      }
+    };
+
+    window.addEventListener("stayz_lang_changed" as any, handleLangChange as any);
+    return () => window.removeEventListener("stayz_lang_changed" as any, handleLangChange as any);
   }, [lang]);
 
   function handleSubmit(e: React.FormEvent) {
@@ -119,19 +128,19 @@ function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
       {/* Main Search Form Bar */}
       <form className="search-bar" id="search-banner" onSubmit={handleSubmit} role="search" aria-label="Tìm kiếm">
         <div className="search-field">
-          <label htmlFor="sb-keyword">{t("search_button", currentLang).split(" ")[0]}</label>
+          <label htmlFor="sb-keyword">{t("Tìm kiếm ngay", currentLang).split(" ")[0]}</label>
           <input
             id="sb-keyword"
             ref={keywordRef}
             type="text"
-            placeholder={t("search_destination_placeholder", currentLang)}
+            placeholder={t("Bạn muốn đi đâu? (Đà Nẵng, Tokyo, New York, Bali...)", currentLang)}
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             autoComplete="off"
           />
         </div>
         <div className="search-field">
-          <label htmlFor="sb-city">{t("stat_destinations", currentLang).split(" ")[0]}</label>
+          <label htmlFor="sb-city">{t("Điểm đến Toàn cầu", currentLang).split(" ")[0]}</label>
           <select
             id="sb-city"
             value={city}
@@ -146,21 +155,21 @@ function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
           </select>
         </div>
         <div className="search-field">
-          <label htmlFor="sb-type">{t("filter_all", currentLang)}</label>
+          <label htmlFor="sb-type">{t("Tất cả", currentLang)}</label>
           <select
             id="sb-type"
             value={type}
             onChange={(e) => setType(e.target.value)}
             aria-label="Chọn loại hình"
           >
-            <option value="">{t("filter_all", currentLang)}</option>
-            <option value="resort">{t("filter_villa", currentLang)}</option>
-            <option value="hotel">{t("filter_hotel", currentLang)}</option>
-            <option value="apartment">{t("filter_apartment", currentLang)}</option>
+            <option value="">{t("Tất cả", currentLang)}</option>
+            <option value="resort">{t("Villa & Resort", currentLang)}</option>
+            <option value="hotel">{t("Khách sạn", currentLang)}</option>
+            <option value="apartment">{t("Căn hộ & Business", currentLang)}</option>
           </select>
         </div>
         <div className="search-field" style={{ borderRight: 0 }}>
-          <label htmlFor="sb-guests">{t("search_guests", currentLang)}</label>
+          <label htmlFor="sb-guests">{t("Số khách & Phòng", currentLang)}</label>
           <input
             id="sb-guests"
             type="number"
@@ -173,7 +182,7 @@ function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
         </div>
         <button type="submit" className="search-btn" aria-label="Tìm kiếm">
           <Search size={16} aria-hidden="true" />
-          {t("search_button", currentLang)}
+          {t("Tìm kiếm ngay", currentLang)}
         </button>
       </form>
     </div>

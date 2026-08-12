@@ -63,8 +63,8 @@ export default function FavoritesPage() {
       <SiteHeader lang={lang} onLangChange={setLang} />
       <div className="favorites-hero">
         <div className="shell">
-          <h1>{t("favorites_title", lang)}</h1>
-          <p style={{ opacity: .8, fontSize: 14 }}>{hotels.length} {t("stat_properties", lang)}</p>
+          <h1>{t("Nơi lưu trú yêu thích", lang)}</h1>
+          <p style={{ opacity: .8, fontSize: 14 }}>{hotels.length} {t("Khách sạn & Villa", lang)}</p>
         </div>
       </div>
 
@@ -72,10 +72,10 @@ export default function FavoritesPage() {
         {hotels.length === 0 ? (
           <div className="empty-state" style={{ marginTop: "var(--sp-10)" }}>
             <Heart size={40} style={{ color: "var(--color-ink-3)", margin: "0 auto var(--sp-4)" }} aria-hidden="true" />
-            <h3>{t("favorites_empty", lang)}</h3>
-            <p>{t("hotels_subtitle", lang)}</p>
+            <h3>{t("Chưa có nơi lưu trú yêu thích", lang)}</h3>
+            <p>{t("Nơi lưu trú hạng sang được đánh giá cao bởi cộng đồng du khách", lang)}</p>
             <Link href="/search" className="btn-primary" style={{ display: "inline-flex", marginTop: "var(--sp-6)", textDecoration: "none" }}>
-              {t("view_all", lang)}
+              {t("Khám phá tất cả", lang)}
             </Link>
           </div>
         ) : (
@@ -119,8 +119,8 @@ export default function FavoritesPage() {
       <footer className="footer">
         <div className="shell footer-inner">
           <Link href="/" className="brand brand-light">HuKi<span className="z"> Travel</span></Link>
-          <p>{t("footer_desc", lang)}</p>
-          <p>{t("footer_rights", lang)}</p>
+          <p>{t("Nền tảng tích hợp du lịch toàn diện: Đặt phòng + Vé xe + Thuê xe + Ẩm thực + Trải nghiệm.", lang)}</p>
+          <p>{t("Bản quyền thuộc về HuKi Travel Ecosystem.", lang)}</p>
         </div>
       </footer>
     </main>

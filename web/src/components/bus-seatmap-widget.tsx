@@ -61,7 +61,7 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
             <Bus size={14} /> HUKI BUS · REAL-TIME SEATMAP
           </span>
           <h2 style={{ fontSize: 28, fontWeight: 900, margin: "12px 0 8px 0", color: "#ffffff" }}>
-            {t("bus_widget_title", lang)}
+            {t("Sơ Đồ Ghế Giường Nằm 2 Tầng Tự Động Khóa Chỗ", lang)}
           </h2>
           <p style={{ fontSize: 14, color: "#cbd5e1", lineHeight: 1.6, margin: 0 }}>
             Hệ thống sơ đồ ghế giường nằm 2 tầng trực quan mô phỏng real-time via WebSocket. Khóa giữ vị trí tức thì trong 10 phút chống overbooking.
@@ -81,7 +81,7 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
                 cursor: "pointer",
               }}
             >
-              {t("bus_deck_lower", lang)}
+              {t("Tầng Dưới (Deck 1)", lang)}
             </button>
             <button
               onClick={() => setDeck(2)}
@@ -96,7 +96,7 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
                 cursor: "pointer",
               }}
             >
-              {t("bus_deck_upper", lang)}
+              {t("Tầng Trên (Deck 2)", lang)}
             </button>
 
             {/* CTA Button jump to dedicated Bus page */}

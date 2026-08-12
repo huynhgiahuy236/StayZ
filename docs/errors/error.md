@@ -40,4 +40,14 @@
   1. Mở rộng từ điển `web/src/lib/i18n.ts` bổ sung trọn bộ dịch thuật cho `combo_widget_title`, `bus_widget_title`, `splitbill_widget_title`... across 10 global languages.
   2. Cập nhật các Component Widgets bọc văn bản trong thẻ `t(key, lang)`.
   3. Chạy lại script test tự động tái sử dụng `node docs/scripts/test-i18n-darkmode.js`.
-* **Trạng thái**: ✅ **ĐÃ FIX & CHẠY SCRIPT TEST THÀNH CÔNG** (`node docs/scripts/test-i18n-darkmode.js` PASSED 29/29).
+### 📌 Log #004 - [2026-08-12 14:06:00] MongoDB Atlas Server Selection Timeout & IP Whitelist Warning
+* **Lỗi ghi nhận**: `MongoDB connection failed: Server selection timed out after 5000 ms. Could not connect to any servers in your MongoDB Atlas cluster.`
+* **Thành phần bị lỗi**: `platform/server.js` (`connectMongoWithRetry`)
+* **Nguyên nhân gốc rễ**: 
+  1. Địa chỉ IP của máy dev bị thay đổi (dynamic ISP/Wi-Fi) chưa được bổ sung vào whitelist MongoDB Atlas Security Network Access.
+  2. Hàm `connectMongoWithRetry()` trong `server.js` thử kết nối lại vô hạn đến Atlas URI mà không có cơ chế Fallback sang Local MongoDB (`mongodb://127.0.0.1:27017/stayz`).
+* **Phương án xử lý**:
+  1. Thêm cơ chế đếm số lần thử kết nối `mongoConnectAttempts`.
+  2. Sau 2 lần Atlas thất bại/timeout, tự động Fallback sang Local MongoDB URI (`mongodb://127.0.0.1:27017/stayz` hoặc `LOCAL_DATABASE_URL`).
+  3. In cảnh báo gợi ý khắc phục Whitelist IP Atlas trên console (`https://www.mongodb.com/docs/atlas/security-whitelist/`).
+* **Trạng thái**: ✅ **ĐÃ FIX & KIỂM THỬ THÀNH CÔNG** (`platform/server.js` kết nối mượt mà).
