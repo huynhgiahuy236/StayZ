@@ -28,6 +28,19 @@ const HOTEL_TABS = [
   { id: "apartment", labelKey: "filter_apartment", icon: HomeIcon },
 ];
 
+const HERO_COUNTRY_BACKGROUNDS: Record<Language, string> = {
+  vi: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=2000&q=85", // 🇻🇳 Đà Nẵng / Việt Nam
+  en: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=2000&q=85", // 🇺🇸 New York / USA
+  ko: "https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=2000&q=85", // 🇰🇷 Seoul Namsan / Hàn Quốc
+  ja: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=2000&q=85", // 🇯🇵 Tokyo & Núi Phú Sĩ / Nhật Bản
+  th: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=2000&q=85", // 🇹🇭 Bangkok Wat Arun / Thái Lan
+  zh: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=2000&q=85", // 🇨🇳 Thượng Hải / Trung Quốc
+  fr: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=2000&q=85", // 🇫🇷 Tháp Eiffel Paris / Pháp
+  de: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=2000&q=85", // 🇩🇪 Lâu đài Neuschwanstein / Đức
+  es: "https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&w=2000&q=85", // 🇪🇸 Barcelona / Tây Ban Nha
+  ru: "https://images.unsplash.com/photo-1513326718677-b964603b136b?auto=format&fit=crop&w=2000&q=85", // 🇷🇺 Điện Kremlin Matxcva / Nga
+};
+
 export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
   const [lang, setLang] = useState<Language>("vi");
   const [activeHotelTab, setActiveHotelTab] = useState("all");
@@ -42,6 +55,9 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
     setLang(newLang);
     localStorage.setItem("stayz_lang", newLang);
   }
+
+  // Dynamic 4K Background URL based on selected Language/Country
+  const heroBgUrl = HERO_COUNTRY_BACKGROUNDS[lang] || HERO_COUNTRY_BACKGROUNDS.vi;
 
   // Filter Hotels based on selected tab
   const filteredHotels = initialHotels.filter((h) => {
@@ -59,27 +75,41 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
   return (
     <main id="main-content">
       {/* ── 1. HERO BANNER & 5 SUPER-APP SEARCH TABS ─────────────── */}
-      <section className="hero" aria-label="HuKi Travel Super-App Portal">
+      <section
+        className="hero"
+        aria-label="HuKi Travel Super-App Portal"
+        style={{
+          background: `linear-gradient(135deg, rgba(15, 23, 42, 0.88) 0%, rgba(30, 41, 59, 0.72) 50%, rgba(15, 23, 42, 0.9) 100%), url('${heroBgUrl}') center/cover no-repeat`,
+          transition: "background 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+        }}
+      >
         <SiteHeader transparent lang={lang} onLangChange={handleLangChange} />
         <div className="hero-overlay" aria-hidden="true" />
-        <div className="hero-content shell" style={{ paddingTop: 30, paddingBottom: 40 }}>
-          <p className="eyebrow" style={{ letterSpacing: "1.5px", textTransform: "uppercase" }}>
-            {t("hero_slogan", lang)}
-          </p>
-          <h1 style={{ fontSize: "clamp(32px, 5vw, 54px)", fontWeight: 900, marginBottom: 12 }}>
-            {t("hero_title_1", lang)}<br />
-            <em style={{ color: "var(--gold, #fbbf24)", fontStyle: "normal" }}>{t("hero_title_2", lang)}</em>
-          </h1>
-          <p className="hero-copy" style={{ maxWidth: 700, margin: "0 auto 28px auto" }}>
-            {t("hero_subtitle", lang)}
-          </p>
+        <div className="hero-content shell" style={{ paddingTop: 24, paddingBottom: 48, maxWidth: 1400, margin: "0 auto" }}>
+          <div style={{ maxWidth: 1400, margin: "0 auto", width: "100%" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+              <span style={{ background: "rgba(251, 191, 36, 0.2)", color: "#fbbf24", border: "1px solid rgba(251, 191, 36, 0.4)", padding: "3px 10px", borderRadius: 100, fontSize: 10, fontWeight: 800, letterSpacing: 1, textTransform: "uppercase" }}>
+                🌐 {t("lang_dropdown_title", lang)}
+              </span>
+            </div>
+            <p className="eyebrow" style={{ letterSpacing: "1.5px", textTransform: "uppercase", textAlign: "left", marginBottom: 8 }}>
+              {t("hero_slogan", lang)}
+            </p>
+            <h1 style={{ fontSize: "clamp(32px, 5vw, 54px)", fontWeight: 900, marginBottom: 12, textAlign: "left", lineHeight: 1.15 }}>
+              {t("hero_title_1", lang)}<br />
+              <em style={{ color: "var(--gold, #fbbf24)", fontStyle: "normal" }}>{t("hero_title_2", lang)}</em>
+            </h1>
+            <p className="hero-copy" style={{ maxWidth: 720, margin: "0 0 28px 0", textAlign: "left", fontSize: 15, color: "#cbd5e1" }}>
+              {t("hero_subtitle", lang)}
+            </p>
 
-          <SearchBar lang={lang} />
+            <SearchBar lang={lang} />
 
-          <div className="trust-row" style={{ marginTop: 24 }}>
-            <span><BadgeCheck size={14} aria-hidden="true" /> {t("deposit_badge", lang)}</span>
-            <span><ShieldCheck size={14} aria-hidden="true" /> {t("deposit_desc", lang)}</span>
-            <span><Headphones size={14} aria-hidden="true" /> {t("trust_support", lang)}</span>
+            <div className="trust-row" style={{ marginTop: 24, justifyContent: "flex-start", gap: 24 }}>
+              <span><BadgeCheck size={15} style={{ color: "#fbbf24" }} aria-hidden="true" /> {t("deposit_badge", lang)}</span>
+              <span><ShieldCheck size={15} style={{ color: "#34d399" }} aria-hidden="true" /> {t("deposit_desc", lang)}</span>
+              <span><Headphones size={15} style={{ color: "#60a5fa" }} aria-hidden="true" /> {t("trust_support", lang)}</span>
+            </div>
           </div>
         </div>
       </section>

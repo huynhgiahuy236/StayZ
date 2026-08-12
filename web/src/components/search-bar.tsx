@@ -58,15 +58,15 @@ function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
   }
 
   return (
-    <div style={{ width: "100%", maxWidth: 1060, margin: "0 auto" }}>
+    <div style={{ width: "100%", maxWidth: 1400, margin: "0 auto" }}>
       {/* 5 Super-App Service Search Tabs */}
       <div
         style={{
           display: "flex",
-          gap: 8,
-          marginBottom: 12,
+          gap: 10,
+          marginBottom: 16,
           flexWrap: "wrap",
-          justifyContent: "center",
+          justifyContent: "flex-start",
         }}
       >
         {SERVICE_TABS.map((tab) => {
@@ -81,20 +81,20 @@ function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 8,
-                padding: "10px 20px",
+                padding: "10px 22px",
                 borderRadius: 100,
-                fontSize: 13,
+                fontSize: 13.5,
                 fontWeight: 700,
                 cursor: "pointer",
                 transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                background: isActive ? "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)" : "rgba(255, 255, 255, 0.25)",
-                color: isActive ? "#fbbf24" : "#ffffff",
-                backdropFilter: "blur(12px)",
-                border: isActive ? "1px solid #fbbf24" : "1px solid rgba(255, 255, 255, 0.3)",
-                boxShadow: isActive ? "0 8px 20px rgba(0,0,0,0.2)" : "none",
+                background: isActive ? "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)" : "rgba(15, 23, 42, 0.65)",
+                color: isActive ? "#fbbf24" : "#f8fafc",
+                backdropFilter: "blur(16px)",
+                border: isActive ? "1.5px solid #fbbf24" : "1px solid rgba(255, 255, 255, 0.22)",
+                boxShadow: isActive ? "0 8px 24px rgba(15,23,42,0.4)" : "0 4px 12px rgba(0,0,0,0.15)",
               }}
             >
-              <TabIcon size={16} />
+              <TabIcon size={16} style={{ color: isActive ? "#fbbf24" : "#cbd5e1" }} />
               <span>{t(tab.labelKey, currentLang)}</span>
               {tab.badge && (
                 <span
@@ -103,7 +103,7 @@ function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
                     color: "#fff",
                     fontSize: 10,
                     fontWeight: 800,
-                    padding: "2px 6px",
+                    padding: "2px 7px",
                     borderRadius: 100,
                     letterSpacing: 0.5,
                   }}

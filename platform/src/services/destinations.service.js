@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Destination = require("../models/destinations.model");
 const Property = require("../models/properties.model");
 const { NotFoundError } = require("../helpers/error.helper");
@@ -55,16 +56,23 @@ const formatDestination = (doc, lang) => {
 
 const destinationsService = {
   getAll: async ({ is_domestic, lang }) => {
-    const query = { is_active: true };
-    if (is_domestic !== undefined && is_domestic !== null && is_domestic !== "") {
-      query.is_domestic = String(is_domestic) === "true";
+    try {
+      if (mongoose.connection.readyState !== 1) return [];
+
+      const query = { is_active: true };
+      if (is_domestic !== undefined && is_domestic !== null && is_domestic !== "") {
+        query.is_domestic = String(is_domestic) === "true";
+      }
+
+      const docs = await Destination.find(query)
+        .populate("properties", "title slug city type price min_price imageUrls rating reviewCount")
+        .sort({ rating: -1 });
+
+      return docs.map((doc) => formatDestination(doc, lang));
+    } catch (error) {
+      console.warn("[DestinationsService] Warning: Failed to fetch destinations:", error.message);
+      return [];
     }
-
-    const docs = await Destination.find(query)
-      .populate("properties", "title slug city type price min_price imageUrls rating reviewCount")
-      .sort({ rating: -1 });
-
-    return docs.map((doc) => formatDestination(doc, lang));
   },
 
   getBySlug: async (slug, lang) => {

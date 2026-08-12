@@ -11,17 +11,17 @@ interface Props {
   onLangChange?: (newLang: Language) => void;
 }
 
-const LANGUAGES: { code: Language; flag: string; label: string }[] = [
-  { code: "vi", flag: "🇻🇳", label: "Tiếng Việt" },
-  { code: "en", flag: "🇬🇧", label: "English" },
-  { code: "ko", flag: "🇰🇷", label: "한국어" },
-  { code: "ja", flag: "🇯🇵", label: "日本語" },
-  { code: "th", flag: "🇹🇭", label: "ไทย" },
-  { code: "zh", flag: "🇨🇳", label: "中文 (简体)" },
-  { code: "fr", flag: "🇫🇷", label: "Français" },
-  { code: "de", flag: "🇩🇪", label: "Deutsch" },
-  { code: "es", flag: "🇪🇸", label: "Español" },
-  { code: "ru", flag: "🇷🇺", label: "Русский" },
+const LANGUAGES: { code: Language; flagUrl: string; label: string }[] = [
+  { code: "vi", flagUrl: "https://flagcdn.com/w40/vn.png", label: "Tiếng Việt" },
+  { code: "en", flagUrl: "https://flagcdn.com/w40/us.png", label: "English" },
+  { code: "ko", flagUrl: "https://flagcdn.com/w40/kr.png", label: "한국어" },
+  { code: "ja", flagUrl: "https://flagcdn.com/w40/jp.png", label: "日本語" },
+  { code: "th", flagUrl: "https://flagcdn.com/w40/th.png", label: "ไทย" },
+  { code: "zh", flagUrl: "https://flagcdn.com/w40/cn.png", label: "中文 (简体)" },
+  { code: "fr", flagUrl: "https://flagcdn.com/w40/fr.png", label: "Français" },
+  { code: "de", flagUrl: "https://flagcdn.com/w40/de.png", label: "Deutsch" },
+  { code: "es", flagUrl: "https://flagcdn.com/w40/es.png", label: "Español" },
+  { code: "ru", flagUrl: "https://flagcdn.com/w40/ru.png", label: "Русский" },
 ];
 
 function getUserFromCookie(): UserType | null {
@@ -45,19 +45,19 @@ function getInitials(name?: string): string {
     .slice(0, 2);
 }
 
-const COUNTRIES: { code: string; flag: string; label: string }[] = [
-  { code: "vn", flag: "🇻🇳", label: "Việt Nam" },
-  { code: "us", flag: "🇺🇸", label: "Mỹ" },
-  { code: "cn", flag: "🇨🇳", label: "Trung Quốc" },
-  { code: "id", flag: "🇮🇩", label: "Indonesia" },
-  { code: "ch", flag: "🇨🇭", label: "Thụy Sĩ" },
-  { code: "br", flag: "🇧🇷", label: "Brazil" },
-  { code: "ar", flag: "🇦🇷", label: "Argentina" },
-  { code: "au", flag: "🇦🇺", label: "Úc" },
-  { code: "jp", flag: "🇯🇵", label: "Nhật Bản" },
-  { code: "kr", flag: "🇰🇷", label: "Hàn Quốc" },
-  { code: "th", flag: "🇹🇭", label: "Thái Lan" },
-  { code: "sg", flag: "🇸🇬", label: "Singapore" },
+const COUNTRIES: { code: string; flagUrl: string; label: string }[] = [
+  { code: "vn", flagUrl: "https://flagcdn.com/w40/vn.png", label: "Vietnam" },
+  { code: "us", flagUrl: "https://flagcdn.com/w40/us.png", label: "United States" },
+  { code: "cn", flagUrl: "https://flagcdn.com/w40/cn.png", label: "China" },
+  { code: "id", flagUrl: "https://flagcdn.com/w40/id.png", label: "Indonesia" },
+  { code: "ch", flagUrl: "https://flagcdn.com/w40/ch.png", label: "Switzerland" },
+  { code: "br", flagUrl: "https://flagcdn.com/w40/br.png", label: "Brazil" },
+  { code: "ar", flagUrl: "https://flagcdn.com/w40/ar.png", label: "Argentina" },
+  { code: "au", flagUrl: "https://flagcdn.com/w40/au.png", label: "Australia" },
+  { code: "jp", flagUrl: "https://flagcdn.com/w40/jp.png", label: "Japan" },
+  { code: "kr", flagUrl: "https://flagcdn.com/w40/kr.png", label: "South Korea" },
+  { code: "th", flagUrl: "https://flagcdn.com/w40/th.png", label: "Thailand" },
+  { code: "sg", flagUrl: "https://flagcdn.com/w40/sg.png", label: "Singapore" },
 ];
 
 export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: Props) {
@@ -125,11 +125,10 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
 
   return (
     <header className={`site-header ${solid ? "solid" : "transparent"}`}>
-      <nav className="nav shell" aria-label="Điều hướng chính">
+      <nav className="nav" aria-label="Điều hướng chính" style={{ width: "100%" }}>
         {/* Brand */}
-        <Link href="/" className="brand" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+        <Link href="/" className="brand" style={{ display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
           <span>HuKi<span className="z"> Travel</span></span>
-          <span style={{ fontSize: 10, background: "rgba(251,191,36,0.25)", color: "var(--gold, #fbbf24)", padding: "2px 8px", borderRadius: 4, fontWeight: 800, letterSpacing: 0.5 }}>10 LANGUAGES</span>
         </Link>
 
         {/* Nav links */}
@@ -156,7 +155,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
 
         {/* Actions */}
         <div className="nav-actions" style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          {/* 🌍 12-Country Selector Dropdown */}
+          {/* 🌍 Country Selector Dropdown */}
           <div className="nav-dropdown" ref={countryRef} style={{ position: "relative" }}>
             <button
               type="button"
@@ -168,17 +167,18 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                 background: "rgba(255, 255, 255, 0.15)",
                 backdropFilter: "blur(8px)",
                 border: "1px solid rgba(255, 255, 255, 0.2)",
-                padding: "6px 12px",
+                padding: "6px 14px",
                 borderRadius: 100,
                 color: "inherit",
                 fontSize: 13,
                 fontWeight: 600,
                 cursor: "pointer",
+                whiteSpace: "nowrap",
               }}
               aria-label="Chọn quốc gia"
             >
               <span>🌍</span>
-              <span className="hide-mobile">12 Countries</span>
+              <span className="hide-mobile" style={{ whiteSpace: "nowrap" }}>{t("nav_countries", currentLang)}</span>
               <ChevronDown size={13} />
             </button>
 
@@ -193,8 +193,8 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                   minWidth: 170,
                   maxHeight: 320,
                   overflowY: "auto",
-                  background: "var(--color-bg, #fff)",
-                  color: "var(--color-ink, #0f172a)",
+                  background: "#ffffff",
+                  color: "#0f172a",
                   borderRadius: 12,
                   boxShadow: "0 10px 25px -5px rgba(0,0,0,0.25)",
                   padding: "6px",
@@ -219,7 +219,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                       fontWeight: 500,
                     }}
                   >
-                    <span>{c.flag}</span>
+                    <img src={c.flagUrl} alt={c.label} style={{ width: 20, height: 14, borderRadius: 2, objectFit: "cover" }} />
                     <span>{c.label}</span>
                   </Link>
                 ))}
@@ -246,10 +246,15 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                 fontWeight: 700,
                 cursor: "pointer",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                whiteSpace: "nowrap",
               }}
               aria-label="Chọn ngôn ngữ"
             >
-              <span style={{ fontSize: 16 }}>{activeLangObj.flag}</span>
+              <img
+                src={activeLangObj.flagUrl}
+                alt={activeLangObj.code}
+                style={{ width: 20, height: 14, borderRadius: 2, objectFit: "cover", boxShadow: "0 1px 3px rgba(0,0,0,0.3)" }}
+              />
               <span>{activeLangObj.code.toUpperCase()}</span>
               <ChevronDown size={13} />
             </button>
@@ -262,7 +267,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                   right: 0,
                   top: "100%",
                   marginTop: 8,
-                  width: 210,
+                  width: 220,
                   maxHeight: 380,
                   overflowY: "auto",
                   background: "#ffffff",
@@ -274,7 +279,7 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                 }}
               >
                 <div style={{ padding: "6px 10px 8px 10px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#64748b", borderBottom: "1px solid #f1f5f9", marginBottom: 4 }}>
-                  10 Languages / 10 Ngôn Ngữ
+                  {t("lang_dropdown_title", currentLang)}
                 </div>
                 {LANGUAGES.map((langItem) => {
                   const isSelected = currentLang === langItem.code;
@@ -300,7 +305,11 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                       }}
                     >
                       <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ fontSize: 18 }}>{langItem.flag}</span>
+                        <img
+                          src={langItem.flagUrl}
+                          alt={langItem.label}
+                          style={{ width: 22, height: 15, borderRadius: 2, objectFit: "cover", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }}
+                        />
                         <span>{langItem.label}</span>
                       </span>
                       {isSelected && <Check size={15} style={{ color: "#2563eb" }} />}
@@ -341,20 +350,20 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
               {dropOpen && (
                 <div className="nav-dropdown-menu" role="menu">
                   <Link href="/profile" className="nav-dropdown-item" role="menuitem" onClick={() => setDropOpen(false)}>
-                    <User size={16} aria-hidden="true" /> Thông tin cá nhân
+                    <User size={16} aria-hidden="true" /> {t("nav_profile", currentLang)}
                   </Link>
                   <Link href="/profile/bookings" className="nav-dropdown-item" role="menuitem" onClick={() => setDropOpen(false)}>
-                    <Calendar size={16} aria-hidden="true" /> Đặt phòng của tôi
+                    <Calendar size={16} aria-hidden="true" /> {t("nav_my_bookings", currentLang)}
                   </Link>
                   <Link href="/favorites" className="nav-dropdown-item" role="menuitem" onClick={() => setDropOpen(false)}>
-                    <Heart size={16} aria-hidden="true" /> Yêu thích
+                    <Heart size={16} aria-hidden="true" /> {t("nav_favorites", currentLang)}
                   </Link>
                   <Link href="/policy" className="nav-dropdown-item" role="menuitem" onClick={() => setDropOpen(false)}>
-                    <ShieldCheck size={16} aria-hidden="true" /> Điều khoản & Chính sách
+                    <ShieldCheck size={16} aria-hidden="true" /> {t("nav_policy", currentLang)}
                   </Link>
                   {isAdmin && (
-                    <Link href="/admin" className="nav-dropdown-item" role="menuitem" onClick={() => setDropOpen(false)} style={{ color: "var(--gold)", fontWeight: 700 }}>
-                      <ShieldAlert size={16} aria-hidden="true" /> Trang Quản trị (Admin)
+                    <Link href="/admin" className="nav-dropdown-item" role="menuitem" onClick={() => setDropOpen(false)} style={{ color: "#d97706", fontWeight: 700 }}>
+                      <ShieldAlert size={16} aria-hidden="true" /> {t("nav_admin_panel", currentLang)}
                     </Link>
                   )}
                   <div className="nav-dropdown-divider" role="separator" />

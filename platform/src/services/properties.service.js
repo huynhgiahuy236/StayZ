@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { BadRequestException } = require("../helpers/error.helper");
 const propertiesModel = require("../models/properties.model");
 const roomsModel = require("../models/rooms.model");
@@ -34,16 +35,11 @@ const invalidateCache = async (property) => {
     keys.push(cacheKeyFor(`city:${property.city}`));
     if (property.slug) keys.push(cacheKeyFor(`slug:${property.slug}:${property.city}`));
   }
-  await Promise.all(keys.map((key) => redis.del(key)));
+  await Promise.all(keys.map((key) => redis.del(key).catch(() => null)));
 };
 
 /**
- * Gan them du lieu thuc te ma client can nhung khong nam trong property:
- * diem danh gia trung binh that, so luot danh gia, gia phong thap nhat,
- * suc chua lon nhat va so phong con hoat dong.
- *
- * Truoc day client phai tai toan bo /room/getAll roi tu join, va rating
- * la hang so 4.7. Gop vao day de sua ca hai van de cung luc.
+ * Enrich properties với thông tin room và review
  */
 const enrichProperties = async (properties) => {
   if (!properties.length) return [];

@@ -140,13 +140,21 @@ const server = http.createServer(app);
 // Initialize Socket.io on the server
 initSocket(server);
 
+// Disable Mongoose command buffering so queries fail fast or handle gracefully instead of buffering for 10s
+mongoose.set("bufferCommands", false);
+
 async function connectMongoWithRetry() {
   if (isMongoConnecting || mongoose.connection.readyState === 1) return;
 
   isMongoConnecting = true;
   lastMongoAttemptAt = new Date().toISOString();
   try {
-    await mongoose.connect(DATABASE_URL, { serverSelectionTimeoutMS: 10000 });
+    await mongoose.connect(DATABASE_URL, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      family: 4, // IPv4 first to prevent Windows dual-stack IPv6 DNS ECONNRESET timeouts
+    });
     lastMongoError = null;
     console.log("MongoDB connected");
     await bookingService.settleExpiredBookings().catch((error) => {
@@ -155,7 +163,7 @@ async function connectMongoWithRetry() {
   } catch (error) {
     lastMongoError = error.message;
     console.error("MongoDB connection failed:", error.message);
-    setTimeout(connectMongoWithRetry, 10000);
+    setTimeout(connectMongoWithRetry, 3000);
   } finally {
     isMongoConnecting = false;
   }
@@ -163,7 +171,7 @@ async function connectMongoWithRetry() {
 
 mongoose.connection.on("disconnected", () => {
   console.warn("MongoDB disconnected. Retrying connection...");
-  setTimeout(connectMongoWithRetry, 10000);
+  setTimeout(connectMongoWithRetry, 3000);
 });
 
 const startServer = (portToTry) => {

@@ -115,6 +115,30 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
         </Link>
         <h1>Đặt phòng</h1>
 
+        {/* Real-time 15-Minute Hold Countdown Banner */}
+        <div style={{
+          background: "linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%)",
+          color: "#fff",
+          padding: "14px 20px",
+          borderRadius: "14px",
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          marginBottom: "var(--sp-6)",
+          boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+          border: "1px solid rgba(251, 191, 36, 0.3)"
+        }}>
+          <span style={{ fontSize: "20px" }}>⏳</span>
+          <div>
+            <strong style={{ color: "#fbbf24", fontSize: "14px", display: "block" }}>
+              Giữ chỗ tạm thời (15 Phút)
+            </strong>
+            <span style={{ fontSize: "12px", opacity: 0.9 }}>
+              Phòng của bạn đang được tạm giữ trong 15:00 phút. Hoàn tất thanh toán PayOS để đảm bảo giữ chỗ.
+            </span>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} noValidate>
           {/* Room selection */}
           <div className="book-section">

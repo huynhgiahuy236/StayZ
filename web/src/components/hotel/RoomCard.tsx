@@ -1,7 +1,11 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Bed, Users, Maximize2, Eye, Wind, Star } from "lucide-react";
+import { Bed, Users, Maximize2, Eye, Wind } from "lucide-react";
 import type { Room } from "@/lib/types";
 import { resolveImage } from "@/lib/api";
+import { t, Language } from "@/lib/i18n";
 
 interface Props {
   room: Room;
@@ -16,6 +20,22 @@ const roomTypeLabels: Record<string, string> = {
 };
 
 export function RoomCard({ room, propertyCity, propertySlug }: Props) {
+  const [lang, setLang] = useState<Language>("vi");
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || "vi";
+    setLang(saved);
+
+    const handleLangChange = (e: CustomEvent<{ lang: Language }>) => {
+      if (e.detail?.lang) {
+        setLang(e.detail.lang);
+      }
+    };
+
+    window.addEventListener("stayz_lang_changed" as any, handleLangChange as any);
+    return () => window.removeEventListener("stayz_lang_changed" as any, handleLangChange as any);
+  }, []);
+
   const imageSrc = resolveImage(room.main_image_url);
 
   return (
@@ -36,25 +56,25 @@ export function RoomCard({ room, propertyCity, propertySlug }: Props) {
         </span>
         <p className="room-name">{room.name}</p>
         <div className="room-details">
-          <span className="room-detail" title="Sức chứa">
-            <Users size={13} aria-hidden="true" /> {room.capacity} khách
+          <span className="room-detail" title={t("room_capacity", lang)}>
+            <Users size={13} aria-hidden="true" /> {room.capacity} {t("guests_label", lang)}
           </span>
-          <span className="room-detail" title="Giường">
+          <span className="room-detail" title={t("room_beds", lang)}>
             <Bed size={13} aria-hidden="true" /> {room.bed_info}
           </span>
           {room.area ? (
-            <span className="room-detail" title="Diện tích">
+            <span className="room-detail" title={t("room_area", lang)}>
               <Maximize2 size={13} aria-hidden="true" /> {room.area} m²
             </span>
           ) : null}
           {room.view ? (
-            <span className="room-detail" title="Tầm nhìn">
+            <span className="room-detail" title={t("room_view", lang)}>
               <Eye size={13} aria-hidden="true" /> {room.view}
             </span>
           ) : null}
           {room.badges?.air_conditioning && (
-            <span className="room-detail" title="Điều hòa">
-              <Wind size={13} aria-hidden="true" /> Điều hòa
+            <span className="room-detail" title={t("room_ac", lang)}>
+              <Wind size={13} aria-hidden="true" /> {t("room_ac", lang)}
             </span>
           )}
         </div>
@@ -72,14 +92,14 @@ export function RoomCard({ room, propertyCity, propertySlug }: Props) {
               )}
             </div>
             <strong>{new Intl.NumberFormat("vi-VN").format(room.price)} ₫</strong>
-            <span style={{ marginLeft: 4 }}>/ đêm</span>
+            <span style={{ marginLeft: 4 }}>{t("per_night", lang)}</span>
           </div>
           <a
             href={`/hotels/${encodeURIComponent(propertyCity)}/${propertySlug}/book?roomId=${room._id}`}
             className="btn-book"
-            aria-label={`Đặt phòng ${room.name}`}
+            aria-label={`${t("card_book_now", lang)} ${room.name}`}
           >
-            Đặt ngay
+            {t("card_book_now", lang)}
           </a>
         </div>
       </div>

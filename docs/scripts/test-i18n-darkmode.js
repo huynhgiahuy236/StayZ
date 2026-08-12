@@ -33,9 +33,10 @@ const i18nContent = fs.readFileSync(i18nPath, "utf-8");
 const targetLangs = ["vi", "en", "ko", "ja", "th", "zh", "fr", "de", "es", "ru"];
 
 targetLangs.forEach((lang) => {
+  const langFilePath = path.join(__dirname, `../../web/src/lib/i18n/${lang}.ts`);
   assert(
-    i18nContent.includes(`${lang}: {`),
-    `Language key '${lang}' is configured in dictionary`
+    fs.existsSync(langFilePath),
+    `Language dictionary file 'web/src/lib/i18n/${lang}.ts' exists`
   );
 });
 
@@ -53,9 +54,11 @@ const requiredKeys = [
   "stayz_pick",
 ];
 
+const viContent = fs.readFileSync(path.join(__dirname, "../../web/src/lib/i18n/vi.ts"), "utf-8");
+
 requiredKeys.forEach((key) => {
   assert(
-    i18nContent.includes(`${key}:`),
+    viContent.includes(`${key}:`),
     `Key '${key}' is defined in translations`
   );
 });

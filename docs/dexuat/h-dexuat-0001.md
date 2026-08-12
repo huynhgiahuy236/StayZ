@@ -1,13 +1,13 @@
 # Mã Đề Xuất: h-dexuat-0001
 **Dự án**: StayZ platform & DB Upgrade to HuKi Travel Ecosystem
-**Tiêu đề**: Bản Thiết Kế Chi Tiết & Chuẩn Hóa CSDL Dài Hạn (PostgreSQL + MongoDB Atlas) & Nâng Cấp Platform Express API Cho Hệ Sinh Thái HuKi Travel v2.0
-**Trạng thái**: ĐÃ THỰC HIỆN THÀNH CÔNG (EXECUTED & COMPLETED ✅)
+**Tiêu đề**: Bản Thiết Kế Chi Tiết & Chuẩn Hóa CSDL Dài Hạn (PostgreSQL + MongoDB Atlas) & Nâng Cấp Platform Microservices Architecture Cho Hệ Sinh Thái HuKi Travel v2.0
+**Trạng thái**: ĐÃ CẬP NHẬT KIẾN TRÚC PHÂN TÁCH CSDL & MICROSERVICES (PROPOSAL MODE — CHỈ LẬP KẾ HOẠCH, KHÔNG SỬA CODE NGUỒN)
 
 ---
 
 ## 📋 1. TỔNG QUAN ĐỀ XUẤT CHUYỂN ĐỔI (OVERVIEW)
 
-Theo định hướng kiến trúc từ bộ tài liệu **HuKi Travel Master Architecture Specification v2.0** (`HuKi Travel/`), hệ thống Backend Platform (`platform/`) và CSDL (Prisma PostgreSQL + Mongoose MongoDB) của StayZ sẽ được tái cấu trúc và nâng cấp mở rộng từ **Đơn dịch vụ Khách sạn (StayZ)** thành **Super-App Du Lịch Đa Dịch Vụ (HuKi Travel)**.
+Theo định hướng kiến trúc từ bộ tài liệu **HuKi Travel Master Architecture Specification v2.0** (`HuKi Travel/`), hệ thống Backend Platform (`platform/`) và CSDL (Prisma PostgreSQL + Mongoose MongoDB) của StayZ sẽ được tái cấu trúc và nâng cấp mở rộng từ **Đơn dịch vụ Khách sạn (StayZ)** thành **Super-App Du Lịch Đa Dịch Vụ (HuKi Travel)** theo chuẩn kiến trúc Microservices phân tách độc lập.
 
 ---
 
@@ -111,10 +111,10 @@ Hệ thống HuKi Travel vận hành mô hình **Polyglot Dual-Database Architec
 - **MongoDB Atlas (Catalog DB - High Performance Read & JSON)**: Quản lý Danh mục Khách sạn, Phòng nghỉ, Giỏ hàng Chuyến đi lồng nhau, Xe khách SeatMap, Xe thuê, Chuyến bay, Cẩm nang Du lịch và Mã QR Động.
 
 ```
-                               ┌─────────────────────────────────────────┐
-                               │       HUKI TRAVEL DUAL DATABASE         │
-                               └────────────────────┬────────────────────┘
-                                                    │
+                                ┌─────────────────────────────────────────┐
+                                │       HUKI TRAVEL DUAL DATABASE         │
+                                └────────────────────┬────────────────────┘
+                                                     │
                    ┌────────────────────────────────┴────────────────────────────────┐
                    ▼                                                                 ▼
       POSTGRESQL (TRANSACTION & IDENTITY DB)                               MONGODB ATLAS (CATALOG & CONTENT DB)
@@ -151,5 +151,108 @@ Hệ thống HuKi Travel vận hành mô hình **Polyglot Dual-Database Architec
 
 ---
 
+## 🏢 8. ĐỀ XUẤT BỔ SUNG TÍNH NĂNG MULTI-TENANT & PHÂN QUYỀN DOANH NGHIỆP DỊCH VỤ
+
+Theo yêu cầu bổ sung từ tác giả Huỳnh Gia Huy, hệ thống mở rộng theo kiến trúc Phân cấp 4 tầng người dùng: `HUKI_ADMIN` (Super-Admin), `BUSINESS_PARTNER` (Chủ Doanh nghiệp Khách sạn / Nhà xe / Thuê xe / Hãng bay), `PARTNER_STAFF` (Nhân viên lễ tân/tài xế) và `CUSTOMER` (Khách du lịch).
+
+---
+
+## 🧩 9. CHI TIẾT PHÂN TÁCH CSDL VÀ CHIA MICROSERVICES CHUẨN DOMAIN-DRIVEN DESIGN (DATABASE-PER-SERVICE & ZERO USER BOTTLENECK)
+
+Theo yêu cầu khắt khe về mặt kiến trúc nhằm **tránh nghẽn CSDL User (Zero User DB Bottleneck)** và đảm bảo tính độc lập tối đa khi mở rộng quy mô (Scalability), hệ thống sẽ được phân tách thành **6 Microservices độc lập** tuân thủ nguyên tắc **Database-Per-Service**:
+
+```mermaid
+graph TD
+    ClientGate["API Gateway / Edge Router (Nginx / Envoy)"]
+    
+    subgraph AuthSvc ["1. huki-auth-service (Identity & SSO Core)"]
+        A_DB[("PostgreSQL: huki_auth_db<br/>(users, kyc, business_profiles)")]
+    end
+
+    subgraph StaySvc ["2. huki-stay-service (Hotel & Villa)"]
+        S_DB[("PostgreSQL: huki_stay_db<br/>MongoDB: huki_stay_catalog")]
+    end
+
+    subgraph BusSvc ["3. huki-bus-service (Sleeper Bus)"]
+        B_DB[("MongoDB: huki_bus_db<br/>(bus_trips, seat_maps)")]
+    end
+
+    subgraph RideSvc ["4. huki-ride-service (Car & Motorbike Rental)"]
+        R_DB[("PostgreSQL: huki_ride_db<br/>MongoDB: huki_ride_catalog")]
+    end
+
+    subgraph FlightSvc ["5. huki-flight-service (Airline Flight)"]
+        F_DB[("MongoDB: huki_flight_db<br/>(airlines, flights, seats)")]
+    end
+
+    subgraph PaySvc ["6. huki-payment-service (Payment & Wallet & Split Bill)"]
+        P_DB[("PostgreSQL: huki_payment_db<br/>(payments, split_bills, huki_passes)")]
+    end
+
+    ClientGate --> AuthSvc
+    ClientGate --> StaySvc
+    ClientGate --> BusSvc
+    ClientGate --> RideSvc
+    ClientGate --> FlightSvc
+    ClientGate --> PaySvc
+
+    %% Event Bus Async
+    AuthSvc -. "NATS Event: USER_KYC_VERIFIED" .-> RideSvc
+    PaySvc -. "NATS Event: PAYMENT_SUCCESS" .-> StaySvc
+    PaySvc -. "NATS Event: PAYMENT_SUCCESS" .-> BusSvc
+```
+
+---
+
+### 🔹 A. Ma Trận Phân Tách 6 Microservices Độc Lập & CSDL Đi Kèm
+
+| Tên Microservice | Mã Service | CSDL Độc Lập (Database-per-Service) | Bảng / Collection Quản Lý | Nhiệm Vụ Nghiệp Vụ Chuyên Biệt |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Identity & SSO** | `huki-auth-service` | PostgreSQL `huki_auth_db` | `users`, `user_tokens`, `user_profiles_kyc`, `business_profiles` | Đăng nhập SSO, cấp Token JWT, xác thực KYC sinh trắc học, quản lý vai trò RBAC & hồ sơ Doanh nghiệp. |
+| **2. Stay & Hotel** | `huki-stay-service` | PostgreSQL `huki_stay_db`<br>MongoDB `huki_stay_catalog` | `hotels`, `rooms`, `room_inventory`, `stay_bookings`, `hotel_reviews` | Quản lý danh mục lưu trú, tồn kho phòng theo ngày (`room_inventory`), tính giá và đếm ngược giữ phòng. |
+| **3. Sleeper Bus** | `huki-bus-service` | MongoDB `huki_bus_db` | `bus_operators`, `bus_routes`, `bus_trips`, `seat_maps`, `bus_bookings` | Quản lý nhà xe, tuyến đường, sơ đồ ghế 2 tầng real-time và khóa ghế via Redis Redlock. |
+| **4. Rental Ride** | `huki-ride-service` | PostgreSQL `huki_ride_db`<br>MongoDB `huki_ride_catalog` | `vehicles`, `vehicle_categories`, `ride_bookings`, `rental_locations` | Quản lý xe máy/ô tô thuê tự lái, điểm giao xe tận nơi, kiểm tra điều kiện GPLX. |
+| **5. Airline Flight** | `huki-flight-service` | MongoDB `huki_flight_db` | `airlines`, `flights`, `flight_seats`, `flight_bookings` | Tìm kiếm lịch bay khứ hồi/1 chiều, sơ đồ chọn chỗ ngồi trên máy bay, giữ chỗ chuyến bay. |
+| **6. Payment & Wallet** | `huki-payment-service` | PostgreSQL `huki_payment_db` | `payments`, `split_bill_expenses`, `split_bill_shares`, `coupons`, `huki_passes` | Xử lý cổng PayOS/Momo, chia tiền nợ nhóm (Split Bill), phát hành Ví vé & Mã QR Động E-Ticket. |
+
+---
+
+### 🔹 B. Giải Pháp Tránh "Nặng User DB" (Zero User DB Bottleneck Mechanism)
+
+Để đảm bảo CSDL `huki_auth_db` không bao giờ bị nghẽn khi hàng triệu lượt truy vấn đọc/viết diễn ra tại các phân hệ Đặt phòng (`Stay`), Xe khách (`Bus`), Thuê xe (`Ride`):
+
+1. **Stateless Asymmetric JWT Authentication (Xác Thực Không Trạng Thái)**:
+   - Tất cả thông tin cốt lõi của người dùng (`userId`, `role`, `kycStatus`, `businessProfileId`, `email`) được mã hóa trực tiếp trong **JWT Access Token Payload**.
+   - Các Microservices (`stay`, `bus`, `ride`, `flight`, `payment`) **TỰ GIẢI MÃ VÀ XÁC THỰC TOKEN MẠCH CỦA MÌNH** bằng Public Secret Key tại API Gateway / Local Middleware mà **KHÔNG CẦN QUERY TRUY VẤN VÀO CSDL USER `huki_auth_db`**.
+   - Kết quả: CSDL User chạy cực nhẹ, 100% độc lập, không bị ảnh hưởng khi lượng traffic đặt phòng tăng đột biến.
+
+2. **Event-Driven Asynchronous Communication (Kiến Trúc Bất Đồng Bộ Qua Event Bus)**:
+   - Các Microservices giao tiếp gián tiếp qua **Message Broker (NATS JetStream / RabbitMQ)**:
+     - Khi `huki-payment-service` nhận webhook thanh toán PayOS thành công $\rightarrow$ Bắn Event `PAYMENT_COMPLETED` lên Event Bus.
+     - `huki-stay-service` và `huki-bus-service` lắng nghe Event này để cập nhật trạng thái đơn mà **không gọi API đồng bộ (Synchronous HTTP) gây nghẽn chuỗi (Cascading Failure)**.
+
+3. **Chia Tách CSDL Vật Lý (Physical Database Isolation)**:
+   - Mỗi Microservice kết nối đến một Database Instance/Schema riêng biệt với connection pool độc lập (`DATABASE_AUTH_URL`, `DATABASE_STAY_URL`, `DATABASE_BUS_URL`...).
+   - Lỗi gián đoạn ở 1 CSDL dịch vụ (ví dụ: DB Bus bảo trì) **TUYỆT ĐỐI KHÔNG LÀM ẢNH HƯỞNG** đến Auth hay Đặt phòng Khách sạn.
+
+---
+
+## 🖼️ 10. ĐỀ XUẤT QUY CHUẨN VÀ BỘ PROMPT CÀO / SINH ẢNH 4K CHO CSDL TẤT CẢ DỊCH VỤ (`docs/db/promt.img.md`)
+
+Theo chỉ đạo bổ sung từ tác giả Huỳnh Gia Huy, toàn bộ hình ảnh lưu trữ trong CSDL của tất cả các phân hệ dịch vụ (`Stay`, `Bus`, `Ride`, `Flight`, `Taste`, `Experience`, `Auth`) được chuẩn hóa theo bộ tài liệu **[`docs/db/promt.img.md`](docs/db/promt.img.md)**:
+
+1. **5 Quy Tắc Vàng Bắt Buộc**:
+   - 📸 **Độ nét 4K Ultra-HD Crisp Quality**: Tối thiểu 2560x1440 hoặc 3840x2160, rõ nét từng chi tiết, tỷ lệ khung hình chuẩn hóa (16:9 Cover, 4:3 Card, 1:1 Avatar).
+   - 🎯 **Chính xác dữ liệu 100% (Strict Relevance)**: Tuyệt đối không cào sai đối tượng (Máy bay phải là máy bay thực tế, Xe giường nằm phải là xe 2 tầng VIP, Xe thuê phải là xe đời mới 45 độ).
+   - 🚫 **Nghiêm cấm ảnh rác / Placeholder**: Không dùng ảnh xám, không dùng ảnh vỡ nét, không chứa watermark.
+   - 🧘 **Tập trung chủ thể (Subject Focus)**: Hạn chế người xuất hiện chính diện. Tôn vinh vẻ đẹp kiến trúc, phương tiện, món ăn, phong cảnh.
+   - ☀️ **Ánh sáng & Thẩm mỹ Super-App Hạng Sang**: Ánh sáng rực rỡ, tone màu tươi sáng sang trọng.
+
+2. **Cơ Chế Kích Hoạt Tự Động**:
+   - Khi người dùng gọi lệnh cào/sinh ảnh cho bất kỳ dịch vụ nào (ví dụ: *cào ảnh khách sạn*, *cào ảnh xe khách*, *cào ảnh máy bay*), AI sẽ tự động đọc file **[`docs/db/promt.img.md`](docs/db/promt.img.md)** để lấy exact Prompt và thực thi cào/sinh ảnh chính xác cho CSDL phân hệ đó.
+
+---
+
 > [!NOTE]
-> **Tình trạng h-dexuat-0001.md**: Đã phát lệnh `h-thống nhất` và thực thi thành công 100% (Chi tiết lưu tại [`docs/results/h-result-0001.md`](docs/results/h-result-0001.md)).
+> **Tình trạng h-dexuat-0001.md**: Đã cập nhật bổ sung đầy đủ bộ quy chuẩn & Prompt cào ảnh 4K CSDL tại [`docs/db/promt.img.md`](docs/db/promt.img.md). Mọi mã nguồn thực tế sẽ được triển khai khi có lệnh `h-thống nhất`.
+

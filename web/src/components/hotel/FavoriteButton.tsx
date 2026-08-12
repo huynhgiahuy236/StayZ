@@ -54,7 +54,7 @@ export function FavoriteButton({ propertyId, initialFav = false }: Props) {
       className={`fav-btn ${isFav ? "active" : ""}`}
       onClick={toggle}
       disabled={loading}
-      aria-label={isFav ? "Xóa khỏi yêu thích" : "Thêm vào yêu thích"}
+      aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
       aria-pressed={isFav}
     >
       <Heart

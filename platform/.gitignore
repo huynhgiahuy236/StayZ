@@ -3,3 +3,5 @@ node_modules/
 stayz.sql
 dist/
 build/
+postgreSql/
+

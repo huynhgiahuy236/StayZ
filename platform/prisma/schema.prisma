@@ -29,6 +29,7 @@ model User {
   reviews                  Review[]
   split_bill_expenses      SplitBillExpense[]
   split_bill_shares        SplitBillShare[]
+  business_profile         BusinessProfile?
 
   @@map("users")
 }
@@ -168,3 +169,25 @@ model Coupon {
 
   @@map("coupons")
 }
+
+model BusinessProfile {
+  id                  String    @id @default(uuid()) @db.VarChar(64)
+  user_id             String    @unique @db.VarChar(64)
+  business_name       String    @db.VarChar(150)
+  tax_code            String?   @unique @db.VarChar(30)
+  service_type        String    @db.VarChar(30)
+  business_license    String?   @db.Text
+  verification_status String?   @default("PENDING") @db.VarChar(20)
+  commission_rate     Decimal?  @default(10.00) @db.Decimal(5, 2)
+  bank_name           String?   @db.VarChar(100)
+  bank_account_number String?   @db.VarChar(50)
+  is_deleted          Boolean   @default(false)
+  deleted_at          DateTime?
+  deleted_by          String?   @db.VarChar(64)
+  created_at          DateTime? @default(now())
+  updated_at          DateTime? @default(now()) @updatedAt
+  user                User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("business_profiles")
+}
+

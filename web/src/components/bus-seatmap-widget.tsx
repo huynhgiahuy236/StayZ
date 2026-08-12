@@ -30,11 +30,12 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
     <section className="section shell" style={{ paddingTop: 40, paddingBottom: 40 }}>
       <div
         style={{
-          background: "var(--color-card-bg, #ffffff)",
-          border: "1px solid var(--color-border, #e2e8f0)",
+          background: "linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.98) 100%), url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=2560&q=80') center/cover no-repeat",
+          border: "1px solid rgba(251, 191, 36, 0.3)",
           borderRadius: 24,
           padding: "36px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+          color: "#fff",
+          boxShadow: "0 15px 35px rgba(0,0,0,0.25)",
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
           gap: 32,
@@ -44,8 +45,8 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
         <div>
           <span
             style={{
-              background: "rgba(37, 99, 235, 0.1)",
-              color: "#2563eb",
+              background: "rgba(251, 191, 36, 0.2)",
+              color: "#fbbf24",
               fontSize: 12,
               fontWeight: 800,
               padding: "6px 14px",
@@ -59,24 +60,24 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
           >
             <Bus size={14} /> HUKI BUS · REAL-TIME SEATMAP
           </span>
-          <h2 style={{ fontSize: 26, fontWeight: 800, margin: "12px 0 8px 0", color: "var(--color-ink, #0f172a)" }}>
+          <h2 style={{ fontSize: 28, fontWeight: 900, margin: "12px 0 8px 0", color: "#ffffff" }}>
             {t("bus_widget_title", lang)}
           </h2>
-          <p style={{ fontSize: 14, color: "var(--color-ink-2, #64748b)", lineHeight: 1.6, margin: 0 }}>
-            {t("combo_widget_desc", lang)}
+          <p style={{ fontSize: 14, color: "#cbd5e1", lineHeight: 1.6, margin: 0 }}>
+            Hệ thống sơ đồ ghế giường nằm 2 tầng trực quan mô phỏng real-time via WebSocket. Khóa giữ vị trí tức thì trong 10 phút chống overbooking.
           </p>
 
-          <div style={{ display: "flex", gap: 12, marginTop: 24 }}>
+          <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap", alignItems: "center" }}>
             <button
               onClick={() => setDeck(1)}
               style={{
-                padding: "8px 18px",
+                padding: "10px 20px",
                 borderRadius: 100,
                 fontSize: 13,
                 fontWeight: 700,
                 border: 0,
-                background: deck === 1 ? "#0f172a" : "#f1f5f9",
-                color: deck === 1 ? "#fbbf24" : "#475569",
+                background: deck === 1 ? "#fbbf24" : "rgba(255,255,255,0.15)",
+                color: deck === 1 ? "#0f172a" : "#ffffff",
                 cursor: "pointer",
               }}
             >
@@ -85,26 +86,46 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
             <button
               onClick={() => setDeck(2)}
               style={{
-                padding: "8px 18px",
+                padding: "10px 20px",
                 borderRadius: 100,
                 fontSize: 13,
                 fontWeight: 700,
                 border: 0,
-                background: deck === 2 ? "#0f172a" : "#f1f5f9",
-                color: deck === 2 ? "#fbbf24" : "#475569",
+                background: deck === 2 ? "#fbbf24" : "rgba(255,255,255,0.15)",
+                color: deck === 2 ? "#0f172a" : "#ffffff",
                 cursor: "pointer",
               }}
             >
               {t("bus_deck_upper", lang)}
             </button>
+
+            {/* CTA Button jump to dedicated Bus page */}
+            <a
+              href="/bus"
+              style={{
+                background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+                color: "#fff",
+                fontWeight: 800,
+                fontSize: 13,
+                padding: "10px 22px",
+                borderRadius: 100,
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 6,
+                boxShadow: "0 4px 15px rgba(37,99,235,0.4)"
+              }}
+            >
+              Đặt Vé Xe Khách Giường Nằm →
+            </a>
           </div>
         </div>
 
         {/* SeatMap Interactive Demo */}
-        <div style={{ background: "#f8fafc", padding: 24, borderRadius: 20, border: "1px dashed #cbd5e1" }}>
+        <div style={{ background: "rgba(15, 23, 42, 0.85)", backdropFilter: "blur(12px)", padding: 24, borderRadius: 20, border: "1px solid rgba(255,255,255,0.15)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#64748b" }}>SEATMAP {deck === 1 ? "DECK 1" : "DECK 2"}</span>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "#16a34a" }}>● LIVE WEBSOCKET</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#fbbf24" }}>SEATMAP {deck === 1 ? "DECK 1" : "DECK 2"}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#34d399" }}>● LIVE WEBSOCKET</span>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
@@ -113,13 +134,13 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
               const isBooked = seat.status === "booked";
               const isLocked = seat.status === "locked";
 
-              let bg = "#ffffff";
-              let color = "#1e293b";
-              let border = "1px solid #cbd5e1";
+              let bg = "rgba(255,255,255,0.1)";
+              let color = "#ffffff";
+              let border = "1px solid rgba(255,255,255,0.2)";
 
-              if (isBooked) { bg = "#e2e8f0"; color = "#94a3b8"; border = "1px solid #cbd5e1"; }
-              else if (isLocked) { bg = "#fef3c7"; color = "#d97706"; border = "1px solid #f59e0b"; }
-              else if (isSelected) { bg = "#2563eb"; color = "#ffffff"; border = "1px solid #1d4ed8"; }
+              if (isBooked) { bg = "rgba(148,163,184,0.2)"; color = "#64748b"; border = "1px solid rgba(148,163,184,0.3)"; }
+              else if (isLocked) { bg = "rgba(245,158,11,0.3)"; color = "#fbbf24"; border = "1px solid #f59e0b"; }
+              else if (isSelected) { bg = "#2563eb"; color = "#ffffff"; border = "1px solid #60a5fa"; }
 
               return (
                 <button
@@ -139,7 +160,7 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
                     flexDirection: "column",
                     alignItems: "center",
                     gap: 4,
-                    boxShadow: isSelected ? "0 4px 12px rgba(37,99,235,0.3)" : "none",
+                    boxShadow: isSelected ? "0 4px 12px rgba(37,99,235,0.4)" : "none",
                   }}
                 >
                   <span>{seat.id}</span>

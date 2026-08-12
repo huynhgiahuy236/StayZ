@@ -61,3 +61,17 @@ Toàn bộ CSDL PostgreSQL, MongoDB Atlas và hệ thống Backend Platform API 
 - **Kết quả kiểm thử**:
   - Executed `node -e "require('./src/controllers/auth.controller')"` $\rightarrow$ **PASS ✅ (Auth Controller loaded clean)**.
   - Nodemon server ready to auto-reload without crashing.
+
+---
+
+## 🏢 5. BÁO CÁO THỰC THỊ BỔ SUNG MULTI-TENANT & POSTGRESQL SQL SCRIPTS (`h-thống nhất 0001`)
+- **Thời gian thực thi**: 12/08/2026
+- **Các công việc đã thực hiện**:
+  1. ✅ **Prisma Schema Update**: Đã bổ sung `BusinessProfile` model và liên kết `business_profile` trong `User` model (`platform/prisma/schema.prisma`).
+  2. ✅ **Phân Cấp Phân Quyền Multi-Tenant**: Thiết kế ma trận phân quyền 4 tầng người dùng (`HUKI_ADMIN`, `BUSINESS_PARTNER`, `PARTNER_STAFF`, `CUSTOMER`) cùng cột cô lập dữ liệu `business_profile_id`.
+  3. ✅ **Tạo File DDL PostgreSQL Master**: Đã xuất file DDL PostgreSQL đầy đủ tại `platform/postgreSql/huki_master_v2.sql` chứa trọn vẹn 10 bảng CSDL relational.
+  4. ✅ **Cập nhật GitIgnore**: Đã thêm thư mục `postgreSql/` vào `platform/.gitignore` theo đúng yêu cầu bảo mật.
+  5. ✅ **Tách Biệt Microservices Chống Nghẽn User DB**: Thiết kế kiến trúc Stateless Asymmetric JWT Token Verification & Message Broker Pub-Sub cho 6 Microservices độc lập (`huki-auth-service`, `huki-stay-service`, `huki-bus-service`, `huki-ride-service`, `huki-flight-service`, `huki-payment-service`).
+- **Kết quả kiểm thử syntax & verification**:
+  - Executed file DDL generation & Prisma Schema check $\rightarrow$ **PASS ✅ (All schemas valid and properly gitignored)**.
+

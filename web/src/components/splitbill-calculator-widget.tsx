@@ -56,11 +56,32 @@ export function SplitbillCalculatorWidget({ lang = "vi" }: Props) {
 
           <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "#cbd5e1" }}>
-              <CheckCircle2 size={16} style={{ color: "#c084fc" }} /> AI Split Bill Engine
+              <CheckCircle2 size={16} style={{ color: "#c084fc" }} /> AI Split Bill Engine - Hạch toán nợ chéo tối giản
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "#cbd5e1" }}>
-              <CheckCircle2 size={16} style={{ color: "#c084fc" }} /> Dynamic VietQR Settlement Link
+              <CheckCircle2 size={16} style={{ color: "#c084fc" }} /> Dynamic VietQR Settlement Link & Ví HuKi Pass
             </div>
+          </div>
+
+          <div style={{ marginTop: 28 }}>
+            <a
+              href="/wallet/split-bill"
+              style={{
+                background: "linear-gradient(135deg, #c084fc 0%, #9333ea 100%)",
+                color: "#ffffff",
+                fontWeight: 800,
+                fontSize: 14,
+                padding: "12px 28px",
+                borderRadius: 100,
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                boxShadow: "0 6px 20px rgba(192, 132, 252, 0.4)",
+              }}
+            >
+              Mở Công Cụ Chia Tiền Nhóm →
+            </a>
           </div>
         </div>
 

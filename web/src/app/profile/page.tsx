@@ -193,6 +193,36 @@ export default function ProfilePage() {
                   {saving ? <><Loader2 size={16} aria-hidden="true" /> Đang lưu...</> : "Lưu thay đổi"}
                 </button>
               </form>
+
+              {/* KYC & Identity Section */}
+              <div style={{ marginTop: "var(--sp-8)", paddingTop: "var(--sp-6)", borderTop: "1px solid var(--color-border)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--sp-4)" }}>
+                  <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>🪪 Xác thực Sinh trắc học & Giấy tờ (HuKi ID KYC)</h3>
+                  <span style={{
+                    padding: "4px 12px",
+                    borderRadius: 20,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    background: user?.kyc_status === "VERIFIED" ? "rgba(16, 185, 129, 0.15)" : user?.kyc_status === "PENDING" ? "rgba(245, 158, 11, 0.15)" : "rgba(239, 68, 68, 0.15)",
+                    color: user?.kyc_status === "VERIFIED" ? "#10b981" : user?.kyc_status === "PENDING" ? "#f59e0b" : "#ef4444"
+                  }}>
+                    {user?.kyc_status === "VERIFIED" ? "✓ Đã xác thực" : user?.kyc_status === "PENDING" ? "⏳ Đang chờ duyệt" : "⚠️ Chưa xác thực"}
+                  </span>
+                </div>
+                <p style={{ fontSize: 13, color: "var(--color-ink-3)", marginBottom: "var(--sp-4)" }}>
+                  Xác thực bằng lái xe (GPLX) bắt buộc để sử dụng dịch vụ thuê xe tự lái <strong>HuKi Ride</strong>.
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--sp-4)" }}>
+                  <div className="form-group">
+                    <label className="form-label">Số CCCD / CMND</label>
+                    <input type="text" className="form-input" placeholder="03609..." value={user?.identity_card_number || ""} readOnly disabled style={{ opacity: 0.8 }} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Số Giấy phép lái xe (GPLX)</label>
+                    <input type="text" className="form-input" placeholder="79012..." value={user?.driver_license_number || ""} readOnly disabled style={{ opacity: 0.8 }} />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
