@@ -208,4 +208,6 @@ export const zhDict: Record<string, string> = {
   "Resort & Nghỉ dưỡng": "度假村 & 疗养",
   "Trải Nghiệm & Check-in": "体验 & 打卡",
   "Ẩm Thực Đặc sản": "特色美食",
+  "12 Quốc Gia Toàn Cầu": "全球12个国家",
+  "Điểm Đến Nổi Bật Theo Quốc Gia": "按国家划分的热门目的地",
 };

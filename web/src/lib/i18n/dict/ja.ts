@@ -208,4 +208,6 @@ export const jaDict: Record<string, string> = {
   "Resort & Nghỉ dưỡng": "リゾート＆避暑地",
   "Trải Nghiệm & Check-in": "体験＆チェックイン",
   "Ẩm Thực Đặc sản": "特産品料理",
+  "12 Quốc Gia Toàn Cầu": "世界の12か国",
+  "Điểm Đến Nổi Bật Theo Quốc Gia": "国別の注目目的地",
 };

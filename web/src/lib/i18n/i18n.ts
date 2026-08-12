@@ -1,13 +1,13 @@
-import { viDict } from "./i18n/dict/vi";
-import { enDict } from "./i18n/dict/en";
-import { koDict } from "./i18n/dict/ko";
-import { jaDict } from "./i18n/dict/ja";
-import { thDict } from "./i18n/dict/th";
-import { zhDict } from "./i18n/dict/zh";
-import { frDict } from "./i18n/dict/fr";
-import { deDict } from "./i18n/dict/de";
-import { esDict } from "./i18n/dict/es";
-import { ruDict } from "./i18n/dict/ru";
+import { viDict } from "./dict/vi";
+import { enDict } from "./dict/en";
+import { koDict } from "./dict/ko";
+import { jaDict } from "./dict/ja";
+import { thDict } from "./dict/th";
+import { zhDict } from "./dict/zh";
+import { frDict } from "./dict/fr";
+import { deDict } from "./dict/de";
+import { esDict } from "./dict/es";
+import { ruDict } from "./dict/ru";
 
 export type Language = "vi" | "en" | "ko" | "ja" | "th" | "zh" | "fr" | "de" | "es" | "ru";
 

@@ -112,7 +112,7 @@ export function SearchInteractive({
         const q = keyword.toLowerCase();
         const titleMatch = typeof hotel.title === "string" 
           ? hotel.title.toLowerCase().includes(q)
-          : (hotel.title?.vi || "").toLowerCase().includes(q) || (hotel.title?.en || "").toLowerCase().includes(q);
+          : ((hotel.title as any)?.vi || "").toLowerCase().includes(q) || ((hotel.title as any)?.en || "").toLowerCase().includes(q);
         const cityMatch = (hotel.city || "").toLowerCase().includes(q);
         const addrMatch = (hotel.address || "").toLowerCase().includes(q);
         if (!titleMatch && !cityMatch && !addrMatch) return false;
@@ -146,8 +146,11 @@ export function SearchInteractive({
 
       // Amenities match
       if (selectedAmenities.length > 0) {
-        const hotelAmenities = hotel.amenities || [];
-        const hasAll = selectedAmenities.every((a) => hotelAmenities.includes(a));
+        const hasAll = selectedAmenities.every((a) => {
+          if (Array.isArray(hotel.amenities)) return (hotel.amenities as any).includes(a);
+          if (hotel.amenities && typeof hotel.amenities === "object") return Boolean((hotel.amenities as any)[a]);
+          return false;
+        });
         if (!hasAll) return false;
       }
 

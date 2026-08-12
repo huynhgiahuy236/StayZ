@@ -208,4 +208,6 @@ export const frDict: Record<string, string> = {
   "Resort & Nghỉ dưỡng": "Resort & Détente",
   "Trải Nghiệm & Check-in": "Expériences & Check-in",
   "Ẩm Thực Đặc sản": "Cuisine Spéciale",
+  "12 Quốc Gia Toàn Cầu": "12 Pays du Monde",
+  "Điểm Đến Nổi Bật Theo Quốc Gia": "Destinations En Vedette par Pays",
 };

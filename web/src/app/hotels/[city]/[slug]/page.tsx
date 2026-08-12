@@ -40,7 +40,7 @@ export default async function HotelDetail({ params }: { params: Promise<{ city: 
         rooms={rooms}
         reviews={reviews}
         images={images}
-        price={price}
+        price={price ?? null}
         enabledAmenities={enabledAmenities}
         avgRating={avgRating}
         activeRooms={activeRooms}

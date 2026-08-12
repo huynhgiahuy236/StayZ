@@ -208,4 +208,6 @@ export const esDict: Record<string, string> = {
   "Resort & Nghỉ dưỡng": "Resort & Descanso",
   "Trải Nghiệm & Check-in": "Experiencias & Check-in",
   "Ẩm Thực Đặc sản": "Cocina Especial",
+  "12 Quốc Gia Toàn Cầu": "12 Países del Mundo",
+  "Điểm Đến Nổi Bật Theo Quốc Gia": "Destinos Destacados por País",
 };

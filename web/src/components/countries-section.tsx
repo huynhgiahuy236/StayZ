@@ -139,7 +139,15 @@ export function CountriesSection({ lang = "vi", onSelectCountry }: Props) {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16, marginTop: 20 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 16,
+          marginTop: 20,
+        }}
+        className="country-grid-4-cols"
+      >
         {COUNTRIES_DATA.map((c) => {
           const cData = c as CountryInfo;
           const cName = getI18nField(cData.name, lang, cData.name.vi);

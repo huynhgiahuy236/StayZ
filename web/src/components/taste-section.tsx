@@ -3,6 +3,10 @@ import Link from "next/link";
 import { Utensils } from "lucide-react";
 import type { Destination } from "@/lib/types";
 import { Language, t } from "@/lib/i18n";
+import { useState } from "react";
+import { getDistinctVisualImage } from "@/lib/unique-images";
+import { getMasterDataForCountry } from "@/lib/master-data";
+import { CountryFilterTabs } from "@/components/country-filter-tabs";
 
 interface Props {
   destinations: Destination[];
@@ -20,21 +24,15 @@ function getI18nText(field: unknown, lang: Language, fallback: string): string {
 }
 
 export function TasteSection({ destinations, lang = "vi" }: Props) {
-  const allFoods = destinations.flatMap((d) => {
-    const cityName = getI18nText(d.name, lang, "");
-    return (d.foods || []).map((f) => ({
-      ...f,
-      cityName,
-      destinationSlug: d.slug,
-    }));
-  });
+  const [selectedCountry, setSelectedCountry] = useState("all");
 
-  if (!allFoods.length) return null;
+  const masterData = getMasterDataForCountry(selectedCountry);
+  const allFoods = masterData.foods;
   const displayFoods = allFoods.slice(0, 8); // 8 items (4 per row)
 
   return (
     <section className="section shell" id="taste-section" aria-labelledby="taste-heading" style={{ paddingTop: 40, paddingBottom: 40 }}>
-      <div className="section-heading">
+      <div className="section-heading" style={{ marginBottom: 16 }}>
         <div>
           <p className="eyebrow dark" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
             <Utensils size={14} className="text-gold" /> {t("TASTE OF STAYZ", lang)}
@@ -44,12 +42,27 @@ export function TasteSection({ destinations, lang = "vi" }: Props) {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20, marginTop: 24 }}>
+      {/* 12 Country Filter Tab Bar */}
+      <CountryFilterTabs
+        selectedCode={selectedCountry}
+        onSelect={(code) => setSelectedCountry(code)}
+        lang={lang}
+      />
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 20,
+          marginTop: 24,
+        }}
+        className="taste-grid-4-cols"
+      >
         {displayFoods.map((food, idx) => {
           const title = getI18nText(food.title, lang, "Món ngon đặc sản");
           const desc = getI18nText(food.description, lang, "Trải nghiệm hương vị chuẩn vị.");
           const spots = (food.recommended_spots || []).map((s) => getI18nText(s, lang, ""));
-          const img = food.image_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=85";
+          const img = getDistinctVisualImage("food", food.slug || title || `food-${idx}`, idx);
 
           return (
             <div
@@ -84,7 +97,7 @@ export function TasteSection({ destinations, lang = "vi" }: Props) {
                     borderRadius: 100,
                   }}
                 >
-                  📍 {food.cityName}
+                  📍 {(food as any).cityName || "Đặc sản"}
                 </span>
 
                 {food.price_range && (

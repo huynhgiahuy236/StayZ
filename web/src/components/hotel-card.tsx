@@ -5,6 +5,8 @@ import type { Hotel } from "@/lib/types";
 import { resolveImage } from "@/lib/api";
 import { Language, t } from "@/lib/i18n";
 
+import { getDistinctVisualImage } from "@/lib/unique-images";
+
 interface Props {
   hotel: Hotel;
   lang?: Language;
@@ -12,7 +14,7 @@ interface Props {
 
 export function HotelCard({ hotel, lang = "vi" }: Props) {
   const price = hotel.min_price ?? hotel.base_price;
-  const imageSrc = resolveImage(hotel.main_image_url);
+  const imageSrc = getDistinctVisualImage("hotel", hotel.slug || hotel._id || hotel.title);
   const typeLabel = hotel.type ? t(`filter_${hotel.type.toLowerCase()}`, lang) : t("Khách sạn", lang);
 
   return (

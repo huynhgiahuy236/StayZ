@@ -200,4 +200,6 @@ export const ruDict: Record<string, string> = {
   "Hiện": "Показать",
   "Tiến trình đăng ký": "Прогресс регистрации",
   "Số": "Номер",
+  "12 Quốc Gia Toàn Cầu": "12 Страны Мира",
+  "Điểm Đến Nổi Bật Theo Quốc Gia": "Популярные Направления по Странам",
 };

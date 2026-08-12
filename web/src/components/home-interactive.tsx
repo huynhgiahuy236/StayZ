@@ -15,6 +15,8 @@ import { HotelCard } from "@/components/hotel-card";
 import { TripComboWidget } from "@/components/trip-combo-widget";
 import { BusSeatmapWidget } from "@/components/bus-seatmap-widget";
 import { SplitbillCalculatorWidget } from "@/components/splitbill-calculator-widget";
+import { CountryFilterTabs } from "@/components/country-filter-tabs";
+import { getMasterDataForCountry } from "@/lib/master-data";
 
 interface Props {
   initialHotels: Hotel[];
@@ -22,21 +24,21 @@ interface Props {
 }
 
 const HOTEL_TABS = [
-  { id: "all", labelKey: "Tất cả", icon: Building },
-  { id: "hotel", labelKey: "Khách sạn", icon: HotelIcon },
-  { id: "villa", labelKey: "Villa & Resort", icon: Palmtree },
-  { id: "apartment", labelKey: "Căn hộ & Business", icon: HomeIcon },
+  { id: "all", labelKey: "filter_all", icon: Building },
+  { id: "hotel", labelKey: "filter_hotel", icon: HotelIcon },
+  { id: "villa", labelKey: "filter_villa", icon: Palmtree },
+  { id: "apartment", labelKey: "filter_apartment", icon: HomeIcon },
 ];
 
 const HERO_COUNTRY_BACKGROUNDS: Record<Language, string> = {
-  vi: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=2000&q=85", // 🇻🇳 Đà Nẵng / Việt Nam
-  en: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=2000&q=85", // 🇺🇸 New York / USA
-  ko: "https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=2000&q=85", // 🇰🇷 Seoul Namsan / Hàn Quốc
-  ja: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=2000&q=85", // 🇯🇵 Tokyo & Núi Phú Sĩ / Nhật Bản
-  th: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=2000&q=85", // 🇹🇭 Bangkok Wat Arun / Thái Lan
-  zh: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=2000&q=85", // 🇨🇳 Thượng Hải / Trung Quốc
-  fr: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=2000&q=85", // 🇫🇷 Tháp Eiffel Paris / Pháp
-  de: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=2000&q=85", // 🇩🇪 Lâu đài Neuschwanstein / Đức
+  vi: "https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=2000&q=85", // 🇻🇳 Đà Nẵng / Việt Nam
+  en: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&w=2000&q=85", // 🇺🇸 New York / Mỹ
+  ko: "https://images.unsplash.com/photo-1538485399081-7191377e8241?auto=format&fit=crop&w=2000&q=85", // 🇰🇷 Seoul / Hàn Quốc
+  ja: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=2000&q=85", // 🇯🇵 Tokyo / Nhật Bản
+  th: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=2000&q=85", // 🇹🇭 Bangkok / Thái Lan
+  zh: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&w=2000&q=85", // 🇨🇳 Bắc Kinh / Trung Quốc
+  fr: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=2000&q=85", // 🇫🇷 Paris / Pháp
+  de: "https://images.unsplash.com/photo-1599946347371-68eb71b16afc?auto=format&fit=crop&w=2000&q=85", // 🇩🇪 Berlin / Đức
   es: "https://images.unsplash.com/photo-1543783207-ec64e4d95325?auto=format&fit=crop&w=2000&q=85", // 🇪🇸 Barcelona / Tây Ban Nha
   ru: "https://images.unsplash.com/photo-1513326718677-b964603b136b?auto=format&fit=crop&w=2000&q=85", // 🇷🇺 Điện Kremlin Matxcva / Nga
 };
@@ -44,6 +46,7 @@ const HERO_COUNTRY_BACKGROUNDS: Record<Language, string> = {
 export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
   const [lang, setLang] = useState<Language>("vi");
   const [activeHotelTab, setActiveHotelTab] = useState("all");
+  const [activeHotelCountry, setActiveHotelCountry] = useState("all");
   const [selectedCountryCode, setSelectedCountryCode] = useState("vn");
 
   useEffect(() => {
@@ -59,8 +62,9 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
   // Dynamic 4K Background URL based on selected Language/Country
   const heroBgUrl = HERO_COUNTRY_BACKGROUNDS[lang] || HERO_COUNTRY_BACKGROUNDS.vi;
 
-  // Filter Hotels based on selected tab
-  const filteredHotels = initialHotels.filter((h) => {
+  // Filter Hotels based on selected country & type tab using Master Data Provider
+  const countryHotels = getMasterDataForCountry(activeHotelCountry).hotels;
+  const filteredHotels = countryHotels.filter((h) => {
     if (activeHotelTab === "all") return true;
     const type = (h.type || "").toLowerCase();
     if (activeHotelTab === "hotel") return type === "hotel" || type === "business";
@@ -173,6 +177,13 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
             </div>
           </div>
 
+          {/* Bộ chọn 12 Quốc gia lọc Khách sạn */}
+          <CountryFilterTabs
+            selectedCode={activeHotelCountry}
+            onSelect={(code) => setActiveHotelCountry(code)}
+            lang={lang}
+          />
+
           {/* Bộ lọc 4 Tab Button Khách sạn */}
           <div
             style={{
@@ -214,7 +225,7 @@ export function HomeInteractive({ initialHotels, initialDestinations }: Props) {
 
           {/* Grid 8 Hotel Cards (4 items/row) */}
           {displayHotels.length ? (
-            <div className="hotel-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20 }}>
+            <div className="hotel-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
               {displayHotels.map((hotel) => (
                 <HotelCard hotel={hotel} key={hotel._id} lang={lang} />
               ))}

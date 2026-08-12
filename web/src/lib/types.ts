@@ -17,15 +17,22 @@ export type Hotel = {
   available_rooms?: number;
   max_capacity?: number | null;
   is_preferred?: boolean;
+  price_from?: number | null;
+  price?: number | null;
   amenities?: Record<string, boolean>;
 };
 
+// ─── SearchResponse ───────────────────────────────────────────────────────────
 export type SearchResponse = {
   items?: Hotel[];
   data?: Hotel[];
   properties?: Hotel[];
-  total?: number;
-  page?: number;
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+    total_pages: number;
+  };
 };
 
 // ─── Room ─────────────────────────────────────────────────────────────────────
@@ -85,6 +92,9 @@ export type User = {
   date_of_birth?: string | null;
   avatar?: { url?: string; public_id?: string };
   role: "admin" | "user";
+  kyc_status?: string;
+  identity_card_number?: string;
+  driver_license_number?: string;
   is_active?: boolean;
   createdAt?: string;
 };

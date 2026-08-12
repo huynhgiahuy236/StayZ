@@ -208,4 +208,6 @@ export const koDict: Record<string, string> = {
   "Resort & Nghỉ dưỡng": "리조트 & 휴양",
   "Trải Nghiệm & Check-in": "체험 & 체크인",
   "Ẩm Thực Đặc sản": "특산물 요리",
+  "12 Quốc Gia Toàn Cầu": "12개 글로벌 국가",
+  "Điểm Đến Nổi Bật Theo Quốc Gia": "국가별 주요 여행지",
 };

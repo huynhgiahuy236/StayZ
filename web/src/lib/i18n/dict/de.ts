@@ -208,4 +208,6 @@ export const deDict: Record<string, string> = {
   "Resort & Nghỉ dưỡng": "Resort & Erholung",
   "Trải Nghiệm & Check-in": "Erlebnisse & Check-in",
   "Ẩm Thực Đặc sản": "Spezialgerichte",
+  "12 Quốc Gia Toàn Cầu": "12 Globale Länder",
+  "Điểm Đến Nổi Bật Theo Quốc Gia": "Beliebte Reiseziele nach Land",
 };

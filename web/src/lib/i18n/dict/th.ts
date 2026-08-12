@@ -208,4 +208,6 @@ export const thDict: Record<string, string> = {
   "Resort & Nghỉ dưỡng": "รีสอร์ท & พักผ่อน",
   "Trải Nghiệm & Check-in": "ประสบการณ์ & เช็คอิน",
   "Ẩm Thực Đặc sản": "อาหารพื้นเมือง",
+  "12 Quốc Gia Toàn Cầu": "12 ประเทศทั่วโลก",
+  "Điểm Đến Nổi Bật Theo Quốc Gia": "จุดหมายปลายทางยอดนิยมตามประเทศ",
 };

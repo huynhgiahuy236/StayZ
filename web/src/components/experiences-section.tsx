@@ -3,6 +3,10 @@ import Link from "next/link";
 import { Compass, Camera, Trees, Landmark, Sparkles } from "lucide-react";
 import type { Destination } from "@/lib/types";
 import { Language, t } from "@/lib/i18n";
+import { useState } from "react";
+import { getDistinctVisualImage } from "@/lib/unique-images";
+import { getMasterDataForCountry } from "@/lib/master-data";
+import { CountryFilterTabs } from "@/components/country-filter-tabs";
 
 interface Props {
   destinations: Destination[];
@@ -27,22 +31,16 @@ const CATEGORY_MAP: Record<string, { labelKey: string; icon: any; color: string 
 };
 
 export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
-  const allActivities = destinations.flatMap((d) => {
-    const cityName = getI18nText(d.name, lang, "");
-    return (d.activities || []).map((a) => ({
-      ...a,
-      cityName,
-      destinationSlug: d.slug,
-    }));
-  });
+  const [selectedCountry, setSelectedCountry] = useState("all");
 
-  if (!allActivities.length) return null;
+  const masterData = getMasterDataForCountry(selectedCountry);
+  const allActivities = masterData.activities;
   const displayActivities = allActivities.slice(0, 8); // 8 items (4 per row)
 
   return (
     <section className="section warm" id="experiences-section" aria-labelledby="exp-heading" style={{ paddingTop: 40, paddingBottom: 40 }}>
       <div className="shell">
-        <div className="section-heading">
+        <div className="section-heading" style={{ marginBottom: 16 }}>
           <div>
             <p className="eyebrow dark" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
               <Compass size={14} className="text-gold" /> {t("HUKI EXPERIENCE", lang)}
@@ -52,12 +50,27 @@ export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 20, marginTop: 24 }}>
+        {/* 12 Country Filter Tab Bar */}
+        <CountryFilterTabs
+          selectedCode={selectedCountry}
+          onSelect={(code) => setSelectedCountry(code)}
+          lang={lang}
+        />
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: 20,
+            marginTop: 24,
+          }}
+          className="exp-grid-4-cols"
+        >
           {displayActivities.map((act, idx) => {
             const title = getI18nText(act.title, lang, "Trải nghiệm du lịch");
             const desc = getI18nText(act.description, lang, "Khám phá địa danh độc đáo.");
-            const loc = getI18nText(act.location_name, lang, act.cityName);
-            const img = act.image_url || "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?auto=format&fit=crop&w=800&q=85";
+            const loc = getI18nText(act.location_name, lang, (act as any).cityName || "Khu du lịch");
+            const img = getDistinctVisualImage("exp", act.slug || title || `exp-${idx}`, idx);
             const catInfo = CATEGORY_MAP[act.category || "checkin"] || CATEGORY_MAP.checkin;
             const CatIcon = catInfo.icon;
             const categoryLabel = t(catInfo.labelKey, lang);

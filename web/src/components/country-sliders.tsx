@@ -4,6 +4,9 @@ import Link from "next/link";
 import { Compass, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Destination } from "@/lib/types";
 import { Language, t } from "@/lib/i18n";
+import { getDistinctVisualImage } from "@/lib/unique-images";
+import { CountryFilterTabs } from "@/components/country-filter-tabs";
+import { getMasterDataForCountry } from "@/lib/master-data";
 
 interface Props {
   destinations: Destination[];
@@ -90,8 +93,9 @@ export function CountrySliders({ destinations, lang: initialLang = "vi", selecte
     setCurrentPage(1);
   }
 
-  // Filter destinations by active country
-  const filtered = destinations.filter((d) => isDestinationInCountry(d, activeCountry));
+  // Filter destinations by active country using Master Data Provider
+  const masterData = getMasterDataForCountry(activeCountry);
+  const filtered = masterData.destinations;
 
   const totalPages = Math.ceil(filtered.length / visibleLimit);
   const startIndex = (currentPage - 1) * visibleLimit;
@@ -115,62 +119,27 @@ export function CountrySliders({ destinations, lang: initialLang = "vi", selecte
         </Link>
       </div>
 
-      {/* Filter Buttons Quốc gia */}
-      <div
-        style={{
-          display: "flex",
-          gap: 10,
-          overflowX: "auto",
-          paddingBottom: 12,
-          marginBottom: 20,
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-        className="no-scrollbar"
-      >
-        {COUNTRY_FILTERS.map((c) => {
-          const isActive = activeCountry === c.code;
-          const label = c.label[lang] || c.label.vi;
-          return (
-            <button
-              key={c.code}
-              onClick={() => handleCountryChange(c.code)}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "8px 16px",
-                borderRadius: 100,
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                transition: "all 0.2s ease",
-                border: isActive ? "1px solid var(--color-gold)" : "1px solid rgba(0,0,0,0.08)",
-                background: isActive ? "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)" : "#fff",
-                color: isActive ? "#facc15" : "var(--color-ink-1)",
-                boxShadow: isActive ? "0 4px 12px rgba(15,23,42,0.15)" : "none",
-              }}
-            >
-              <span>{c.flag}</span>
-              <span>{label}</span>
-            </button>
-          );
-        })}
-      </div>
+      {/* 12 Country Filter Tab Bar */}
+      <CountryFilterTabs
+        selectedCode={activeCountry}
+        onSelect={(code) => handleCountryChange(code)}
+        lang={lang}
+        hideAllOption
+      />
 
-      {/* Grid Items (8 hoặc 12 items/trang) */}
+      {/* Grid Items (8 items/trang - 4 items / 1 hàng) */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+          gridTemplateColumns: "repeat(4, 1fr)",
           gap: 20,
         }}
+        className="country-sliders-4-cols"
       >
-        {displayItems.map((dest) => {
+        {displayItems.map((dest, idx) => {
           const name = getI18nText(dest.name, lang, "Điểm đến");
           const summary = getI18nText(dest.summary, lang, "Kỳ nghỉ ấn tượng tuyệt vời");
-          const bgImg = dest.hero_image || dest.gallery?.[0] || "/hotel-placeholder.svg";
+          const bgImg = getDistinctVisualImage("dest", dest.slug || `${activeCountry}-${idx}`, idx);
 
           return (
             <Link
