@@ -200,4 +200,12 @@ export const jaDict: Record<string, string> = {
   "Hiện": "表示",
   "Tiến trình đăng ký": "登録進捗",
   "Số": "番号",
+  // Navigation multi-level
+  "12 Điểm Đến": "12の旅行先",
+  "Chọn quốc gia & điểm đến": "国・旅行先を選択",
+  "12 Quốc Gia": "12カ国",
+  "Phổ biến": "人気",
+  "Resort & Nghỉ dưỡng": "リゾート＆避暑地",
+  "Trải Nghiệm & Check-in": "体験＆チェックイン",
+  "Ẩm Thực Đặc sản": "特産品料理",
 };

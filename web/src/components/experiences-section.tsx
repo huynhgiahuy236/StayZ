@@ -45,7 +45,7 @@ export function ExperiencesSection({ destinations, lang = "vi" }: Props) {
         <div className="section-heading">
           <div>
             <p className="eyebrow dark" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              <Compass size={14} className="text-gold" /> HUKI EXPERIENCE
+              <Compass size={14} className="text-gold" /> {t("HUKI EXPERIENCE", lang)}
             </p>
             <h2 id="exp-heading">{t("Trải Nghiệm & Điểm Sống Ảo", lang)}</h2>
             <p className="section-sub">{t("Những hoạt động & góc chụp hình triệu view không thể bỏ qua", lang)}</p>

@@ -53,20 +53,20 @@ const AMENITY_ICONS: Record<string, any> = {
 };
 
 const AMENITY_LABELS: Record<string, string> = {
-  outdoor_pool: "Hồ bơi ngoài trời",
-  indoor_pool: "Hồ bơi trong nhà",
-  free_wifi: "Wi-Fi miễn phí",
-  airport_shuttle: "Xe đưa đón sân bay",
-  non_smoking_room: "Phòng không hút thuốc",
-  room_service: "Dịch vụ phòng 24/7",
-  restaurant: "Nhà hàng cao cấp",
-  free_parking: "Chỗ đậu xe miễn phí",
-  family_room: "Phòng gia đình",
-  bar: "Quầy Bar & Lounge",
-  breakfast: "Bữa sáng miễn phí",
-  gym: "Phòng Gym & Fitness",
-  spa: "Dịch vụ Spa & Massage",
-  concierge: "Hỗ trợ lễ tân 24/7",
+  outdoor_pool: "amenity_outdoor_pool",
+  indoor_pool: "amenity_indoor_pool",
+  free_wifi: "amenity_free_wifi",
+  airport_shuttle: "amenity_airport_shuttle",
+  non_smoking_room: "amenity_non_smoking_room",
+  room_service: "amenity_room_service",
+  restaurant: "amenity_restaurant",
+  free_parking: "amenity_free_parking",
+  family_room: "amenity_family_room",
+  bar: "amenity_bar",
+  breakfast: "amenity_breakfast",
+  gym: "amenity_gym",
+  spa: "amenity_spa",
+  concierge: "amenity_concierge",
 };
 
 export function HotelDetailInteractive({
@@ -300,7 +300,7 @@ export function HotelDetailInteractive({
           </div>
           <p style={{ margin: 0, fontSize: 13, color: "var(--color-ink-3)" }}>{t("Giá từ", lang)}</p>
           <strong style={{ fontSize: 28, color: "var(--navy, #0f172a)", display: "block" }}>
-            {price ? new Intl.NumberFormat("vi-VN").format(price) + " ₫" : "Liên hệ"}
+            {price ? new Intl.NumberFormat("vi-VN").format(price) + " ₫" : t("Liên hệ", lang)}
           </strong>
           {price && <span style={{ display: "block", marginBottom: 12, fontSize: 13, color: "var(--color-ink-3)" }}>{t("/ đêm", lang)} ({t("Đã bao gồm thuế & phí", lang)})</span>}
 

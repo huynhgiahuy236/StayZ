@@ -37,7 +37,7 @@ export function TasteSection({ destinations, lang = "vi" }: Props) {
       <div className="section-heading">
         <div>
           <p className="eyebrow dark" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <Utensils size={14} className="text-gold" /> TASTE OF STAYZ
+            <Utensils size={14} className="text-gold" /> {t("TASTE OF STAYZ", lang)}
           </p>
           <h2 id="taste-heading">{t("Ẩm Thực Đặc Sản & Quán Ngon", lang)}</h2>
           <p className="section-sub">{t("Hương vị truyền thống địa phương chuẩn vị khó cưỡng", lang)}</p>

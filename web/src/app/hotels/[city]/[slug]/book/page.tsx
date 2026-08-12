@@ -6,7 +6,6 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { getHotel, getRoomsByProperty, createBooking, createPayment } from "@/lib/api";
 import type { Hotel, Room } from "@/lib/types";
-
 import { t, Language } from "@/lib/i18n";
 
 function getToken(): string | null {
@@ -85,9 +84,9 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
     setError("");
     const token = getToken();
     if (!token) { router.replace("/login"); return; }
-    if (!selectedRoom) { setError("Vui lòng chọn loại phòng."); return; }
-    if (!checkIn || !checkOut) { setError("Vui lòng chọn ngày nhận và trả phòng."); return; }
-    if (nights < 1) { setError("Ngày trả phòng phải sau ngày nhận phòng."); return; }
+    if (!selectedRoom) { setError(t("Vui lòng chọn loại phòng.", lang)); return; }
+    if (!checkIn || !checkOut) { setError(t("Vui lòng chọn ngày nhận và trả phòng.", lang)); return; }
+    if (nights < 1) { setError(t("Ngày trả phòng phải sau ngày nhận phòng.", lang)); return; }
 
     setSubmitting(true);
     const { data: booking, error: bErr } = await createBooking(token, {
@@ -99,7 +98,7 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
       rooms_count: roomsCount,
       payment_plan: paymentPlan,
     });
-    if (bErr || !booking) { setError(bErr ?? "Không thể tạo đặt phòng."); setSubmitting(false); return; }
+    if (bErr || !booking) { setError(bErr ?? t("Không thể tạo đặt phòng.", lang)); setSubmitting(false); return; }
 
     // Create payment link
     const { data: payment, error: pErr } = await createPayment(token, booking._id);
@@ -113,7 +112,7 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
   if (loading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", padding: "var(--sp-24)" }}>
-        <Loader2 size={32} style={{ animation: "spin .7s linear infinite", color: "var(--navy)" }} aria-label="Đang tải..." />
+        <Loader2 size={32} style={{ animation: "spin .7s linear infinite", color: "var(--navy)" }} aria-label={t("Đang tải...", lang)} />
       </div>
     );
   }
@@ -171,7 +170,7 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
                     <div>
                       <h4 style={{ margin: "0 0 4px", fontWeight: 700 }}>{r.name}</h4>
                       <p style={{ fontSize: 12, color: "var(--color-ink-3)", margin: 0 }}>
-                        {r.bed_info} · {r.capacity} khách · {r.area ? `${r.area} m²` : ""}
+                        {r.bed_info} · {r.capacity} {t("khách", lang)} · {r.area ? `${r.area} m²` : ""}
                       </p>
                     </div>
                     <div style={{ textAlign: "right" }}>
@@ -181,38 +180,38 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
                         </p>
                       )}
                       <p style={{ fontWeight: 800, fontSize: 16, color: "var(--navy)", margin: 0 }}>
-                        {fmtPrice(r.price)}<span style={{ fontWeight: 400, fontSize: 12, color: "var(--color-ink-3)" }}>/đêm</span>
+                        {fmtPrice(r.price)}<span style={{ fontWeight: 400, fontSize: 12, color: "var(--color-ink-3)" }}>{t("/ đêm", lang)}</span>
                       </p>
                     </div>
                   </div>
                 </label>
               ))}
               {rooms.length === 0 && (
-                <p style={{ color: "var(--color-ink-3)", fontSize: 14 }}>Hiện không có phòng trống.</p>
+                <p style={{ color: "var(--color-ink-3)", fontSize: 14 }}>{t("Hiện không có phòng trống.", lang)}</p>
               )}
             </div>
           </div>
 
           {/* Dates & Guests */}
           <div className="book-section">
-            <h2>Ngày lưu trú & Số khách</h2>
+            <h2>{t("Ngày lưu trú & Số khách", lang)}</h2>
             <div className="date-row">
               <div className="form-group">
-                <label className="form-label" htmlFor="book-checkin">Nhận phòng</label>
+                <label className="form-label" htmlFor="book-checkin">{t("Nhận phòng", lang)}</label>
                 <input id="book-checkin" type="date" className="form-input" value={checkIn} min={todayStr} onChange={(e) => setCheckIn(e.target.value)} required />
               </div>
               <div className="form-group">
-                <label className="form-label" htmlFor="book-checkout">Trả phòng</label>
+                <label className="form-label" htmlFor="book-checkout">{t("Trả phòng", lang)}</label>
                 <input id="book-checkout" type="date" className="form-input" value={checkOut} min={checkIn || todayStr} onChange={(e) => setCheckOut(e.target.value)} required />
               </div>
             </div>
             <div className="date-row">
               <div className="form-group">
-                <label className="form-label" htmlFor="book-guests">Số khách</label>
+                <label className="form-label" htmlFor="book-guests">{t("Số khách", lang)}</label>
                 <input id="book-guests" type="number" className="form-input" min={1} max={room?.capacity ?? 10} value={guests} onChange={(e) => setGuests(Number(e.target.value))} />
               </div>
               <div className="form-group">
-                <label className="form-label" htmlFor="book-rooms">Số phòng</label>
+                <label className="form-label" htmlFor="book-rooms">{t("Số phòng", lang)}</label>
                 <input id="book-rooms" type="number" className="form-input" min={1} max={10} value={roomsCount} onChange={(e) => setRoomsCount(Number(e.target.value))} />
               </div>
             </div>
@@ -220,17 +219,17 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
 
           {/* Payment plan */}
           <div className="book-section">
-            <h2>Phương thức thanh toán</h2>
+            <h2>{t("Phương thức thanh toán", lang)}</h2>
             <div className="payment-plan-group">
               <label className={`plan-card ${paymentPlan === "full_100" ? "selected" : ""}`} style={{ cursor: "pointer" }}>
                 <input type="radio" name="plan" value="full_100" checked={paymentPlan === "full_100"} onChange={() => setPaymentPlan("full_100")} style={{ display: "none" }} />
-                <h4>Toàn bộ</h4>
-                <p>Thanh toán 100% ngay bây giờ</p>
+                <h4>{t("Toàn bộ", lang)}</h4>
+                <p>{t("Thanh toán 100% ngay bây giờ", lang)}</p>
               </label>
               <label className={`plan-card ${paymentPlan === "deposit_30" ? "selected" : ""}`} style={{ cursor: "pointer" }}>
                 <input type="radio" name="plan" value="deposit_30" checked={paymentPlan === "deposit_30"} onChange={() => setPaymentPlan("deposit_30")} style={{ display: "none" }} />
-                <h4>Đặt cọc 30%</h4>
-                <p>Trả phần còn lại tại khách sạn</p>
+                <h4>{t("Đặt cọc 30%", lang)}</h4>
+                <p>{t("Trả phần còn lại tại khách sạn", lang)}</p>
               </label>
             </div>
           </div>
@@ -239,39 +238,39 @@ function BookContent({ city, slug }: { city: string; slug: string }) {
 
           <button type="submit" className="form-submit" disabled={submitting || !room || nights < 1} aria-busy={submitting}>
             {submitting
-              ? <><Loader2 size={18} aria-hidden="true" /> Đang xử lý...</>
-              : `Thanh toán ${nights > 0 && room ? fmtPrice(payNow) : "—"}`}
+              ? <><Loader2 size={18} aria-hidden="true" /> {t("Đang xử lý...", lang)}</>
+              : `${t("Thanh toán", lang)} ${nights > 0 && room ? fmtPrice(payNow) : "—"}`}
           </button>
           <p style={{ fontSize: 12, color: "var(--color-ink-3)", textAlign: "center", marginTop: "var(--sp-3)" }}>
-            Bạn sẽ được chuyển đến cổng thanh toán PayOS an toàn.
+            {t("Bạn sẽ được chuyển đến cổng thanh toán PayOS an toàn.", lang)}
           </p>
         </form>
       </div>
 
       {/* Right: Summary */}
-      <aside className="book-summary" aria-label="Tóm tắt đặt phòng">
+      <aside className="book-summary" aria-label={t("Tóm tắt đặt phòng", lang)}>
         <h3>{hotel.title}</h3>
         {room ? (
           <>
-            <div className="summary-row"><span>Phòng:</span><strong>{room.name}</strong></div>
-            <div className="summary-row"><span>Giá/đêm:</span><strong>{fmtPrice(room.price)}</strong></div>
-            <div className="summary-row"><span>Số đêm:</span><strong>{nights}</strong></div>
-            <div className="summary-row"><span>Số phòng:</span><strong>{roomsCount}</strong></div>
-            <div className="summary-row"><span>Số khách:</span><strong>{guests}</strong></div>
-            {checkIn && <div className="summary-row"><span>Nhận phòng:</span><strong>{new Date(checkIn).toLocaleDateString("vi-VN")}</strong></div>}
-            {checkOut && <div className="summary-row"><span>Trả phòng:</span><strong>{new Date(checkOut).toLocaleDateString("vi-VN")}</strong></div>}
+            <div className="summary-row"><span>{t("Phòng:", lang)}</span><strong>{room.name}</strong></div>
+            <div className="summary-row"><span>{t("Giá/đêm:", lang)}</span><strong>{fmtPrice(room.price)}</strong></div>
+            <div className="summary-row"><span>{t("Số đêm:", lang)}</span><strong>{nights}</strong></div>
+            <div className="summary-row"><span>{t("Số phòng", lang)}:</span><strong>{roomsCount}</strong></div>
+            <div className="summary-row"><span>{t("Số khách", lang)}:</span><strong>{guests}</strong></div>
+            {checkIn && <div className="summary-row"><span>{t("Nhận phòng:", lang)}</span><strong>{new Date(checkIn).toLocaleDateString("vi-VN")}</strong></div>}
+            {checkOut && <div className="summary-row"><span>{t("Trả phòng:", lang)}</span><strong>{new Date(checkOut).toLocaleDateString("vi-VN")}</strong></div>}
             <div className="summary-total">
-              <span>{paymentPlan === "deposit_30" ? "Thanh toán trước (30%)" : "Tổng thanh toán"}</span>
+              <span>{paymentPlan === "deposit_30" ? t("Thanh toán trước (30%)", lang) : t("Tổng thanh toán", lang)}</span>
               <span className="price">{nights > 0 ? fmtPrice(payNow) : "—"}</span>
             </div>
             {paymentPlan === "deposit_30" && nights > 0 && (
               <p style={{ fontSize: 12, color: "var(--color-ink-3)", marginTop: "var(--sp-3)" }}>
-                Còn lại {fmtPrice(totalPrice - payNow)} thanh toán tại khách sạn
+                {t("Còn lại thanh toán tại khách sạn", lang)} {fmtPrice(totalPrice - payNow)}
               </p>
             )}
           </>
         ) : (
-          <p style={{ color: "var(--color-ink-3)", fontSize: 14 }}>Chưa chọn phòng</p>
+          <p style={{ color: "var(--color-ink-3)", fontSize: 14 }}>{t("Chưa chọn phòng", lang)}</p>
         )}
       </aside>
     </div>

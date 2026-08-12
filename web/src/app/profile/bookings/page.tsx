@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/site-header";
 import { getBookingsByUser, getCancellationQuote, cancelBooking, createPayment, createReview } from "@/lib/api";
 import { resolveImage } from "@/lib/api";
 import type { Booking, Hotel, Room } from "@/lib/types";
+import { t, Language } from "@/lib/i18n";
 
 function getToken(): string | null {
   if (typeof document === "undefined") return null;
@@ -22,15 +23,18 @@ function getStoredUser() {
     return JSON.parse(decodeURIComponent(m.split("=").slice(1).join("=")));
   } catch { return null; }
 }
-function fmtDate(d: string) { return new Intl.DateTimeFormat("vi-VN").format(new Date(d)); }
+function fmtDate(d: string, locale: string = "vi-VN") { return new Intl.DateTimeFormat(locale).format(new Date(d)); }
 function fmtPrice(n: number) { return new Intl.NumberFormat("vi-VN").format(n) + " ₫"; }
 
-const STATUS_LABELS: Record<string, string> = {
-  pending: "Chờ thanh toán",
-  confirmed: "Đã xác nhận",
-  completed: "Đã hoàn thành",
-  cancelled: "Đã hủy",
-};
+function getStatusLabel(status: string, lang: Language): string {
+  switch (status) {
+    case "pending": return t("Chờ thanh toán", lang);
+    case "confirmed": return t("Đã xác nhận", lang);
+    case "completed": return t("Đã hoàn thành", lang);
+    case "cancelled": return t("Đã hủy", lang);
+    default: return status;
+  }
+}
 
 export default function BookingsPage() {
   const router = useRouter();
@@ -39,6 +43,7 @@ export default function BookingsPage() {
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [payingId, setPayingId] = useState<string | null>(null);
   const [quoteMap, setQuoteMap] = useState<Record<string, { refund_amount: number; message: string } | null>>({});
+  const [lang, setLang] = useState<Language>("vi");
 
   // Review modal state
   const [reviewingBooking, setReviewingBooking] = useState<Booking | null>(null);
@@ -49,6 +54,8 @@ export default function BookingsPage() {
   const [reviewedBookings, setReviewedBookings] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    const savedLang = (localStorage.getItem("stayz_lang") as Language) || "vi";
+    setLang(savedLang);
     const token = getToken();
     const u = getStoredUser();
     if (!token || !u) { router.replace("/login?redirect=/profile/bookings"); return; }
@@ -125,26 +132,26 @@ export default function BookingsPage() {
 
   return (
     <main id="main-content" className="profile-page">
-      <SiteHeader />
+      <SiteHeader lang={lang} onLangChange={setLang} />
       <div className="profile-hero">
         <div className="shell">
-          <h1>Đặt phòng của tôi</h1>
-          <p style={{ opacity: .8, fontSize: 14 }}>{bookings.length} đặt phòng</p>
+          <h1>{t("Đặt phòng của tôi", lang)}</h1>
+          <p style={{ opacity: .8, fontSize: 14 }}>{bookings.length} {t("đặt phòng", lang)}</p>
         </div>
       </div>
 
       <div className="profile-content">
         <div className="shell">
           <div className="profile-grid">
-            <nav className="profile-nav" aria-label="Điều hướng tài khoản">
+            <nav className="profile-nav" aria-label={t("Thông tin cá nhân", lang)}>
               <Link href="/profile" className="profile-nav-item">
-                👤 Thông tin cá nhân
+                👤 {t("Thông tin cá nhân", lang)}
               </Link>
               <Link href="/profile/bookings" className="profile-nav-item active">
-                📅 Đặt phòng của tôi
+                📅 {t("Đặt phòng của tôi", lang)}
               </Link>
               <Link href="/favorites" className="profile-nav-item">
-                ❤️ Yêu thích
+                ❤️ {t("Yêu thích", lang)}
               </Link>
             </nav>
 
@@ -152,10 +159,10 @@ export default function BookingsPage() {
               {bookings.length === 0 ? (
                 <div className="empty-state">
                   <Calendar size={40} style={{ color: "var(--color-ink-3)", margin: "0 auto var(--sp-4)" }} aria-hidden="true" />
-                  <h3>Chưa có đặt phòng nào</h3>
-                  <p>Khám phá và đặt những nơi lưu trú tuyệt vời trên khắp Việt Nam.</p>
+                  <h3>{t("Chưa có đặt phòng nào", lang)}</h3>
+                  <p>{t("Khám phá và đặt những nơi lưu trú tuyệt vời trên khắp Việt Nam.", lang)}</p>
                   <Link href="/search" className="btn-primary" style={{ display: "inline-flex", marginTop: "var(--sp-6)", textDecoration: "none" }}>
-                    Tìm khách sạn
+                    {t("Tìm khách sạn", lang)}
                   </Link>
                 </div>
               ) : (
@@ -166,9 +173,14 @@ export default function BookingsPage() {
                   const canPayNow = booking.payment_status === "pending" && booking.status !== "cancelled";
                   const isCompleted = booking.status === "completed";
                   const hasReviewed = reviewedBookings[booking._id];
+                  const dateLocale = lang === "vi" ? "vi-VN" : "en-US";
+                  const nightsLabel = t("đêm", lang);
+                  const roomLabel = t("Phòng", lang);
+                  const guestsLabel = t("khách", lang);
+                  const roomsCountLabel = t("phòng", lang);
 
                   return (
-                    <div key={booking._id} className="booking-item" role="article" aria-label={`Đặt phòng ${hotel?.title ?? "khách sạn"}`}>
+                    <div key={booking._id} className="booking-item" role="article" aria-label={`${t("Đặt phòng", lang)} ${hotel?.title ?? t("Khách sạn", lang)}`}>
                       <div className="booking-item-inner">
                         {/* Image */}
                         <div className="booking-img">
@@ -187,16 +199,16 @@ export default function BookingsPage() {
 
                         {/* Info */}
                         <div>
-                          <p className="booking-name">{hotel?.title ?? "Khách sạn"}</p>
+                          <p className="booking-name">{hotel?.title ?? t("Khách sạn", lang)}</p>
                           <p className="booking-dates">
                             <Calendar size={13} aria-hidden="true" style={{ display: "inline", marginRight: 4 }} />
-                            {fmtDate(booking.check_in)} → {fmtDate(booking.check_out)} · {booking.nights} đêm
+                            {fmtDate(booking.check_in, dateLocale)} → {fmtDate(booking.check_out, dateLocale)} · {booking.nights} {nightsLabel}
                           </p>
                           <p style={{ fontSize: 12, color: "var(--color-ink-3)", marginBottom: "var(--sp-2)" }}>
-                            {room?.name ?? "Phòng"} · {booking.guests} khách · {booking.rooms_count} phòng
+                            {room?.name ?? roomLabel} · {booking.guests} {guestsLabel} · {booking.rooms_count} {roomsCountLabel}
                           </p>
                           <span className={`booking-status-badge ${booking.status}`}>
-                            {STATUS_LABELS[booking.status] ?? booking.status}
+                            {getStatusLabel(booking.status, lang)}
                           </span>
                         </div>
 
@@ -204,9 +216,9 @@ export default function BookingsPage() {
                         <div style={{ textAlign: "right" }}>
                           <p className="booking-price">{fmtPrice(booking.total_price)}</p>
                           <p style={{ fontSize: 11, color: "var(--color-ink-3)", marginBottom: "var(--sp-3)" }}>
-                            {booking.payment_status === "paid" ? "Đã thanh toán" : "Chờ thanh toán"}
+                            {booking.payment_status === "paid" ? t("Đã thanh toán", lang) : t("Chờ thanh toán", lang)}
                           </p>
-                          
+
                           <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end" }}>
                             {canPayNow && (
                               <button
@@ -216,7 +228,7 @@ export default function BookingsPage() {
                                 disabled={payingId === booking._id}
                               >
                                 {payingId === booking._id ? <Loader2 size={13} style={{ animation: "spin .7s linear infinite" }} /> : <CreditCard size={13} style={{ marginRight: 4 }} />}
-                                Thanh toán ngay
+                                {t("Thanh toán ngay", lang)}
                               </button>
                             )}
 
@@ -226,13 +238,13 @@ export default function BookingsPage() {
                                 style={{ fontSize: 12, padding: "6px 14px", color: "var(--gold)", borderColor: "var(--gold)" }}
                                 onClick={() => { setReviewingBooking(booking); setRating(5); setComment(""); setReviewErr(""); }}
                               >
-                                <Star size={13} style={{ marginRight: 4 }} fill="var(--gold)" /> Viết đánh giá
+                                <Star size={13} style={{ marginRight: 4 }} fill="var(--gold)" /> {t("Viết đánh giá", lang)}
                               </button>
                             )}
 
                             {isCompleted && hasReviewed && (
                               <span style={{ fontSize: 12, color: "var(--color-success)", fontWeight: 600 }}>
-                                ✓ Đã đánh giá
+                                ✓ {t("Đã đánh giá", lang)}
                               </span>
                             )}
 
@@ -241,10 +253,10 @@ export default function BookingsPage() {
                                 className="btn-outline"
                                 style={{ fontSize: 12, padding: "6px 14px", color: "var(--color-destructive)", borderColor: "var(--color-destructive)" }}
                                 onClick={() => showCancelQuote(booking._id)}
-                                aria-label={`Hủy đặt phòng ${hotel?.title}`}
+                                aria-label={`${t("Hủy đặt phòng", lang)} ${hotel?.title}`}
                               >
                                 <XCircle size={13} style={{ display: "inline", marginRight: 4 }} aria-hidden="true" />
-                                Hủy đặt phòng
+                                {t("Hủy đặt phòng", lang)}
                               </button>
                             )}
                           </div>
@@ -261,19 +273,19 @@ export default function BookingsPage() {
                               </p>
                               {(quoteMap[booking._id]?.refund_amount ?? 0) > 0 && (
                                 <p style={{ fontSize: 13, color: "var(--color-success)", marginBottom: "var(--sp-3)" }}>
-                                  Hoàn tiền: {fmtPrice(quoteMap[booking._id]!.refund_amount)}
+                                  {t("Hoàn tiền:", lang)} {fmtPrice(quoteMap[booking._id]!.refund_amount)}
                                 </p>
                               )}
                             </>
                           ) : (
-                            <p style={{ fontSize: 14, marginBottom: "var(--sp-3)" }}>Bạn có chắc muốn hủy đặt phòng này không?</p>
+                            <p style={{ fontSize: 14, marginBottom: "var(--sp-3)" }}>{t("Bạn có chắc muốn hủy đặt phòng này không?", lang)}</p>
                           )}
                           <div style={{ display: "flex", gap: "var(--sp-3)" }}>
                             <button className="form-submit" style={{ background: "var(--color-destructive)", maxWidth: 160, padding: "10px 20px", fontSize: 13 }} onClick={() => confirmCancel(booking._id)}>
-                              Xác nhận hủy
+                              {t("Xác nhận hủy", lang)}
                             </button>
                             <button className="btn-ghost" style={{ color: "var(--color-ink-3)", border: "1px solid var(--color-border)" }} onClick={() => setCancellingId(null)}>
-                              Giữ lại
+                              {t("Giữ lại", lang)}
                             </button>
                           </div>
                         </div>
@@ -292,17 +304,17 @@ export default function BookingsPage() {
         <div className="modal-overlay" onClick={() => setReviewingBooking(null)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Đánh giá kỳ nghỉ</h3>
+              <h3>{t("Đánh giá kỳ nghỉ", lang)}</h3>
               <button className="modal-close" onClick={() => setReviewingBooking(null)}>✕</button>
             </div>
             <form onSubmit={handleReviewSubmit}>
               <div className="modal-body">
                 <p style={{ fontWeight: 600, marginBottom: "var(--sp-4)" }}>
-                  {typeof reviewingBooking.property_id === "object" ? (reviewingBooking.property_id as Hotel).title : "Khách sạn"}
+                  {typeof reviewingBooking.property_id === "object" ? (reviewingBooking.property_id as Hotel).title : t("Khách sạn", lang)}
                 </p>
 
                 <div className="form-group">
-                  <label className="form-label">Điểm đánh giá</label>
+                  <label className="form-label">{t("Điểm đánh giá", lang)}</label>
                   <div style={{ display: "flex", gap: 8, margin: "8px 0" }}>
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -322,12 +334,12 @@ export default function BookingsPage() {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label" htmlFor="review-comment">Nhận xét của bạn</label>
+                  <label className="form-label" htmlFor="review-comment">{t("Nhận xét của bạn", lang)}</label>
                   <textarea
                     id="review-comment"
                     className="form-input"
                     rows={4}
-                    placeholder="Chia sẻ trải nghiệm của bạn tại đây..."
+                    placeholder={t("Chia sẻ trải nghiệm của bạn tại đây...", lang)}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                   />
@@ -337,9 +349,9 @@ export default function BookingsPage() {
               </div>
 
               <div className="modal-footer">
-                <button type="button" className="btn-ghost" onClick={() => setReviewingBooking(null)}>Hủy</button>
+                <button type="button" className="btn-ghost" onClick={() => setReviewingBooking(null)}>{t("Hủy", lang)}</button>
                 <button type="submit" className="btn-primary" disabled={submittingReview}>
-                  {submittingReview ? <Loader2 size={16} style={{ animation: "spin .7s linear infinite" }} /> : "Gửi đánh giá"}
+                  {submittingReview ? <Loader2 size={16} style={{ animation: "spin .7s linear infinite" }} /> : t("Gửi đánh giá", lang)}
                 </button>
               </div>
             </form>

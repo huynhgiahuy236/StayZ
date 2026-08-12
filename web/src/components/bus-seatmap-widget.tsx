@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bus } from "lucide-react";
 import { Language, t } from "@/lib/i18n";
 
@@ -8,9 +8,24 @@ interface Props {
   lang?: Language;
 }
 
-export function BusSeatmapWidget({ lang = "vi" }: Props) {
+export function BusSeatmapWidget({ lang: initialLang = "vi" }: Props) {
+  const [lang, setLang] = useState<Language>(initialLang);
   const [deck, setDeck] = useState<1 | 2>(1);
   const [selectedSeat, setSelectedSeat] = useState<string | null>("A05");
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || initialLang || "vi";
+    setLang(saved);
+
+    const handleLangChange = (e: CustomEvent<{ lang: Language }>) => {
+      if (e.detail?.lang) {
+        setLang(e.detail.lang);
+      }
+    };
+
+    window.addEventListener("stayz_lang_changed" as any, handleLangChange as any);
+    return () => window.removeEventListener("stayz_lang_changed" as any, handleLangChange as any);
+  }, [initialLang]);
 
   const upperSeats = [
     { id: "B01", status: "booked" }, { id: "B02", status: "available" }, { id: "B03", status: "locked" },
@@ -64,7 +79,7 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
             {t("Sơ Đồ Ghế Giường Nằm 2 Tầng Tự Động Khóa Chỗ", lang)}
           </h2>
           <p style={{ fontSize: 14, color: "#cbd5e1", lineHeight: 1.6, margin: 0 }}>
-            Hệ thống sơ đồ ghế giường nằm 2 tầng trực quan mô phỏng real-time via WebSocket. Khóa giữ vị trí tức thì trong 10 phút chống overbooking.
+            {t("Sơ đồ ghế giường nằm 2 tầng trực quan với WebSocket real-time. Khóa giữ vị trí tức thì trong 10 phút chống overbooking", lang)}
           </p>
 
           <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap", alignItems: "center" }}>
@@ -116,7 +131,7 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
                 boxShadow: "0 4px 15px rgba(37,99,235,0.4)"
               }}
             >
-              Đặt Vé Xe Khách Giường Nằm →
+              {t("Đặt Vé Xe Khách Giường Nằm", lang)} →
             </a>
           </div>
         </div>
@@ -165,7 +180,7 @@ export function BusSeatmapWidget({ lang = "vi" }: Props) {
                 >
                   <span>{seat.id}</span>
                   <span style={{ fontSize: 10, fontWeight: 500 }}>
-                    {isBooked ? "Booked" : isLocked ? "Locked" : isSelected ? "Selected" : "Free"}
+                    {isBooked ? t("Đã đặt", lang) : isLocked ? t("Bị khóa", lang) : isSelected ? t("Đã chọn", lang) : t("Trống", lang)}
                   </span>
                 </button>
               );

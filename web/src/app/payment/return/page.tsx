@@ -1,25 +1,46 @@
+"use client";
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Thanh toán thành công — StayZ",
-  description: "Đặt phòng của bạn đã được xác nhận.",
-};
+import { t, Language } from "@/lib/i18n";
 
 export default function PaymentReturnPage() {
+  const [lang, setLang] = useState<Language>("vi");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || "vi";
+    setLang(saved);
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <main id="main-content">
+        <SiteHeader />
+        <div className="payment-page">
+          <div className="payment-card">
+            <div style={{ display: "flex", justifyContent: "center", padding: "var(--sp-24)" }}>
+              <Loader2 size={32} style={{ animation: "spin .7s linear infinite", color: "var(--navy)" }} />
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main id="main-content">
-      <SiteHeader />
+      <SiteHeader lang={lang} onLangChange={setLang} />
       <div className="payment-page">
         <div className="payment-card">
           <div className="payment-icon success" aria-hidden="true">
             <CheckCircle2 size={36} />
           </div>
-          <h1>Thanh toán thành công!</h1>
+          <h1>{t("Thanh toán thành công!", lang)}</h1>
           <p>
-            Đặt phòng của bạn đã được xác nhận. Thông tin vé điện tử và mã QR Check-in đã được khởi tạo.
+            {t("Đặt phòng của bạn đã được xác nhận. Thông tin vé điện tử và mã QR Check-in đã được khởi tạo.", lang)}
           </p>
 
           {/* Digital Booking Pass E-Ticket */}
@@ -34,10 +55,10 @@ export default function PaymentReturnPage() {
             border: "1px solid rgba(251, 191, 36, 0.4)"
           }}>
             <span style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: "#fbbf24", fontWeight: 800 }}>
-              STAYZ DIGITAL BOOKING PASS
+              {t("STAYZ DIGITAL BOOKING PASS", lang)}
             </span>
-            <h3 style={{ margin: "8px 0 4px", fontSize: 18, color: "#fff" }}>Vé Điện Tử Nhận Phòng Khách Sạn</h3>
-            <p style={{ fontSize: 12, opacity: 0.8, margin: "0 0 16px" }}>Vui lòng xuất trình mã QR này tại quầy Lễ tân</p>
+            <h3 style={{ margin: "8px 0 4px", fontSize: 18, color: "#fff" }}>{t("Vé Điện Tử Nhận Phòng Khách Sạn", lang)}</h3>
+            <p style={{ fontSize: 12, opacity: 0.8, margin: "0 0 16px" }}>{t("Vui lòng xuất trình mã QR này tại quầy Lễ tân", lang)}</p>
 
             {/* QR Placeholder / Pass Code Box */}
             <div style={{
@@ -55,16 +76,16 @@ export default function PaymentReturnPage() {
             </div>
 
             <p style={{ fontSize: 12, color: "#fbbf24", marginTop: 12, margin: 0 }}>
-              ✓ Quét mã check-in tức thì không cần chờ làm thủ tục
+              ✓ {t("Quét mã check-in tức thì không cần chờ làm thủ tục", lang)}
             </p>
           </div>
 
           <div style={{ display: "flex", gap: "var(--sp-3)", justifyContent: "center", marginTop: "var(--sp-6)", flexWrap: "wrap" }}>
             <Link href="/profile/bookings" className="btn-primary" style={{ textDecoration: "none" }}>
-              Xem đặt phòng của tôi
+              {t("Xem đặt phòng của tôi", lang)}
             </Link>
             <Link href="/" className="btn-outline" style={{ textDecoration: "none", color: "var(--navy)", border: "1.5px solid var(--navy)" }}>
-              Về trang chủ
+              {t("Về trang chủ", lang)}
             </Link>
           </div>
         </div>

@@ -87,7 +87,7 @@ export default function FavoritesPage() {
                   <button
                     onClick={() => handleRemove(hotel._id)}
                     disabled={removing === hotel._id}
-                    aria-label={`Xóa ${hotel.title} khỏi yêu thích`}
+                    aria-label={t("Xóa %s khỏi yêu thích", lang).replace("%s", hotel.title)}
                     style={{
                       position: "absolute",
                       top: 14,

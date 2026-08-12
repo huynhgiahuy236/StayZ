@@ -200,4 +200,12 @@ export const koDict: Record<string, string> = {
   "Hiện": "표시",
   "Tiến trình đăng ký": "회원가입 진행",
   "Số": "번호",
+  // Navigation multi-level
+  "12 Điểm Đến": "12개 여행지",
+  "Chọn quốc gia & điểm đến": "국가 & 여행지 선택",
+  "12 Quốc Gia": "12개 국가",
+  "Phổ biến": "인기",
+  "Resort & Nghỉ dưỡng": "리조트 & 휴양",
+  "Trải Nghiệm & Check-in": "체험 & 체크인",
+  "Ẩm Thực Đặc sản": "특산물 요리",
 };

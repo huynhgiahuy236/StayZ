@@ -9,8 +9,23 @@ interface Props {
   lang?: Language;
 }
 
-export function TripComboWidget({ lang = "vi" }: Props) {
+export function TripComboWidget({ lang: initialLang = "vi" }: Props) {
+  const [lang, setLang] = useState<Language>(initialLang);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes countdown
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || initialLang || "vi";
+    setLang(saved);
+
+    const handleLangChange = (e: CustomEvent<{ lang: Language }>) => {
+      if (e.detail?.lang) {
+        setLang(e.detail.lang);
+      }
+    };
+
+    window.addEventListener("stayz_lang_changed" as any, handleLangChange as any);
+    return () => window.removeEventListener("stayz_lang_changed" as any, handleLangChange as any);
+  }, [initialLang]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -73,7 +88,7 @@ export function TripComboWidget({ lang = "vi" }: Props) {
                   gap: 6,
                 }}
               >
-                <Clock size={14} /> Hold Timer: <strong>{timeFormatted}</strong>
+                <Clock size={14} /> {t("Thời gian giữ chỗ", lang)}: <strong>{timeFormatted}</strong>
               </span>
             </div>
 
@@ -132,30 +147,30 @@ export function TripComboWidget({ lang = "vi" }: Props) {
             gap: 16
           }}>
             <h4 style={{ margin: 0, fontSize: 14, textTransform: "uppercase", letterSpacing: 1, color: "#fbbf24", fontWeight: 800 }}>
-              💡 Quy Trình Gom Chuyến Tự Động
+              💡 {t("Quy Trình Gom Chuyến Tự Động", lang)}
             </h4>
 
             <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 14px", background: "rgba(255,255,255,0.06)", borderRadius: 12 }}>
               <span style={{ background: "#fbbf24", color: "#0f172a", width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14 }}>1</span>
               <div>
-                <strong style={{ fontSize: 14, display: "block", color: "#fff" }}>Chọn Phương Tiện Di Chuyển</strong>
-                <span style={{ fontSize: 12, color: "#94a3b8" }}>Vé máy bay hoặc Xe khách 2 tầng</span>
+                <strong style={{ fontSize: 14, display: "block", color: "#fff" }}>{t("Chọn Phương Tiện Di Chuyển", lang)}</strong>
+                <span style={{ fontSize: 12, color: "#94a3b8" }}>{t("Vé máy bay hoặc Xe khách 2 tầng", lang)}</span>
               </div>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 14px", background: "rgba(255,255,255,0.06)", borderRadius: 12 }}>
               <span style={{ background: "#fbbf24", color: "#0f172a", width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14 }}>2</span>
               <div>
-                <strong style={{ fontSize: 14, display: "block", color: "#fff" }}>Thêm Nơi Lưu Trú & Xe Tự Lái</strong>
-                <span style={{ fontSize: 12, color: "#94a3b8" }}>Khách sạn 4-5 sao hoặc Xe máy/Ô tô</span>
+                <strong style={{ fontSize: 14, display: "block", color: "#fff" }}>{t("Thêm Nơi Lưu Trú & Xe Tự Lái", lang)}</strong>
+                <span style={{ fontSize: 12, color: "#94a3b8" }}>{t("Khách sạn 4-5 sao hoặc Xe máy/Ô tô", lang)}</span>
               </div>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 14px", background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.3)", borderRadius: 12 }}>
               <span style={{ background: "#10b981", color: "#fff", width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 14 }}>✓</span>
               <div>
-                <strong style={{ fontSize: 14, display: "block", color: "#fbbf24" }}>Nhận Giảm Giá 10% Tức Thì</strong>
-                <span style={{ fontSize: 12, color: "#e2e8f0" }}>Tự động giữ chỗ 10 phút & Xuất Vé QR</span>
+                <strong style={{ fontSize: 14, display: "block", color: "#fbbf24" }}>{t("Nhận Giảm Giá 10% Tức Thì", lang)}</strong>
+                <span style={{ fontSize: 12, color: "#e2e8f0" }}>{t("Tự động giữ chỗ 10 phút & Xuất Vé QR", lang)}</span>
               </div>
             </div>
           </div>

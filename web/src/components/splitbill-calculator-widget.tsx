@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Wallet, Calculator, CheckCircle2 } from "lucide-react";
 import { Language, t } from "@/lib/i18n";
 
@@ -8,9 +8,24 @@ interface Props {
   lang?: Language;
 }
 
-export function SplitbillCalculatorWidget({ lang = "vi" }: Props) {
+export function SplitbillCalculatorWidget({ lang: initialLang = "vi" }: Props) {
+  const [lang, setLang] = useState<Language>(initialLang);
   const [totalExpense, setTotalExpense] = useState(3600000);
   const [memberCount, setMemberCount] = useState(4);
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || initialLang || "vi";
+    setLang(saved);
+
+    const handleLangChange = (e: CustomEvent<{ lang: Language }>) => {
+      if (e.detail?.lang) {
+        setLang(e.detail.lang);
+      }
+    };
+
+    window.addEventListener("stayz_lang_changed" as any, handleLangChange as any);
+    return () => window.removeEventListener("stayz_lang_changed" as any, handleLangChange as any);
+  }, [initialLang]);
 
   const perPerson = Math.round(totalExpense / memberCount);
 
@@ -56,10 +71,10 @@ export function SplitbillCalculatorWidget({ lang = "vi" }: Props) {
 
           <div style={{ marginTop: 24, display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "#cbd5e1" }}>
-              <CheckCircle2 size={16} style={{ color: "#c084fc" }} /> AI Split Bill Engine - Hạch toán nợ chéo tối giản
+              <CheckCircle2 size={16} style={{ color: "#c084fc" }} /> {t("AI Split Bill Engine - Hạch toán nợ chéo tối giản", lang)}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13, color: "#cbd5e1" }}>
-              <CheckCircle2 size={16} style={{ color: "#c084fc" }} /> Dynamic VietQR Settlement Link & Ví HuKi Pass
+              <CheckCircle2 size={16} style={{ color: "#c084fc" }} /> {t("Dynamic VietQR Settlement Link & Ví HuKi Pass", lang)}
             </div>
           </div>
 
@@ -80,7 +95,7 @@ export function SplitbillCalculatorWidget({ lang = "vi" }: Props) {
                 boxShadow: "0 6px 20px rgba(192, 132, 252, 0.4)",
               }}
             >
-              Mở Công Cụ Chia Tiền Nhóm →
+              {t("Mở Công Cụ Chia Tiền Nhóm", lang)} →
             </a>
           </div>
         </div>
@@ -92,7 +107,7 @@ export function SplitbillCalculatorWidget({ lang = "vi" }: Props) {
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: "block", fontSize: 12, opacity: 0.8, marginBottom: 6 }}>Total Expense (VNĐ):</label>
+            <label style={{ display: "block", fontSize: 12, opacity: 0.8, marginBottom: 6 }}>{t("Tổng chi tiêu (VNĐ)", lang)}:</label>
             <input
               type="number"
               step={100000}
@@ -112,7 +127,7 @@ export function SplitbillCalculatorWidget({ lang = "vi" }: Props) {
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", fontSize: 12, opacity: 0.8, marginBottom: 6 }}>Group Members:</label>
+            <label style={{ display: "block", fontSize: 12, opacity: 0.8, marginBottom: 6 }}>{t("Số thành viên trong nhóm", lang)}:</label>
             <div style={{ display: "flex", gap: 8 }}>
               {[2, 3, 4, 5, 6].map((num) => (
                 <button

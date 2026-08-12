@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Heart } from "lucide-react";
 import { addFavorite, removeFavorite, checkIsFavorite } from "@/lib/api";
+import { t, Language } from "@/lib/i18n";
 
 interface Props {
   propertyId: string;
@@ -18,6 +19,21 @@ export function FavoriteButton({ propertyId, initialFav = false }: Props) {
   const [isFav, setIsFav] = useState(initialFav);
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [lang, setLang] = useState<Language>("vi");
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || "vi";
+    setLang(saved);
+
+    const handleLangChange = (e: CustomEvent<{ lang: Language }>) => {
+      if (e.detail?.lang) {
+        setLang(e.detail.lang);
+      }
+    };
+
+    window.addEventListener("stayz_lang_changed" as any, handleLangChange as any);
+    return () => window.removeEventListener("stayz_lang_changed" as any, handleLangChange as any);
+  }, []);
 
   useEffect(() => {
     const token = getToken();
@@ -54,7 +70,7 @@ export function FavoriteButton({ propertyId, initialFav = false }: Props) {
       className={`fav-btn ${isFav ? "active" : ""}`}
       onClick={toggle}
       disabled={loading}
-      aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
+      aria-label={isFav ? t("Xóa khỏi yêu thích", lang) : t("Thêm vào yêu thích", lang)}
       aria-pressed={isFav}
     >
       <Heart

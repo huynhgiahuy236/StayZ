@@ -1,25 +1,33 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Globe, MapPin, Star } from "lucide-react";
 import type { Destination } from "@/lib/types";
+import { Language, t } from "@/lib/i18n";
 
 interface Props {
   destinations: Destination[];
+  lang?: Language;
 }
 
-function getI18nText(field: unknown, fallback: string): string {
+function getI18nText(field: unknown, lang: Language, fallback: string): string {
   if (!field) return fallback;
   if (typeof field === "string") return field;
   if (typeof field === "object" && field !== null) {
     const obj = field as Record<string, string>;
-    return obj.vi || obj.en || fallback;
+    return obj[lang] || obj.vi || obj.en || fallback;
   }
   return fallback;
 }
 
-export function DestinationsSection({ destinations }: Props) {
+export function DestinationsSection({ destinations, lang: initialLang = "vi" }: Props) {
+  const [lang, setLang] = useState<Language>("vi");
   const [filter, setFilter] = useState<"all" | "domestic" | "international">("all");
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || initialLang;
+    setLang(saved);
+  }, [initialLang]);
 
   const filtered = destinations.filter((dest) => {
     if (filter === "domestic") return dest.is_domestic === true;
@@ -32,9 +40,9 @@ export function DestinationsSection({ destinations }: Props) {
       <div className="section-heading" style={{ flexWrap: "wrap", gap: 16 }}>
         <div>
           <p className="eyebrow dark" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <Globe size={14} className="text-gold" /> Điểm đến mơ ước
+            <Globe size={14} className="text-gold" /> {t("Điểm đến mơ ước", lang)}
           </p>
-          <h2 id="destinations-heading">Khám phá thế giới cùng StayZ</h2>
+          <h2 id="destinations-heading">{t("Khám phá thế giới cùng StayZ", lang)}</h2>
         </div>
 
         {/* Tab filters */}
@@ -54,7 +62,7 @@ export function DestinationsSection({ destinations }: Props) {
               transition: "all 0.2s ease",
             }}
           >
-            Tất cả ({destinations.length})
+            {t("Tất cả", lang)} ({destinations.length})
           </button>
           <button
             onClick={() => setFilter("domestic")}
@@ -71,7 +79,7 @@ export function DestinationsSection({ destinations }: Props) {
               transition: "all 0.2s ease",
             }}
           >
-            🇻🇳 Trong nước
+            🇻🇳 {t("Trong nước", lang)}
           </button>
           <button
             onClick={() => setFilter("international")}
@@ -88,16 +96,16 @@ export function DestinationsSection({ destinations }: Props) {
               transition: "all 0.2s ease",
             }}
           >
-            🌏 Quốc tế
+            🌏 {t("Quốc tế", lang)}
           </button>
         </div>
       </div>
 
       <div className="destination-grid" style={{ marginTop: 24 }}>
         {filtered.map((dest, index) => {
-          const name = getI18nText(dest.name, "Điểm đến");
-          const country = getI18nText(dest.country, dest.is_domestic ? "Việt Nam" : "Quốc tế");
-          const summary = getI18nText(dest.summary, "Trải nghiệm lưu trú tuyệt vời cùng StayZ.");
+          const name = getI18nText(dest.name, lang, "Điểm đến");
+          const country = getI18nText(dest.country, lang, dest.is_domestic ? "Việt Nam" : "Quốc tế");
+          const summary = getI18nText(dest.summary, lang, "Trải nghiệm lưu trú tuyệt vời cùng StayZ.");
           const bgImg = dest.hero_image || dest.gallery?.[0] || "/hotel-placeholder.svg";
 
           return (
@@ -121,7 +129,7 @@ export function DestinationsSection({ destinations }: Props) {
                 textDecoration: "none",
                 transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease",
               }}
-              aria-label={`Khám phá ${name}`}
+              aria-label={`${t("Khám phá", lang)} ${name}`}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span
@@ -137,7 +145,7 @@ export function DestinationsSection({ destinations }: Props) {
                     letterSpacing: 0.5,
                   }}
                 >
-                  {dest.is_domestic ? "🇻🇳 Việt Nam" : `🌏 ${country}`}
+                  {dest.is_domestic ? `🇻🇳 ${t("Việt Nam", lang)}` : `🌏 ${country}`}
                 </span>
 
                 {dest.discount_badge && (

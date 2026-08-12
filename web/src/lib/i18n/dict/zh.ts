@@ -200,4 +200,12 @@ export const zhDict: Record<string, string> = {
   "Hiện": "显示",
   "Tiến trình đăng ký": "注册进度",
   "Số": "编号",
+  // Navigation multi-level
+  "12 Điểm Đến": "12个目的地",
+  "Chọn quốc gia & điểm đến": "选择国家 & 目的地",
+  "12 Quốc Gia": "12个国家",
+  "Phổ biến": "热门",
+  "Resort & Nghỉ dưỡng": "度假村 & 疗养",
+  "Trải Nghiệm & Check-in": "体验 & 打卡",
+  "Ẩm Thực Đặc sản": "特色美食",
 };

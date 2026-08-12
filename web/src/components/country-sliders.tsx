@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Compass, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Destination } from "@/lib/types";
@@ -70,10 +70,16 @@ function isDestinationInCountry(d: Destination, countryCode: string): boolean {
   return allowedSlugs.some((s) => d.slug === s || d.slug.includes(s) || s.includes(d.slug));
 }
 
-export function CountrySliders({ destinations, lang = "vi", selectedCountry: externalSelectedCountry, onSelectCountry }: Props) {
+export function CountrySliders({ destinations, lang: initialLang = "vi", selectedCountry: externalSelectedCountry, onSelectCountry }: Props) {
+  const [lang, setLang] = useState<Language>("vi");
   const [internalCountry, setInternalCountry] = useState("vn");
   const [visibleLimit, setVisibleLimit] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || initialLang;
+    setLang(saved);
+  }, [initialLang]);
 
   const activeCountry = externalSelectedCountry || internalCountry;
 
@@ -96,16 +102,16 @@ export function CountrySliders({ destinations, lang = "vi", selectedCountry: ext
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 16 }}>
         <div>
           <p className="eyebrow" style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "var(--color-gold, #d97706)", fontSize: 13, fontWeight: 700 }}>
-            <Compass size={14} /> 12 Quốc Gia Toàn Cầu
+            <Compass size={14} /> {t("12 Quốc Gia Toàn Cầu", lang)}
           </p>
           <Link href="/destinations" style={{ textDecoration: "none", color: "inherit" }}>
             <h2 style={{ fontSize: 28, fontWeight: 800, margin: 0, color: "var(--color-ink)" }}>
-              Điểm Đến Nổi Bật Theo Quốc Gia
+              {t("Điểm Đến Nổi Bật Theo Quốc Gia", lang)}
             </h2>
           </Link>
         </div>
         <Link href="/destinations" style={{ color: "var(--color-gold, #d97706)", fontWeight: 700, fontSize: 14, textDecoration: "none" }}>
-          Xem tất cả ({destinations.length}) →
+          {t("Xem tất cả", lang)} ({destinations.length}) →
         </Link>
       </div>
 
@@ -231,7 +237,7 @@ export function CountrySliders({ destinations, lang = "vi", selectedCountry: ext
               cursor: "pointer",
             }}
           >
-            Xem thêm sổ xuống 12 điểm đến ({filtered.length - 8} thêm)
+            {t("Xem thêm 12 điểm đến", lang)} ({filtered.length - 8} {t("thêm", lang)})
           </button>
         )}
 
@@ -242,7 +248,7 @@ export function CountrySliders({ destinations, lang = "vi", selectedCountry: ext
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid #cbd5e1", background: "#fff", cursor: currentPage === 1 ? "not-allowed" : "pointer", opacity: currentPage === 1 ? 0.5 : 1 }}
             >
-              Trang trước
+              {t("Trang trước", lang)}
             </button>
             {Array.from({ length: totalPages }).map((_, idx) => (
               <button
@@ -267,7 +273,7 @@ export function CountrySliders({ destinations, lang = "vi", selectedCountry: ext
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid #cbd5e1", background: "#fff", cursor: currentPage === totalPages ? "not-allowed" : "pointer", opacity: currentPage === totalPages ? 0.5 : 1 }}
             >
-              Trang sau
+              {t("Trang sau", lang)}
             </button>
           </div>
         )}

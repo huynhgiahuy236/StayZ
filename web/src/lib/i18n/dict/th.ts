@@ -200,4 +200,12 @@ export const thDict: Record<string, string> = {
   "Hiện": "แสดง",
   "Tiến trình đăng ký": "ความคืบหน้าการสมัคร",
   "Số": "ลำดับ",
+  // Navigation multi-level
+  "12 Điểm Đến": "12 จุดหมายปลายทาง",
+  "Chọn quốc gia & điểm đến": "เลือกประเทศ & จุดหมาย",
+  "12 Quốc Gia": "12 ประเทศ",
+  "Phổ biến": "ยอดนิยม",
+  "Resort & Nghỉ dưỡng": "รีสอร์ท & พักผ่อน",
+  "Trải Nghiệm & Check-in": "ประสบการณ์ & เช็คอิน",
+  "Ẩm Thực Đặc sản": "อาหารพื้นเมือง",
 };

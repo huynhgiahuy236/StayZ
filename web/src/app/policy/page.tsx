@@ -1,14 +1,18 @@
+"use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ShieldCheck, Lock, FileText, CreditCard, RefreshCw } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Chính sách & Điều khoản — StayZ",
-  description: "Các quy định đặt phòng, hủy phòng, bảo mật thông tin và thanh toán tại StayZ.",
-};
+import { t, Language } from "@/lib/i18n";
 
 export default function PolicyPage() {
+  const [lang, setLang] = useState<Language>("vi");
+
+  useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || "vi";
+    setLang(saved);
+  }, []);
+
   return (
     <main id="main-content" style={{ background: "var(--color-bg)", minHeight: "100dvh" }}>
       <SiteHeader />
@@ -16,10 +20,10 @@ export default function PolicyPage() {
         <div className="shell">
           <p className="eyebrow" style={{ color: "#e5b66d" }}>StayZ Policy & Terms</p>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(36px, 5vw, 54px)", fontWeight: 800, letterSpacing: "-.04em" }}>
-            Chính sách & Điều khoản dịch vụ
+            {t("Chính sách & Điều khoản dịch vụ", lang)}
           </h1>
           <p style={{ opacity: .8, fontSize: 16, maxWidth: 600 }}>
-            Cam kết minh bạch về quyền lợi, quy định đặt hủy phòng và bảo mật dữ liệu khách hàng.
+            {t("Cam kết minh bạch về quyền lợi, quy định đặt hủy phòng và bảo mật dữ liệu khách hàng.", lang)}
           </p>
         </div>
       </section>
@@ -29,12 +33,10 @@ export default function PolicyPage() {
         <div className="book-section">
           <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)", marginBottom: "var(--sp-3)" }}>
             <FileText size={24} style={{ color: "var(--navy)" }} aria-hidden="true" />
-            <h2 style={{ borderBottom: 0, paddingBottom: 0, margin: 0 }}>1. Quy định đặt phòng</h2>
+            <h2 style={{ borderBottom: 0, paddingBottom: 0, margin: 0 }}>{t("1. Quy định đặt phòng", lang)}</h2>
           </div>
           <p style={{ color: "var(--color-ink-2)", fontSize: 15, lineHeight: 1.7 }}>
-            Khách hàng có thể tìm kiếm và thực hiện đặt phòng trực tuyến thông qua nền tảng StayZ. Khi hoàn tất đặt phòng,
-            thông tin booking sẽ được ghi nhận vào hệ thống và mã nhận phòng sẽ được tạo tự động. Quý khách vui lòng cung cấp
-            đúng số lượng người lưu trú theo quy định của từng loại phòng.
+            {t("Khách hàng có thể tìm kiếm và thực hiện đặt phòng trực tuyến thông qua nền tảng StayZ. Khi hoàn tất đặt phòng, thông tin booking sẽ được ghi nhận vào hệ thống và mã nhận phòng sẽ được tạo tự động. Quý khách vui lòng cung cấp đúng số lượng người lưu trú theo quy định của từng loại phòng.", lang)}
           </p>
         </div>
 
@@ -42,13 +44,13 @@ export default function PolicyPage() {
         <div className="book-section">
           <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)", marginBottom: "var(--sp-3)" }}>
             <RefreshCw size={24} style={{ color: "var(--navy)" }} aria-hidden="true" />
-            <h2 style={{ borderBottom: 0, paddingBottom: 0, margin: 0 }}>2. Chính sách hủy phòng & Hoàn tiền</h2>
+            <h2 style={{ borderBottom: 0, paddingBottom: 0, margin: 0 }}>{t("2. Chính sách hủy phòng & Hoàn tiền", lang)}</h2>
           </div>
           <ul style={{ color: "var(--color-ink-2)", fontSize: 15, lineHeight: 1.8, paddingLeft: 20 }}>
-            <li><strong>Hủy trước 7 ngày check-in:</strong> Hoàn tiền 100% số tiền đã thanh toán.</li>
-            <li><strong>Hủy từ 3 - 7 ngày trước check-in:</strong> Hoàn tiền 50% số tiền đã thanh toán.</li>
-            <li><strong>Hủy trong vòng 3 ngày hoặc không đến (No-show):</strong> Không áp dụng hoàn tiền.</li>
-            <li>Mọi yêu cầu hủy phòng được thực hiện trực tiếp trên trang <strong>Đặt phòng của tôi</strong>.</li>
+            <li><strong>{t("Hủy trước 7 ngày check-in:", lang)}</strong> {t("Hoàn tiền 100% số tiền đã thanh toán.", lang)}</li>
+            <li><strong>{t("Hủy từ 3 - 7 ngày trước check-in:", lang)}</strong> {t("Hoàn tiền 50% số tiền đã thanh toán.", lang)}</li>
+            <li><strong>{t("Hủy trong vòng 3 ngày hoặc không đến (No-show):", lang)}</strong> {t("Không áp dụng hoàn tiền.", lang)}</li>
+            <li>{t("Mọi yêu cầu hủy phòng được thực hiện trực tiếp trên trang Đặt phòng của tôi.", lang)}</li>
           </ul>
         </div>
 
@@ -56,15 +58,14 @@ export default function PolicyPage() {
         <div className="book-section">
           <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)", marginBottom: "var(--sp-3)" }}>
             <CreditCard size={24} style={{ color: "var(--navy)" }} aria-hidden="true" />
-            <h2 style={{ borderBottom: 0, paddingBottom: 0, margin: 0 }}>3. Phương thức thanh toán</h2>
+            <h2 style={{ borderBottom: 0, paddingBottom: 0, margin: 0 }}>{t("3. Phương thức thanh toán", lang)}</h2>
           </div>
           <p style={{ color: "var(--color-ink-2)", fontSize: 15, lineHeight: 1.7 }}>
-            StayZ hỗ trợ cổng thanh toán bảo mật <strong>PayOS</strong> (Mã QR VietQR, thẻ ATM nội địa, thẻ quốc tế).
-            Khách hàng có thể lựa chọn:
+            {t("StayZ hỗ trợ cổng thanh toán bảo mật PayOS (Mã QR VietQR, thẻ ATM nội địa, thẻ quốc tế). Khách hàng có thể lựa chọn:", lang)}
           </p>
           <ul style={{ color: "var(--color-ink-2)", fontSize: 15, lineHeight: 1.8, paddingLeft: 20, marginTop: 10 }}>
-            <li><strong>Thanh toán 100%:</strong> Xác nhận ngay lập tức.</li>
-            <li><strong>Đặt cọc 30%:</strong> Giữ phòng và thanh toán 70% còn lại khi làm thủ tục nhận phòng tại khách sạn.</li>
+            <li><strong>{t("Thanh toán 100%:", lang)}</strong> {t("Xác nhận ngay lập tức.", lang)}</li>
+            <li><strong>{t("Đặt cọc 30%:", lang)}</strong> {t("Giữ phòng và thanh toán 70% còn lại khi làm thủ tục nhận phòng tại khách sạn.", lang)}</li>
           </ul>
         </div>
 
@@ -72,11 +73,10 @@ export default function PolicyPage() {
         <div className="book-section">
           <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)", marginBottom: "var(--sp-3)" }}>
             <Lock size={24} style={{ color: "var(--navy)" }} aria-hidden="true" />
-            <h2 style={{ borderBottom: 0, paddingBottom: 0, margin: 0 }}>4. Bảo mật thông tin cá nhân</h2>
+            <h2 style={{ borderBottom: 0, paddingBottom: 0, margin: 0 }}>{t("4. Bảo mật thông tin cá nhân", lang)}</h2>
           </div>
           <p style={{ color: "var(--color-ink-2)", fontSize: 15, lineHeight: 1.7 }}>
-            StayZ cam kết bảo vệ dữ liệu cá nhân của người dùng. Mật khẩu được mã hóa an toàn, mã OTP xác thực email được giới hạn thời gian và số lần gửi.
-            Thông tin thanh toán được xử lý thông qua đối tác thanh toán đạt chuẩn PCI-DSS.
+            {t("StayZ cam kết bảo vệ dữ liệu cá nhân của người dùng. Mật khẩu được mã hóa an toàn, mã OTP xác thực email được giới hạn thời gian và số lần gửi. Thông tin thanh toán được xử lý thông qua đối tác thanh toán đạt chuẩn PCI-DSS.", lang)}
           </p>
         </div>
       </div>

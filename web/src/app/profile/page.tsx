@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/site-header";
 import { getUserById, updateUser, uploadAvatar } from "@/lib/api";
 import { resolveImage } from "@/lib/api";
 import type { User as UserType } from "@/lib/types";
+import { t, Language } from "@/lib/i18n";
 
 function getToken(): string | null {
   if (typeof document === "undefined") return null;
@@ -39,8 +40,11 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [lang, setLang] = useState<Language>("vi");
 
   useEffect(() => {
+    const savedLang = (localStorage.getItem("stayz_lang") as Language) || "vi";
+    setLang(savedLang);
     const token = getToken();
     if (!token) { router.replace("/login?redirect=/profile"); return; }
     const stored = getStoredUser();
@@ -72,7 +76,7 @@ export default function ProfilePage() {
       date_of_birth: dob || undefined,
     });
     setSaving(false);
-    if (err || !updated) { setError(err ?? "Lưu thất bại."); return; }
+    if (err || !updated) { setError(err ?? t("Lưu thất bại.", lang)); return; }
     setUser(updated);
     saveUserCookie(updated);
     setSaved(true);
@@ -97,7 +101,7 @@ export default function ProfilePage() {
 
   if (loading) return (
     <main id="main-content" className="profile-page">
-      <SiteHeader />
+      <SiteHeader lang={lang} onLangChange={setLang} />
       <div style={{ display: "flex", justifyContent: "center", padding: "var(--sp-24)" }}>
         <Loader2 size={32} style={{ animation: "spin .7s linear infinite", color: "var(--navy)" }} />
       </div>
@@ -106,7 +110,7 @@ export default function ProfilePage() {
 
   return (
     <main id="main-content" className="profile-page">
-      <SiteHeader />
+      <SiteHeader lang={lang} onLangChange={setLang} />
       <div className="profile-hero">
         <div className="shell">
           <div className="profile-avatar-wrap">
@@ -121,12 +125,12 @@ export default function ProfilePage() {
                 <User size={40} aria-hidden="true" />
               </div>
             )}
-            <label className="profile-avatar-change" htmlFor="avatar-upload" aria-label="Đổi ảnh đại diện" style={{ cursor: "pointer" }}>
+            <label className="profile-avatar-change" htmlFor="avatar-upload" aria-label={t("Đổi ảnh đại diện", lang)} style={{ cursor: "pointer" }}>
               <Camera size={14} aria-hidden="true" />
               <input id="avatar-upload" type="file" accept="image/*" style={{ display: "none" }} onChange={handleAvatarChange} />
             </label>
           </div>
-          <h1>{user?.full_name ?? user?.email ?? "Tài khoản"}</h1>
+          <h1>{user?.full_name ?? user?.email ?? t("Tài khoản", lang)}</h1>
           <p style={{ opacity: .8, fontSize: 14 }}>{user?.email}</p>
         </div>
       </div>
@@ -135,69 +139,69 @@ export default function ProfilePage() {
         <div className="shell">
           <div className="profile-grid">
             {/* Sidebar nav */}
-            <nav className="profile-nav" aria-label="Điều hướng tài khoản">
+            <nav className="profile-nav" aria-label={t("Thông tin cá nhân", lang)}>
               <Link href="/profile" className="profile-nav-item active">
-                <User size={16} aria-hidden="true" /> Thông tin cá nhân
+                <User size={16} aria-hidden="true" /> {t("Thông tin cá nhân", lang)}
               </Link>
               <Link href="/profile/bookings" className="profile-nav-item">
-                📅 Đặt phòng của tôi
+                📅 {t("Đặt phòng của tôi", lang)}
               </Link>
               <Link href="/favorites" className="profile-nav-item">
-                ❤️ Yêu thích
+                ❤️ {t("Yêu thích", lang)}
               </Link>
             </nav>
 
             {/* Profile form */}
             <div className="profile-card">
-              <h2>Thông tin cá nhân</h2>
+              <h2>{t("Thông tin cá nhân", lang)}</h2>
               <form onSubmit={handleSave} noValidate>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--sp-5)" }}>
                   <div className="form-group">
-                    <label className="form-label" htmlFor="p-name">Họ và tên</label>
+                    <label className="form-label" htmlFor="p-name">{t("Họ và tên", lang)}</label>
                     <input id="p-name" type="text" className="form-input" value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="name" />
                   </div>
                   <div className="form-group">
-                    <label className="form-label" htmlFor="p-phone">Số điện thoại</label>
+                    <label className="form-label" htmlFor="p-phone">{t("Số điện thoại", lang)}</label>
                     <input id="p-phone" type="tel" className="form-input" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" placeholder="0901234567" />
                   </div>
                   <div className="form-group">
-                    <label className="form-label" htmlFor="p-gender">Giới tính</label>
+                    <label className="form-label" htmlFor="p-gender">{t("Giới tính", lang)}</label>
                     <select id="p-gender" className="form-input" value={gender} onChange={(e) => setGender(e.target.value as typeof gender)}>
-                      <option value="">Không xác định</option>
-                      <option value="male">Nam</option>
-                      <option value="female">Nữ</option>
-                      <option value="other">Khác</option>
+                      <option value="">{t("Không xác định", lang)}</option>
+                      <option value="male">{t("Nam", lang)}</option>
+                      <option value="female">{t("Nữ", lang)}</option>
+                      <option value="other">{t("Khác", lang)}</option>
                     </select>
                   </div>
                   <div className="form-group">
-                    <label className="form-label" htmlFor="p-dob">Ngày sinh</label>
+                    <label className="form-label" htmlFor="p-dob">{t("Ngày sinh", lang)}</label>
                     <input id="p-dob" type="date" className="form-input" value={dob} onChange={(e) => setDob(e.target.value)} max={new Date().toISOString().split("T")[0]} />
                   </div>
                 </div>
                 <div className="form-group">
-                  <label className="form-label" htmlFor="p-address">Địa chỉ</label>
-                  <input id="p-address" type="text" className="form-input" value={address} onChange={(e) => setAddress(e.target.value)} autoComplete="street-address" placeholder="Số nhà, đường, thành phố..." />
+                  <label className="form-label" htmlFor="p-address">{t("Địa chỉ", lang)}</label>
+                  <input id="p-address" type="text" className="form-input" value={address} onChange={(e) => setAddress(e.target.value)} autoComplete="street-address" placeholder={t("Số nhà, đường, thành phố...", lang)} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Email</label>
-                  <input type="email" className="form-input" value={user?.email ?? ""} disabled style={{ opacity: .6, cursor: "not-allowed" }} aria-label="Email không thể thay đổi" />
-                  <p style={{ fontSize: 12, color: "var(--color-ink-3)", marginTop: 4 }}>Email không thể thay đổi.</p>
+                  <input type="email" className="form-input" value={user?.email ?? ""} disabled style={{ opacity: .6, cursor: "not-allowed" }} aria-label={t("Email không thể thay đổi.", lang)} />
+                  <p style={{ fontSize: 12, color: "var(--color-ink-3)", marginTop: 4 }}>{t("Email không thể thay đổi.", lang)}</p>
                 </div>
                 {error && <p className="form-error" role="alert">{error}</p>}
                 {saved && (
                   <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-2)", color: "var(--color-success)", fontSize: 14, marginBottom: "var(--sp-3)" }}>
-                    <CheckCircle2 size={16} aria-hidden="true" /> Đã lưu thành công!
+                    <CheckCircle2 size={16} aria-hidden="true" /> {t("Đã lưu thành công!", lang)}
                   </div>
                 )}
                 <button type="submit" className="form-submit" style={{ maxWidth: 200 }} disabled={saving} aria-busy={saving}>
-                  {saving ? <><Loader2 size={16} aria-hidden="true" /> Đang lưu...</> : "Lưu thay đổi"}
+                  {saving ? <><Loader2 size={16} aria-hidden="true" /> {t("Đang lưu...", lang)}</> : t("Lưu thay đổi", lang)}
                 </button>
               </form>
 
               {/* KYC & Identity Section */}
               <div style={{ marginTop: "var(--sp-8)", paddingTop: "var(--sp-6)", borderTop: "1px solid var(--color-border)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--sp-4)" }}>
-                  <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>🪪 Xác thực Sinh trắc học & Giấy tờ (HuKi ID KYC)</h3>
+                  <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>🪪 {t("Xác thực Sinh trắc học & Giấy tờ (HuKi ID KYC)", lang)}</h3>
                   <span style={{
                     padding: "4px 12px",
                     borderRadius: 20,
@@ -206,19 +210,19 @@ export default function ProfilePage() {
                     background: user?.kyc_status === "VERIFIED" ? "rgba(16, 185, 129, 0.15)" : user?.kyc_status === "PENDING" ? "rgba(245, 158, 11, 0.15)" : "rgba(239, 68, 68, 0.15)",
                     color: user?.kyc_status === "VERIFIED" ? "#10b981" : user?.kyc_status === "PENDING" ? "#f59e0b" : "#ef4444"
                   }}>
-                    {user?.kyc_status === "VERIFIED" ? "✓ Đã xác thực" : user?.kyc_status === "PENDING" ? "⏳ Đang chờ duyệt" : "⚠️ Chưa xác thực"}
+                    {user?.kyc_status === "VERIFIED" ? "✓ " + t("Đã xác thực", lang) : user?.kyc_status === "PENDING" ? "⏳ " + t("Đang chờ duyệt", lang) : "⚠️ " + t("Chưa xác thực", lang)}
                   </span>
                 </div>
                 <p style={{ fontSize: 13, color: "var(--color-ink-3)", marginBottom: "var(--sp-4)" }}>
-                  Xác thực bằng lái xe (GPLX) bắt buộc để sử dụng dịch vụ thuê xe tự lái <strong>HuKi Ride</strong>.
+                  {t("Xác thực bằng lái xe (GPLX) bắt buộc để sử dụng dịch vụ thuê xe tự lái HuKi Ride.", lang)}
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--sp-4)" }}>
                   <div className="form-group">
-                    <label className="form-label">Số CCCD / CMND</label>
+                    <label className="form-label">{t("Số CCCD / CMND", lang)}</label>
                     <input type="text" className="form-input" placeholder="03609..." value={user?.identity_card_number || ""} readOnly disabled style={{ opacity: 0.8 }} />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Số Giấy phép lái xe (GPLX)</label>
+                    <label className="form-label">{t("Số Giấy phép lái xe (GPLX)", lang)}</label>
                     <input type="text" className="form-input" placeholder="79012..." value={user?.driver_license_number || ""} readOnly disabled style={{ opacity: 0.8 }} />
                   </div>
                 </div>

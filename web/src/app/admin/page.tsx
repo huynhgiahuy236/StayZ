@@ -11,7 +11,6 @@ import {
   Loader2,
   Trash2,
   Search,
-  CheckCircle2,
   Clock,
   DollarSign,
 } from "lucide-react";
@@ -24,6 +23,7 @@ import {
   deletePropertyAdmin,
 } from "@/lib/api";
 import type { Booking, Hotel, User } from "@/lib/types";
+import { t, Language } from "@/lib/i18n";
 
 function getToken(): string | null {
   if (typeof document === "undefined") return null;
@@ -42,9 +42,9 @@ function getStoredUser(): User | null {
   }
 }
 
-function fmtDate(d?: string) {
+function fmtDate(d?: string, lang: Language = "vi") {
   if (!d) return "—";
-  return new Intl.DateTimeFormat("vi-VN", {
+  return new Intl.DateTimeFormat(lang === "vi" ? "vi-VN" : "en-US", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -61,6 +61,7 @@ type Tab = "overview" | "bookings" | "properties" | "users" | "audit";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
+  const [lang, setLang] = useState<Language>("vi");
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [loading, setLoading] = useState(true);
 
@@ -73,10 +74,14 @@ export default function AdminDashboardPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
+    const saved = (localStorage.getItem("stayz_lang") as Language) || "vi";
+    setLang(saved);
+  }, []);
+
+  useEffect(() => {
     const token = getToken();
     const currentUser = getStoredUser();
     if (!token || currentUser?.role !== "admin") {
-      // Direct unauthorized user to login
       router.replace("/login?redirect=/admin");
       return;
     }
@@ -96,7 +101,7 @@ export default function AdminDashboardPage() {
   }, []);
 
   async function handleDeleteProperty(id: string) {
-    if (!confirm("Bạn có chắc muốn xóa khách sạn này không?")) return;
+    if (!confirm(t("Bạn có chắc muốn xóa khách sạn này không?", lang))) return;
     const token = getToken();
     if (!token) return;
     setDeletingId(id);
@@ -144,7 +149,7 @@ export default function AdminDashboardPage() {
             <p className="eyebrow" style={{ color: "var(--gold)", margin: 0 }}>StayZ Administration</p>
           </div>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: 36, fontWeight: 800, margin: 0 }}>
-            Trang Quản trị Hệ thống
+            {t("Trang Quản trị Hệ thống", lang)}
           </h1>
         </div>
       </section>
@@ -153,10 +158,10 @@ export default function AdminDashboardPage() {
         {/* Navigation Tabs */}
         <nav style={{ display: "flex", gap: "var(--sp-2)", borderBottom: "2px solid var(--color-border)", marginBottom: "var(--sp-8)", overflowX: "auto" }}>
           {[
-            { id: "overview", label: "Tổng quan", icon: Clock },
-            { id: "bookings", label: `Đặt phòng (${bookings.length})`, icon: Calendar },
-            { id: "properties", label: `Khách sạn (${properties.length})`, icon: HotelIcon },
-            { id: "users", label: `Người dùng (${users.length})`, icon: Users },
+            { id: "overview", label: t("Tổng quan", lang), icon: Clock },
+            { id: "bookings", label: `${t("Đặt phòng", lang)} (${bookings.length})`, icon: Calendar },
+            { id: "properties", label: `${t("Khách sạn", lang)} (${properties.length})`, icon: HotelIcon },
+            { id: "users", label: `${t("Người dùng", lang)} (${users.length})`, icon: Users },
             { id: "audit", label: `Audit Log (${auditLogs.length})`, icon: FileText },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -193,7 +198,7 @@ export default function AdminDashboardPage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "var(--sp-5)", marginBottom: "var(--sp-10)" }}>
               <div className="profile-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 13, color: "var(--color-ink-3)", fontWeight: 600 }}>TỔNG DOANH THU</span>
+                  <span style={{ fontSize: 13, color: "var(--color-ink-3)", fontWeight: 600 }}>{t("TỔNG DOANH THU", lang)}</span>
                   <DollarSign size={20} style={{ color: "var(--gold)" }} />
                 </div>
                 <strong style={{ fontSize: 28, fontFamily: "var(--font-display)", color: "var(--navy)", display: "block", marginTop: 8 }}>
@@ -203,7 +208,7 @@ export default function AdminDashboardPage() {
 
               <div className="profile-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 13, color: "var(--color-ink-3)", fontWeight: 600 }}>TỔNG ĐẶT PHÒNG</span>
+                  <span style={{ fontSize: 13, color: "var(--color-ink-3)", fontWeight: 600 }}>{t("TỔNG ĐẶT PHÒNG", lang)}</span>
                   <Calendar size={20} style={{ color: "var(--navy)" }} />
                 </div>
                 <strong style={{ fontSize: 28, fontFamily: "var(--font-display)", color: "var(--color-ink)", display: "block", marginTop: 8 }}>
@@ -213,7 +218,7 @@ export default function AdminDashboardPage() {
 
               <div className="profile-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 13, color: "var(--color-ink-3)", fontWeight: 600 }}>KHÁCH SẠN</span>
+                  <span style={{ fontSize: 13, color: "var(--color-ink-3)", fontWeight: 600 }}>{t("KHÁCH SẠN", lang)}</span>
                   <HotelIcon size={20} style={{ color: "var(--navy)" }} />
                 </div>
                 <strong style={{ fontSize: 28, fontFamily: "var(--font-display)", color: "var(--color-ink)", display: "block", marginTop: 8 }}>
@@ -223,7 +228,7 @@ export default function AdminDashboardPage() {
 
               <div className="profile-card">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: 13, color: "var(--color-ink-3)", fontWeight: 600 }}>NGƯỜI DÙNG</span>
+                  <span style={{ fontSize: 13, color: "var(--color-ink-3)", fontWeight: 600 }}>{t("NGƯỜI DÙNG", lang)}</span>
                   <Users size={20} style={{ color: "var(--navy)" }} />
                 </div>
                 <strong style={{ fontSize: 28, fontFamily: "var(--font-display)", color: "var(--color-ink)", display: "block", marginTop: 8 }}>
@@ -234,16 +239,16 @@ export default function AdminDashboardPage() {
 
             {/* Recent Bookings */}
             <div className="profile-card">
-              <h2 style={{ marginBottom: "var(--sp-4)" }}>Đơn đặt phòng gần đây</h2>
+              <h2 style={{ marginBottom: "var(--sp-4)" }}>{t("Đơn đặt phòng gần đây", lang)}</h2>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, textAlign: "left" }}>
                   <thead>
                     <tr style={{ borderBottom: "2px solid var(--color-border)", color: "var(--color-ink-3)" }}>
-                      <th style={{ padding: 12 }}>Mã / ID</th>
-                      <th style={{ padding: 12 }}>Khách sạn</th>
-                      <th style={{ padding: 12 }}>Ngày lưu trú</th>
-                      <th style={{ padding: 12 }}>Tổng tiền</th>
-                      <th style={{ padding: 12 }}>Trạng thái</th>
+                      <th style={{ padding: 12 }}>{t("Mã / ID", lang)}</th>
+                      <th style={{ padding: 12 }}>{t("Khách sạn", lang)}</th>
+                      <th style={{ padding: 12 }}>{t("Ngày lưu trú", lang)}</th>
+                      <th style={{ padding: 12 }}>{t("Tổng tiền", lang)}</th>
+                      <th style={{ padding: 12 }}>{t("Trạng thái", lang)}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -253,10 +258,10 @@ export default function AdminDashboardPage() {
                         <tr key={b._id} style={{ borderBottom: "1px solid var(--color-border)" }}>
                           <td style={{ padding: 12, fontWeight: 700 }}>{b.check_in_code ?? b._id.slice(-6)}</td>
                           <td style={{ padding: 12 }}>{hotel?.title ?? "—"}</td>
-                          <td style={{ padding: 12 }}>{fmtDate(b.check_in).slice(0, 10)}</td>
+                          <td style={{ padding: 12 }}>{fmtDate(b.check_in, lang).slice(0, 10)}</td>
                           <td style={{ padding: 12, fontWeight: 700 }}>{fmtPrice(b.total_price)}</td>
                           <td style={{ padding: 12 }}>
-                            <span className={`booking-status-badge ${b.status}`}>{b.status}</span>
+                            <span className={`booking-status-badge ${b.status}`}>{t(b.status, lang)}</span>
                           </td>
                         </tr>
                       );
@@ -272,12 +277,12 @@ export default function AdminDashboardPage() {
         {activeTab === "bookings" && (
           <div className="profile-card">
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--sp-6)", flexWrap: "wrap", gap: 16 }}>
-              <h2>Tất cả đơn đặt phòng ({bookings.length})</h2>
+              <h2>{t("Tất cả đơn đặt phòng", lang)} ({bookings.length})</h2>
               <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--color-bg)", border: "1px solid var(--color-border)", borderRadius: "var(--r-md)", padding: "6px 12px", width: 280 }}>
                 <Search size={16} style={{ color: "var(--color-ink-3)" }} />
                 <input
                   type="text"
-                  placeholder="Mã check-in, email, hotel..."
+                  placeholder={t("Mã check-in, email, hotel...", lang)}
                   value={searchCode}
                   onChange={(e) => setSearchCode(e.target.value)}
                   style={{ border: 0, outline: 0, background: "transparent", fontSize: 13, width: "100%" }}
@@ -289,13 +294,13 @@ export default function AdminDashboardPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, textAlign: "left" }}>
                 <thead>
                   <tr style={{ borderBottom: "2px solid var(--color-border)", color: "var(--color-ink-3)" }}>
-                    <th style={{ padding: 12 }}>Mã Code</th>
-                    <th style={{ padding: 12 }}>Khách hàng</th>
-                    <th style={{ padding: 12 }}>Khách sạn</th>
-                    <th style={{ padding: 12 }}>Check-in / Check-out</th>
-                    <th style={{ padding: 12 }}>Tổng tiền</th>
-                    <th style={{ padding: 12 }}>Thanh toán</th>
-                    <th style={{ padding: 12 }}>Trạng thái</th>
+                    <th style={{ padding: 12 }}>{t("Mã Code", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Khách hàng", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Khách sạn", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Check-in / Check-out", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Tổng tiền", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Thanh toán", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Trạng thái", lang)}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -311,16 +316,16 @@ export default function AdminDashboardPage() {
                         </td>
                         <td style={{ padding: 12 }}>{hotel?.title || "—"}</td>
                         <td style={{ padding: 12, fontSize: 13 }}>
-                          {fmtDate(b.check_in).slice(0, 10)} → {fmtDate(b.check_out).slice(0, 10)}
+                          {fmtDate(b.check_in, lang).slice(0, 10)} → {fmtDate(b.check_out, lang).slice(0, 10)}
                         </td>
                         <td style={{ padding: 12, fontWeight: 700 }}>{fmtPrice(b.total_price)}</td>
                         <td style={{ padding: 12, fontSize: 13 }}>
                           <span style={{ color: b.payment_status === "paid" ? "var(--color-success)" : "var(--color-ink-3)", fontWeight: 600 }}>
-                            {b.payment_status}
+                            {t(b.payment_status, lang)}
                           </span>
                         </td>
                         <td style={{ padding: 12 }}>
-                          <span className={`booking-status-badge ${b.status}`}>{b.status}</span>
+                          <span className={`booking-status-badge ${b.status}`}>{t(b.status, lang)}</span>
                         </td>
                       </tr>
                     );
@@ -334,17 +339,17 @@ export default function AdminDashboardPage() {
         {/* Tab 3: Properties */}
         {activeTab === "properties" && (
           <div className="profile-card">
-            <h2 style={{ marginBottom: "var(--sp-6)" }}>Danh sách khách sạn hệ thống ({properties.length})</h2>
+            <h2 style={{ marginBottom: "var(--sp-6)" }}>{t("Danh sách khách sạn hệ thống", lang)} ({properties.length})</h2>
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, textAlign: "left" }}>
                 <thead>
                   <tr style={{ borderBottom: "2px solid var(--color-border)", color: "var(--color-ink-3)" }}>
-                    <th style={{ padding: 12 }}>Tên khách sạn</th>
-                    <th style={{ padding: 12 }}>Thành phố</th>
-                    <th style={{ padding: 12 }}>Loại hình</th>
-                    <th style={{ padding: 12 }}>Giá từ</th>
-                    <th style={{ padding: 12 }}>Đánh giá</th>
-                    <th style={{ padding: 12 }}>Thao tác</th>
+                    <th style={{ padding: 12 }}>{t("Tên khách sạn", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Thành phố", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Loại hình", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Giá từ", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Đánh giá", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Thao tác", lang)}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -356,15 +361,15 @@ export default function AdminDashboardPage() {
                         </Link>
                       </td>
                       <td style={{ padding: 12 }}>{p.city}</td>
-                      <td style={{ padding: 12, textTransform: "capitalize" }}>{p.type || "Nơi lưu trú"}</td>
+                      <td style={{ padding: 12, textTransform: "capitalize" }}>{p.type || t("Nơi lưu trú", lang)}</td>
                       <td style={{ padding: 12, fontWeight: 700 }}>{p.min_price || p.base_price ? fmtPrice(p.min_price || p.base_price!) : "—"}</td>
-                      <td style={{ padding: 12 }}>★ {p.rating?.toFixed(1) || "Mới"} ({p.review_count || 0})</td>
+                      <td style={{ padding: 12 }}>★ {p.rating?.toFixed(1) || t("Mới", lang)} ({p.review_count || 0})</td>
                       <td style={{ padding: 12 }}>
                         <button
                           onClick={() => handleDeleteProperty(p._id)}
                           disabled={deletingId === p._id}
                           style={{ border: 0, background: "none", color: "var(--color-destructive)", cursor: "pointer" }}
-                          aria-label={`Xóa ${p.title}`}
+                          aria-label={`${t("Xóa", lang)} ${p.title}`}
                         >
                           {deletingId === p._id ? <Loader2 size={16} style={{ animation: "spin .7s linear infinite" }} /> : <Trash2 size={16} />}
                         </button>
@@ -380,22 +385,22 @@ export default function AdminDashboardPage() {
         {/* Tab 4: Users */}
         {activeTab === "users" && (
           <div className="profile-card">
-            <h2 style={{ marginBottom: "var(--sp-6)" }}>Danh sách người dùng ({users.length})</h2>
+            <h2 style={{ marginBottom: "var(--sp-6)" }}>{t("Danh sách người dùng", lang)} ({users.length})</h2>
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, textAlign: "left" }}>
                 <thead>
                   <tr style={{ borderBottom: "2px solid var(--color-border)", color: "var(--color-ink-3)" }}>
-                    <th style={{ padding: 12 }}>Họ và tên</th>
-                    <th style={{ padding: 12 }}>Email</th>
-                    <th style={{ padding: 12 }}>Số điện thoại</th>
-                    <th style={{ padding: 12 }}>Vai trò</th>
-                    <th style={{ padding: 12 }}>Ngày tạo</th>
+                    <th style={{ padding: 12 }}>{t("Họ và tên", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Email", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Số điện thoại", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Vai trò", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Ngày tạo", lang)}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((u) => (
                     <tr key={u._id} style={{ borderBottom: "1px solid var(--color-border)" }}>
-                      <td style={{ padding: 12, fontWeight: 600 }}>{u.full_name || "Chưa cập nhật"}</td>
+                      <td style={{ padding: 12, fontWeight: 600 }}>{u.full_name || t("Chưa cập nhật", lang)}</td>
                       <td style={{ padding: 12 }}>{u.email}</td>
                       <td style={{ padding: 12 }}>{u.phone_number || "—"}</td>
                       <td style={{ padding: 12 }}>
@@ -403,7 +408,7 @@ export default function AdminDashboardPage() {
                           {u.role}
                         </span>
                       </td>
-                      <td style={{ padding: 12, fontSize: 13 }}>{fmtDate(u.createdAt)}</td>
+                      <td style={{ padding: 12, fontSize: 13 }}>{fmtDate(u.createdAt, lang)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -415,28 +420,28 @@ export default function AdminDashboardPage() {
         {/* Tab 5: Audit Logs */}
         {activeTab === "audit" && (
           <div className="profile-card">
-            <h2 style={{ marginBottom: "var(--sp-6)" }}>Nhật ký Quản trị (Admin Audit Logs)</h2>
+            <h2 style={{ marginBottom: "var(--sp-6)" }}>{t("Nhật ký Quản trị (Admin Audit Logs)", lang)}</h2>
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, textAlign: "left" }}>
                 <thead>
                   <tr style={{ borderBottom: "2px solid var(--color-border)", color: "var(--color-ink-3)" }}>
-                    <th style={{ padding: 12 }}>Thời gian</th>
-                    <th style={{ padding: 12 }}>Hành động</th>
-                    <th style={{ padding: 12 }}>Admin Executed</th>
-                    <th style={{ padding: 12 }}>Chi tiết</th>
+                    <th style={{ padding: 12 }}>{t("Thời gian", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Hành động", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Admin Executed", lang)}</th>
+                    <th style={{ padding: 12 }}>{t("Chi tiết", lang)}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {auditLogs.length === 0 ? (
                     <tr>
                       <td colSpan={4} style={{ padding: 24, textAlign: "center", color: "var(--color-ink-3)" }}>
-                        Chưa có ghi nhận nhật ký nào.
+                        {t("Chưa có ghi nhận nhật ký nào.", lang)}
                       </td>
                     </tr>
                   ) : (
                     auditLogs.map((log: any) => (
                       <tr key={log._id} style={{ borderBottom: "1px solid var(--color-border)" }}>
-                        <td style={{ padding: 12 }}>{fmtDate(log.createdAt)}</td>
+                        <td style={{ padding: 12 }}>{fmtDate(log.createdAt, lang)}</td>
                         <td style={{ padding: 12, fontWeight: 600, color: "var(--navy)" }}>{log.action}</td>
                         <td style={{ padding: 12 }}>{log.admin_id?.email || log.admin_id || "System"}</td>
                         <td style={{ padding: 12, fontFamily: "monospace", fontSize: 12 }}>{JSON.stringify(log.details || {})}</td>

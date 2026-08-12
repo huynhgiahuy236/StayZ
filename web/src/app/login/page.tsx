@@ -12,20 +12,28 @@ function LoginForm() {
   const sp = useSearchParams();
   const redirect = sp.get("redirect") ?? "/";
 
+  const [lang, setLang] = useState<Language>("vi");
   const [email, setEmail] = useState("admin@stayz.local");
   const [password, setPassword] = useState("StayZ@Admin2026");
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("stayz_lang") as Language | null;
+      if (saved) setLang(saved);
+    }
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!email || !password) { setError("Vui lòng nhập đầy đủ thông tin."); return; }
+    if (!email || !password) { setError(t("Vui lòng nhập đầy đủ thông tin.", lang)); return; }
     setLoading(true);
     const { data, error: err } = await login(email, password);
     setLoading(false);
-    if (err || !data) { setError(err ?? "Đăng nhập thất bại. Vui lòng thử lại."); return; }
+    if (err || !data) { setError(err ?? t("Đăng nhập thất bại. Vui lòng thử lại.", lang)); return; }
 
     // Save tokens to cookies
     const maxAge15m = 60 * 15;
@@ -33,7 +41,7 @@ function LoginForm() {
     document.cookie = `stayz_access_token=${data.accessToken}; max-age=${maxAge15m}; path=/; samesite=lax`;
     document.cookie = `stayz_refresh_token=${data.refreshToken}; max-age=${maxAge30d}; path=/; samesite=lax`;
     document.cookie = `stayz_user=${encodeURIComponent(JSON.stringify(data.user))}; max-age=${maxAge30d}; path=/; samesite=lax`;
-    
+
     // Perform full page reload navigation to update auth state across all components
     window.location.href = redirect;
   }
@@ -41,12 +49,12 @@ function LoginForm() {
   return (
     <div className="auth-form-wrap">
       <Link href="/" className="auth-logo">Stay<span className="z">Z</span></Link>
-      <h1 className="auth-title">Chào mừng trở lại</h1>
-      <p className="auth-sub">Đăng nhập để tiếp tục hành trình của bạn.</p>
+      <h1 className="auth-title">{t("Chào mừng trở lại", lang)}</h1>
+      <p className="auth-sub">{t("Đăng nhập để tiếp tục hành trình của bạn.", lang)}</p>
 
       <form onSubmit={handleSubmit} noValidate>
         <div className="form-group">
-          <label className="form-label" htmlFor="login-email">Email</label>
+          <label className="form-label" htmlFor="login-email">{t("Email", lang)}</label>
           <input
             id="login-email"
             type="email"
@@ -59,7 +67,7 @@ function LoginForm() {
           />
         </div>
         <div className="form-group">
-          <label className="form-label" htmlFor="login-password">Mật khẩu</label>
+          <label className="form-label" htmlFor="login-password">{t("Mật khẩu", lang)}</label>
           <div style={{ position: "relative" }}>
             <input
               id="login-password"
@@ -76,7 +84,7 @@ function LoginForm() {
               type="button"
               onClick={() => setShowPw((p) => !p)}
               style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: 0, cursor: "pointer", color: "var(--color-ink-3)" }}
-              aria-label={showPw ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+              aria-label={showPw ? t("Ẩn mật khẩu", lang) : t("Hiện mật khẩu", lang)}
             >
               {showPw ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
             </button>
@@ -89,18 +97,18 @@ function LoginForm() {
 
         <div style={{ textAlign: "right", marginTop: "var(--sp-2)", marginBottom: "var(--sp-2)" }}>
           <Link href="/auth/forgot-password" style={{ fontSize: 13, color: "var(--navy)", fontWeight: 600 }}>
-            Quên mật khẩu?
+            {t("Quên mật khẩu?", lang)}
           </Link>
         </div>
 
         <button type="submit" className="form-submit" disabled={loading} aria-busy={loading}>
-          {loading ? <><Loader2 size={18} className="spinner" aria-hidden="true" /> Đang đăng nhập...</> : "Đăng nhập"}
+          {loading ? <><Loader2 size={18} className="spinner" aria-hidden="true" /> {t("Đang đăng nhập...", lang)}</> : t("Đăng nhập", lang)}
         </button>
       </form>
 
       <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "20px 0", color: "var(--color-ink-3)", fontSize: 12 }}>
         <span style={{ height: 1, background: "var(--color-border)", flex: 1 }} />
-        hoặc
+        {t("hoặc", lang)}
         <span style={{ height: 1, background: "var(--color-border)", flex: 1 }} />
       </div>
 
@@ -109,24 +117,33 @@ function LoginForm() {
         className="form-submit"
         style={{ background: "white", color: "var(--color-ink)", border: "1px solid var(--color-border)", textDecoration: "none" }}
       >
-        Đăng nhập với Google
+        {t("Đăng nhập với Google", lang)}
       </a>
 
       <p className="auth-alt">
-        Chưa có tài khoản? <Link href="/auth/register">Đăng ký ngay</Link>
+        {t("Đã có tài khoản?", lang)} <Link href="/auth/register">{t("Đăng ký ngay", lang)}</Link>
       </p>
     </div>
   );
 }
 
 export default function LoginPage() {
+  const [lang, setLang] = useState<Language>("vi");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("stayz_lang") as Language | null;
+      if (saved) setLang(saved);
+    }
+  }, []);
+
   return (
     <main className="auth-page" id="main-content">
       {/* Left visual panel */}
       <div className="auth-visual" aria-hidden="true">
         <div>
-          <h2>Khám phá những<br />nơi lưu trú đáng nhớ</h2>
-          <p>Hơn 100 điểm đến được tuyển chọn trên khắp Việt Nam đang chờ bạn.</p>
+          <h2 dangerouslySetInnerHTML={{ __html: t("Khám phá những<br />nơi lưu trú đáng nhớ", lang) }} />
+          <p>{t("Hơn 100 điểm đến được tuyển chọn trên khắp Việt Nam đang chờ bạn.", lang)}</p>
         </div>
       </div>
       {/* Right form panel */}

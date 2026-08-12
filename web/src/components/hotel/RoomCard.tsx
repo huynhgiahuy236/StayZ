@@ -14,9 +14,9 @@ interface Props {
 }
 
 const roomTypeLabels: Record<string, string> = {
-  standard_room: "Standard",
-  deluxe_room: "Deluxe",
-  suite: "Suite",
+  standard_room: "room_type_standard",
+  deluxe_room: "room_type_deluxe",
+  suite: "room_type_suite",
 };
 
 export function RoomCard({ room, propertyCity, propertySlug }: Props) {
@@ -52,7 +52,7 @@ export function RoomCard({ room, propertyCity, propertySlug }: Props) {
       </div>
       <div className="room-card-body">
         <span className="room-type-badge">
-          {roomTypeLabels[room.room_type] ?? room.room_type}
+          {t(roomTypeLabels[room.room_type] ?? room.room_type, lang)}
         </span>
         <p className="room-name">{room.name}</p>
         <div className="room-details">

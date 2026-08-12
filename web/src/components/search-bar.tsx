@@ -21,49 +21,49 @@ const SERVICE_TABS = [
 const CITIES = [
   { value: "", labelKey: "Tất cả điểm đến (12 Quốc gia)" },
   // 🇻🇳 Việt Nam
-  { value: "da-nang", label: "🇻🇳 Đà Nẵng, Việt Nam" },
-  { value: "da-lat", label: "🇻🇳 Đà Lạt, Việt Nam" },
-  { value: "ha-noi", label: "🇻🇳 Hà Nội, Việt Nam" },
-  { value: "ho-chi-minh", label: "🇻🇳 TP. Hồ Chí Minh, Việt Nam" },
-  { value: "phu-quoc", label: "🇻🇳 Phú Quốc, Việt Nam" },
-  { value: "nha-trang", label: "🇻🇳 Nha Trang, Việt Nam" },
-  { value: "hoi-an", label: "🇻🇳 Hội An, Việt Nam" },
+  { value: "da-nang", labelKey: "Đà Nẵng, Việt Nam" },
+  { value: "da-lat", labelKey: "Đà Lạt, Việt Nam" },
+  { value: "ha-noi", labelKey: "Hà Nội, Việt Nam" },
+  { value: "ho-chi-minh", labelKey: "TP. Hồ Chí Minh, Việt Nam" },
+  { value: "phu-quoc", labelKey: "Phú Quốc, Việt Nam" },
+  { value: "nha-trang", labelKey: "Nha Trang, Việt Nam" },
+  { value: "hoi-an", labelKey: "Hội An, Việt Nam" },
   // 🇯🇵 Nhật Bản
-  { value: "tokyo", label: "🇯🇵 Tokyo, Nhật Bản" },
-  { value: "kyoto", label: "🇯🇵 Kyoto, Nhật Bản" },
-  { value: "osaka", label: "🇯🇵 Osaka, Nhật Bản" },
+  { value: "tokyo", labelKey: "Tokyo, Nhật Bản" },
+  { value: "kyoto", labelKey: "Kyoto, Nhật Bản" },
+  { value: "osaka", labelKey: "Osaka, Nhật Bản" },
   // 🇰🇷 Hàn Quốc
-  { value: "seoul", label: "🇰🇷 Seoul, Hàn Quốc" },
-  { value: "busan", label: "🇰🇷 Busan, Hàn Quốc" },
-  { value: "jeju", label: "🇰🇷 Đảo Jeju, Hàn Quốc" },
+  { value: "seoul", labelKey: "Seoul, Hàn Quốc" },
+  { value: "busan", labelKey: "Busan, Hàn Quốc" },
+  { value: "jeju", labelKey: "Đảo Jeju, Hàn Quốc" },
   // 🇺🇸 Mỹ
-  { value: "new-york", label: "🇺🇸 New York, Mỹ" },
-  { value: "los-angeles", label: "🇺🇸 Los Angeles, Mỹ" },
-  { value: "san-francisco", label: "🇺🇸 San Francisco, Mỹ" },
-  { value: "las-vegas", label: "🇺🇸 Las Vegas, Mỹ" },
-  { value: "hawaii", label: "🇺🇸 Hawaii, Mỹ" },
+  { value: "new-york", labelKey: "New York, Mỹ" },
+  { value: "los-angeles", labelKey: "Los Angeles, Mỹ" },
+  { value: "san-francisco", labelKey: "San Francisco, Mỹ" },
+  { value: "las-vegas", labelKey: "Las Vegas, Mỹ" },
+  { value: "hawaii", labelKey: "Hawaii, Mỹ" },
   // 🇹🇭 Thái Lan
-  { value: "bangkok", label: "🇹🇭 Bangkok, Thái Lan" },
-  { value: "phuket", label: "🇹🇭 Phuket, Thái Lan" },
-  { value: "chiang-mai", label: "🇹🇭 Chiang Mai, Thái Lan" },
+  { value: "bangkok", labelKey: "Bangkok, Thái Lan" },
+  { value: "phuket", labelKey: "Phuket, Thái Lan" },
+  { value: "chiang-mai", labelKey: "Chiang Mai, Thái Lan" },
   // 🇨🇳 Trung Quốc
-  { value: "shanghai", label: "🇨🇳 Thượng Hải, Trung Quốc" },
-  { value: "beijing", label: "🇨🇳 Bắc Kinh, Trung Quốc" },
+  { value: "shanghai", labelKey: "Thượng Hải, Trung Quốc" },
+  { value: "beijing", labelKey: "Bắc Kinh, Trung Quốc" },
   // 🇮🇩 Indonesia
-  { value: "bali", label: "🇮🇩 Bali, Indonesia" },
-  { value: "jakarta", label: "🇮🇩 Jakarta, Indonesia" },
+  { value: "bali", labelKey: "Bali, Indonesia" },
+  { value: "jakarta", labelKey: "Jakarta, Indonesia" },
   // 🇨🇭 Thụy Sĩ
-  { value: "zurich", label: "🇨🇭 Zurich, Thụy Sĩ" },
-  { value: "geneva", label: "🇨🇭 Geneva, Thụy Sĩ" },
+  { value: "zurich", labelKey: "Zurich, Thụy Sĩ" },
+  { value: "geneva", labelKey: "Geneva, Thụy Sĩ" },
   // 🇦🇺 Úc
-  { value: "sydney", label: "🇦🇺 Sydney, Úc" },
-  { value: "melbourne", label: "🇦🇺 Melbourne, Úc" },
+  { value: "sydney", labelKey: "Sydney, Úc" },
+  { value: "melbourne", labelKey: "Melbourne, Úc" },
   // 🇧🇷 Brazil
-  { value: "rio-de-janeiro", label: "🇧🇷 Rio de Janeiro, Brazil" },
+  { value: "rio-de-janeiro", labelKey: "Rio de Janeiro, Brazil" },
   // 🇦🇷 Argentina
-  { value: "buenos-aires", label: "🇦🇷 Buenos Aires, Argentina" },
+  { value: "buenos-aires", labelKey: "Buenos Aires, Argentina" },
   // 🇸🇬 Singapore
-  { value: "singapore", label: "🇸🇬 Singapore" },
+  { value: "singapore", labelKey: "Singapore" },
 ];
 
 function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
@@ -185,7 +185,7 @@ function SearchBarInner({ initialCity, initialKeyword, lang = "vi" }: Props) {
           >
             {CITIES.map((c) => (
               <option key={c.value} value={c.value}>
-                {c.labelKey ? t(c.labelKey, currentLang) : c.label}
+                {c.labelKey ? t(c.labelKey, currentLang) : ""}
               </option>
             ))}
           </select>

@@ -45,19 +45,21 @@ function getInitials(name?: string): string {
     .slice(0, 2);
 }
 
-const COUNTRIES: { code: string; flagUrl: string; label: string }[] = [
-  { code: "vn", flagUrl: "https://flagcdn.com/w40/vn.png", label: "Vietnam" },
-  { code: "us", flagUrl: "https://flagcdn.com/w40/us.png", label: "United States" },
-  { code: "cn", flagUrl: "https://flagcdn.com/w40/cn.png", label: "China" },
-  { code: "id", flagUrl: "https://flagcdn.com/w40/id.png", label: "Indonesia" },
-  { code: "ch", flagUrl: "https://flagcdn.com/w40/ch.png", label: "Switzerland" },
-  { code: "br", flagUrl: "https://flagcdn.com/w40/br.png", label: "Brazil" },
-  { code: "ar", flagUrl: "https://flagcdn.com/w40/ar.png", label: "Argentina" },
-  { code: "au", flagUrl: "https://flagcdn.com/w40/au.png", label: "Australia" },
-  { code: "jp", flagUrl: "https://flagcdn.com/w40/jp.png", label: "Japan" },
-  { code: "kr", flagUrl: "https://flagcdn.com/w40/kr.png", label: "South Korea" },
-  { code: "th", flagUrl: "https://flagcdn.com/w40/th.png", label: "Thailand" },
-  { code: "sg", flagUrl: "https://flagcdn.com/w40/sg.png", label: "Singapore" },
+const COUNTRIES: { code: string; flagUrl: string; label: string; slug: string }[] = [
+  // --- TRONG NƯỚC (VIETNAM) ---
+  { code: "vn", flagUrl: "https://flagcdn.com/w40/vn.png", label: "Việt Nam", slug: "vietnam" },
+  // --- QUỐC TẾ (12 QUỐC GIA) ---
+  { code: "id", flagUrl: "https://flagcdn.com/w40/id.png", label: "Indonesia", slug: "bali" },
+  { code: "jp", flagUrl: "https://flagcdn.com/w40/jp.png", label: "Nhật Bản", slug: "tokyo" },
+  { code: "th", flagUrl: "https://flagcdn.com/w40/th.png", label: "Thái Lan", slug: "bangkok" },
+  { code: "sg", flagUrl: "https://flagcdn.com/w40/sg.png", label: "Singapore", slug: "singapore" },
+  { code: "kr", flagUrl: "https://flagcdn.com/w40/kr.png", label: "Hàn Quốc", slug: "seoul" },
+  { code: "my", flagUrl: "https://flagcdn.com/w40/my.png", label: "Malaysia", slug: "kuala-lumpur" },
+  { code: "ph", flagUrl: "https://flagcdn.com/w40/ph.png", label: "Philippines", slug: "manila" },
+  { code: "kh", flagUrl: "https://flagcdn.com/w40/kh.png", label: "Cambodia", slug: "siem-reap" },
+  { code: "mm", flagUrl: "https://flagcdn.com/w40/mm.png", label: "Myanmar", slug: "yangon" },
+  { code: "cn", flagUrl: "https://flagcdn.com/w40/cn.png", label: "Trung Quốc", slug: "beijing" },
+  { code: "au", flagUrl: "https://flagcdn.com/w40/au.png", label: "Australia", slug: "sydney" },
 ];
 
 export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: Props) {
@@ -155,18 +157,19 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
 
         {/* Actions */}
         <div className="nav-actions" style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          {/* 🌍 Country Selector Dropdown */}
+          {/* 🌍 Multi-Level Country Navigation */}
           <div className="nav-dropdown" ref={countryRef} style={{ position: "relative" }}>
             <button
               type="button"
               onClick={() => setCountryOpen((p) => !p)}
+              onMouseEnter={() => setCountryOpen(true)}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 6,
-                background: "rgba(255, 255, 255, 0.15)",
+                background: countryOpen ? "rgba(255, 255, 255, 0.25)" : "rgba(255, 255, 255, 0.15)",
                 backdropFilter: "blur(8px)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
+                border: "1px solid rgba(255, 255, 255, 0.25)",
                 padding: "6px 14px",
                 borderRadius: 100,
                 color: "inherit",
@@ -174,55 +177,92 @@ export function SiteHeader({ transparent = false, lang = "vi", onLangChange }: P
                 fontWeight: 600,
                 cursor: "pointer",
                 whiteSpace: "nowrap",
+                transition: "all 0.2s ease",
               }}
-              aria-label="Chọn quốc gia"
+              aria-label={t("Chọn quốc gia & điểm đến", currentLang)}
             >
               <span>🌍</span>
-              <span className="hide-mobile" style={{ whiteSpace: "nowrap" }}>{t("Quốc Gia", currentLang)}</span>
+              <span className="hide-mobile" style={{ whiteSpace: "nowrap" }}>{t("12 Điểm Đến", currentLang)}</span>
               <ChevronDown size={13} />
             </button>
 
             {countryOpen && (
               <div
                 className="nav-dropdown-menu"
+                onMouseLeave={() => setCountryOpen(false)}
                 style={{
                   position: "absolute",
-                  right: 0,
+                  left: 0,
                   top: "100%",
                   marginTop: 8,
-                  minWidth: 170,
-                  maxHeight: 320,
-                  overflowY: "auto",
+                  minWidth: 600,
                   background: "#ffffff",
                   color: "#0f172a",
-                  borderRadius: 12,
-                  boxShadow: "0 10px 25px -5px rgba(0,0,0,0.25)",
-                  padding: "6px",
+                  borderRadius: 16,
+                  boxShadow: "0 20px 50px -5px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)",
+                  padding: "12px",
                   zIndex: 100,
+                  display: "flex",
+                  gap: 16,
                 }}
               >
-                {COUNTRIES.map((c) => (
-                  <Link
-                    key={c.code}
-                    href={`/country/${c.code}`}
-                    onClick={() => setCountryOpen(false)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      width: "100%",
-                      padding: "8px 12px",
-                      borderRadius: 8,
-                      textDecoration: "none",
-                      color: "inherit",
-                      fontSize: 13,
-                      fontWeight: 500,
-                    }}
-                  >
-                    <img src={c.flagUrl} alt={c.label} style={{ width: 20, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                    <span>{c.label}</span>
-                  </Link>
-                ))}
+                {/* Level 1: Countries Grid */}
+                <div style={{ flex: 1, minWidth: 200 }}>
+                  <div style={{ padding: "4px 8px 8px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#64748b", borderBottom: "1px solid #f1f5f9", marginBottom: 8 }}>
+                    {t("12 Quốc Gia", currentLang)}
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 4 }}>
+                    {COUNTRIES.map((c) => (
+                      <Link
+                        key={c.code}
+                        href={`/destinations/${c.slug}`}
+                        onClick={() => setCountryOpen(false)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          padding: "8px 10px",
+                          borderRadius: 8,
+                          textDecoration: "none",
+                          color: "#334155",
+                          fontSize: 12,
+                          fontWeight: 500,
+                          transition: "all 0.15s ease",
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "#f1f5f9"; e.currentTarget.style.color = "#0f172a"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#334155"; }}
+                      >
+                        <img src={c.flagUrl} alt={c.label} style={{ width: 18, height: 13, borderRadius: 2, objectFit: "cover", boxShadow: "0 1px 2px rgba(0,0,0,0.15)" }} />
+                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Level 2: Quick Links */}
+                <div style={{ width: 200, borderLeft: "1px solid #f1f5f9", paddingLeft: 16 }}>
+                  <div style={{ padding: "4px 8px 8px", fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#64748b", borderBottom: "1px solid #f1f5f9", marginBottom: 8 }}>
+                    {t("Phổ biến", currentLang)}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <Link href="/search" onClick={() => setCountryOpen(false)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, textDecoration: "none", color: "#334155", fontSize: 13, fontWeight: 500 }}>
+                      <span>🏨</span> {t("Khách Sạn & Villa", currentLang)}
+                    </Link>
+                    <Link href="/search?type=resort" onClick={() => setCountryOpen(false)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, textDecoration: "none", color: "#334155", fontSize: 13, fontWeight: 500 }}>
+                      <span>🏖️</span> {t("Resort & Nghỉ dưỡng", currentLang)}
+                    </Link>
+                    <Link href="/search?type=apartment" onClick={() => setCountryOpen(false)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, textDecoration: "none", color: "#334155", fontSize: 13, fontWeight: 500 }}>
+                      <span>🏢</span> {t("Căn hộ & Business", currentLang)}
+                    </Link>
+                    <div style={{ margin: "8px 0", borderTop: "1px solid #f1f5f9" }} />
+                    <Link href="/taste" onClick={() => setCountryOpen(false)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, textDecoration: "none", color: "#334155", fontSize: 13, fontWeight: 500 }}>
+                      <span>🍜</span> {t("Ẩm Thực Đặc sản", currentLang)}
+                    </Link>
+                    <Link href="/experiences" onClick={() => setCountryOpen(false)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 8, textDecoration: "none", color: "#334155", fontSize: 13, fontWeight: 500 }}>
+                      <span>🎯</span> {t("Trải Nghiệm & Check-in", currentLang)}
+                    </Link>
+                  </div>
+                </div>
               </div>
             )}
           </div>

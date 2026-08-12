@@ -184,10 +184,10 @@ export function SearchInteractive({
             </span>
           </div>
           <h1 style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 900, marginBottom: 8, color: "#fff" }}>
-            {t("Tìm kiếm khách sạn", lang)}
+            {t("Tìm kiếm khách sạn & Villa", lang)}
           </h1>
           <p style={{ color: "#cbd5e1", fontSize: 15, maxWidth: 700, marginBottom: 28 }}>
-            {t("Nơi lưu trú hạng sang được đánh giá cao bởi cộng đồng du khách", lang)}
+            {t("Tìm kiếm và đặt phòng khách sạn, villa, căn hộ tại các điểm đến nổi bật", lang)}
           </p>
 
           <SearchBar initialCity={city} initialKeyword={keyword} lang={lang} />
@@ -284,10 +284,10 @@ export function SearchInteractive({
               </h4>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {[
-                  { id: "", label: "Tất cả loại hình" },
-                  { id: "hotel", label: "Khách sạn" },
-                  { id: "villa", label: "Villa & Resort" },
-                  { id: "apartment", label: "Căn hộ & Business" },
+                  { id: "", labelKey: "Tất cả loại hình" },
+                  { id: "hotel", labelKey: "Khách sạn" },
+                  { id: "villa", labelKey: "Villa & Resort" },
+                  { id: "apartment", labelKey: "Căn hộ & Business" },
                 ].map((typeItem) => (
                   <button
                     key={typeItem.id}
@@ -307,7 +307,7 @@ export function SearchInteractive({
                       textAlign: "left",
                     }}
                   >
-                    <span>{t(typeItem.label, lang)}</span>
+                    <span>{t(typeItem.labelKey, lang)}</span>
                     {selectedType === typeItem.id && <Check size={14} />}
                   </button>
                 ))}
@@ -449,10 +449,10 @@ export function SearchInteractive({
               >
                 <Building size={48} style={{ color: "#64748b", marginBottom: 16 }} />
                 <h3 style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 8 }}>
-                  {t("Chưa tìm thấy nơi phù hợp", lang)}
+                  {t("Không tìm thấy kết quả phù hợp", lang)}
                 </h3>
                 <p style={{ color: "#94a3b8", maxWidth: 440, margin: "0 auto 24px", fontSize: 14 }}>
-                  {t("Thử một điểm đến khác hoặc bỏ bớt điều kiện tìm kiếm.", lang)}
+                  {t("Hãy thử thay đổi từ khóa hoặc bỏ bớt bộ lọc để có kết quả tốt hơn", lang)}
                 </p>
                 <button
                   onClick={resetFilters}
@@ -467,7 +467,7 @@ export function SearchInteractive({
                     cursor: "pointer",
                   }}
                 >
-                  {t("Đặt lại bộ lọc", lang)}
+                  {t("Xóa bộ lọc & Tìm lại", lang)}
                 </button>
               </div>
             )}
