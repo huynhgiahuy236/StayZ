@@ -40,9 +40,48 @@ const i18n10 = (vi, en) => ({
   ru: `${en} (RU)`
 });
 
-// Image URL generator ensuring 100% UNIQUE IMAGES across every single entity (Promt.img.md)
-const getUniqueImg = (category, index, sub = "") => 
-  `https://images.unsplash.com/photo-unique-${category}-${index}${sub ? "-" + sub : ""}?auto=format&fit=crop&w=1600&q=85`;
+// ════════════════════════════════════════════════════════════════════════════════
+// Image URL generator — FIXED: now uses domain-specific Unsplash photo pool
+// Standard: promt.img.md Sections 4, 10, 12
+//
+// Previously used fake "photo-unique-{category}-{index}" URLs (broken, 404).
+// Now uses real Unsplash photo IDs from the verified pool with proper role matching.
+// ════════════════════════════════════════════════════════════════════════════════
+const {
+  PHOTO_POOL,
+  PhotoPoolPicker,
+  buildUnsplashUrl,
+} = require("./config/unsplash-photo-pool");
+
+// One picker per service domain — maintains fair round-robin across all photos
+// in the pool before cycling, so no single photo is over-used.
+const poolPickers = {};
+for (const domain of Object.keys(PHOTO_POOL)) {
+  poolPickers[domain] = new PhotoPoolPicker();
+}
+
+/**
+ * Get a real Unsplash image URL for a service domain + role.
+ * Falls back gracefully if the role pool is exhausted.
+ *
+ * @param {string} domain  - "HuKi Stay", "HuKi Bus", etc.
+ * @param {string} role    - "cover", "hero", "gallery", "room", etc.
+ * @returns {string}       - Valid Unsplash CDN URL
+ */
+function getUniqueImg(domain, role) {
+  const picker = poolPickers[domain];
+  if (!picker) {
+    // Fallback: use a generic placeholder if domain not in pool
+    return `https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85`;
+  }
+  const result = picker.pick(domain, role);
+  if (!result) {
+    // Pool exhausted for this role — log and return fallback
+    console.warn(`  ⚠ Pool exhausted for ${domain}/${role}, using fallback`);
+    return `https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85`;
+  }
+  return result.url;
+}
 
 // 12 COUNTRIES x 8 DESTINATIONS = 96 REAL GLOBAL DESTINATIONS
 const COUNTRIES_MASTER = [
@@ -88,7 +127,7 @@ async function seedMasterData() {
     let totalFoods = 0;
     let totalExperiences = 0;
 
-    let globalImgCounter = 1;
+    // globalImgCounter removed — photo pool picker handles uniqueness automatically
 
     for (let cIdx = 0; cIdx < COUNTRIES_MASTER.length; cIdx++) {
       const c = COUNTRIES_MASTER[cIdx];
@@ -105,9 +144,9 @@ async function seedMasterData() {
         const destName = `${c.name} - ${item.name}`;
 
         // 1. Destination Document (3 Unique Images: 1 Hero + 2 Gallery)
-        const heroImg = getUniqueImg("dest-hero", globalImgCounter++);
-        const galImg1 = getUniqueImg("dest-gal", globalImgCounter++);
-        const galImg2 = getUniqueImg("dest-gal", globalImgCounter++);
+        const heroImg = getUniqueImg("HuKi Experience", "hero");
+        const galImg1 = getUniqueImg("HuKi Experience", "gallery");
+        const galImg2 = getUniqueImg("HuKi Experience", "gallery");
 
         await Destination.findOneAndUpdate(
           { slug: destSlug },
@@ -133,9 +172,9 @@ async function seedMasterData() {
         for (let hIdx = 0; hIdx < hotelsForDest; hIdx++) {
           const hotelSlug = `hotel-${destSlug}-${hIdx + 1}`;
           const hotelName = `${item.hotel} ${c.name} #${hIdx + 1}`;
-          const hotelMainImg = getUniqueImg("hotel-main", globalImgCounter++);
-          const hotelGal1 = getUniqueImg("hotel-gal", globalImgCounter++);
-          const hotelGal2 = getUniqueImg("hotel-gal", globalImgCounter++);
+          const hotelMainImg = getUniqueImg("HuKi Stay", "cover");
+          const hotelGal1 = getUniqueImg("HuKi Stay", "gallery");
+          const hotelGal2 = getUniqueImg("HuKi Stay", "gallery");
 
           const propDoc = await Property.findOneAndUpdate(
             { slug: hotelSlug },
@@ -163,7 +202,7 @@ async function seedMasterData() {
           // 3 Rooms per Hotel
           for (let rIdx = 0; rIdx < 3; rIdx++) {
             const roomName = rIdx === 0 ? "Standard Double Room" : rIdx === 1 ? "Deluxe Sea/City View Suite" : "Presidential Family Villa";
-            const roomImg = getUniqueImg("room-main", globalImgCounter++);
+            const roomImg = getUniqueImg("HuKi Stay", "room");
 
             await Room.findOneAndUpdate(
               { property_id: propDoc._id, name: roomName },
@@ -206,7 +245,7 @@ async function seedMasterData() {
 
         // 4. HuKi Ride (Car/Motor Rentals: 15 in VN, 4 per other country)
         if (dIdx < (c.code === "vn" ? 8 : 4)) {
-          const rideImg = getUniqueImg("ride-main", globalImgCounter++);
+          const rideImg = getUniqueImg("HuKi Ride", "cover");
           await Ride.findOneAndUpdate(
             { licensePlate: `${c.code.toUpperCase()}-RIDE-${dIdx + 1}` },
             {
@@ -250,7 +289,7 @@ async function seedMasterData() {
         const foodsForDest = (c.code === "vn" && dIdx < 4) ? 4 : foodMultiplier;
         for (let fIdx = 0; fIdx < foodsForDest; fIdx++) {
           const foodSlug = `food-${destSlug}-${fIdx + 1}`;
-          const foodImg = getUniqueImg("food-main", globalImgCounter++);
+          const foodImg = getUniqueImg("HuKi Taste", "cover");
           await FoodSpot.findOneAndUpdate(
             { slug: foodSlug },
             {
@@ -273,7 +312,7 @@ async function seedMasterData() {
         const expForDest = (c.code === "vn" && dIdx < 4) ? 5 : expMultiplier;
         for (let eIdx = 0; eIdx < expForDest; eIdx++) {
           const expSlug = `exp-${destSlug}-${eIdx + 1}`;
-          const expImg = getUniqueImg("exp-main", globalImgCounter++);
+          const expImg = getUniqueImg("HuKi Experience", "hero");
           await ExperienceSpot.findOneAndUpdate(
             { slug: expSlug },
             {
